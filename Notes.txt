@@ -1,0 +1,70 @@
+1) Create Repository GameXO on github
+
+2) locally on git shell
+	cd 'local directory'
+	git init
+
+3) Create Idea Project
+	maven, SDK version 1.7, set project bytecode version to 1.7, modules language level 1.7
+	add framework support - Web, Spring MVC, Google App Engine, remove libs which have been automatically added
+	add necessary libraries to .pom, create base folder structure
+	change into web.xml to <url-pattern>/</url-pattern>
+	project-artifacts - add all libraries to artifact
+
+4) Create new Google Application
+	https://console.cloud.google.com - создать проект
+	GameXO, gamexo-gae
+
+5) SQL - создать экземпляр (будучи в проекте GameXO), создать базу данных второго поколения
+	google-db
+	add allowed network (find your external ip), visit https://www.whatismyip.com/
+	94.153.230.50
+	find id of google sql 
+	
+	id: gamexo-gae:europe-west1:google-db
+	allowed networks: 94.153.230.50
+	address: 23.251.133.78
+	
+	управление доступом-пользователи-изменить пароль пользователя root -> change to 1111
+
+6) open SQL Workbench, connect to google cloud sql
+	connect to database 23.251.133.78 (root, 1111)
+	create in schema into connected server
+		CREATE SCHEMA `xodatabase` ;
+
+	test table creation:	
+	CREATE TABLE `xodatabase`.`testuserauth` (
+  `login` VARCHAR(20) NOT NULL,
+  `password` VARCHAR(20) NOT NULL,
+  PRIMARY KEY (`login`),
+  UNIQUE INDEX `idtestuserauth_UNIQUE` (`login` ASC));
+
+	add few records:
+	INSERT INTO `xodatabase`.`testuserauth` (`login`, `password`) VALUES ('log1', 'p1');
+
+	INSERT INTO `xodatabase`.`testuserauth` (`login`, `password`) VALUES ('log2', 'p2');
+
+	INSERT INTO `xodatabase`.`testuserauth` (`login`, `password`) VALUES ('log3', 'p3');
+	INSERT INTO `xodatabase`.`testuserauth` (`login`, `password`) VALUES ('log4', 'p4');
+	
+	create local version for development (should be the same name):
+	CREATE SCHEMA `xodatabase` ;
+	CREATE TABLE `xodatabase`.`testuserauth` (
+  `login` VARCHAR(20) NOT NULL,
+  `password` VARCHAR(20) NOT NULL,
+  PRIMARY KEY (`login`),
+  UNIQUE INDEX `idtestuserauth_UNIQUE` (`login` ASC));
+	INSERT INTO `xodatabase`.`testuserauth` (`login`, `password`) VALUES ('log1', 'p1');
+
+	INSERT INTO `xodatabase`.`testuserauth` (`login`, `password`) VALUES ('log2', 'p2');
+
+	INSERT INTO `xodatabase`.`testuserauth` (`login`, `password`) VALUES ('log3', 'p3');
+	INSERT INTO `xodatabase`.`testuserauth` (`login`, `password`) VALUES ('log4', 'p4');
+
+7) Create configuration for deployment -> Edit Configuration -> add Google App Engine Deployment
+	version has not contain dot "."
+
+	
+	
+
+
