@@ -63,7 +63,12 @@
 
 7) Create configuration for deployment -> Edit Configuration -> add Google App Engine Deployment
 	version has not contain dot "."
+	production deployemnt switch to Production Db configuration, and comment bean
 
+8) gitshell, cd (to project directory)
+git add --all (directories and files to be tracked)
+git commit -m "text about changes"
+git push --all <url of git repository>
 	
 	
 

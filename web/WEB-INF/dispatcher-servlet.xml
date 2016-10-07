@@ -2,7 +2,8 @@
 <beans xmlns="http://www.springframework.org/schema/beans"
        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
        xmlns:context="http://www.springframework.org/schema/context" xmlns:p="http://www.springframework.org/schema/p"
-       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd">
+       xmlns:tx="http://www.springframework.org/schema/tx"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx.xsd">
 
     <bean class="org.springframework.web.servlet.view.InternalResourceViewResolver">
         <property name="prefix" value="/jsp/" />
@@ -11,12 +12,12 @@
 
     <context:component-scan base-package="jfiles" />
 
-    <!--<bean id="dbDevelopment" class="org.springframework.jdbc.datasource.DriverManagerDataSource">
-        <property name="driverClassName" value="com.mysql.jdbc.Driver" />
-        <property name="url" value="jdbc:mysql://localhost/xodatabaselocal?useSSL=false" />
-        <property name="username" value="root" />
-        <property name="password" value="1111" />
-    </bean>-->
+    <!--<bean id="dbDevelopment" class="org.springframework.jdbc.datasource.DriverManagerDataSource">-->
+        <!--<property name="driverClassName" value="com.mysql.jdbc.Driver" />-->
+        <!--<property name="url" value="jdbc:mysql://localhost/xodatabaselocal?useSSL=false" />-->
+        <!--<property name="username" value="root" />-->
+        <!--<property name="password" value="1111" />-->
+    <!--</bean>-->
 
     <bean id="dbProduction" class="org.springframework.jdbc.datasource.DriverManagerDataSource">
         <property name="driverClassName" value="com.mysql.jdbc.GoogleDriver" />
@@ -40,11 +41,11 @@
         </property>
     </bean>
 
-    <!--Todo later will work with transactions-->
-    <!--<bean id="transactionManager" class="org.springframework.orm.jpa.JpaTransactionManager">
+    <!-- Todo worked without this, why ? -->
+    <bean id="transactionManager" class="org.springframework.orm.jpa.JpaTransactionManager">
         <property name="entityManagerFactory" ref="entityManagerFactory" />
     </bean>
-    &lt;!&ndash; enable the configuration of transactional behavior based on annotations &ndash;&gt;
-    <tx:annotation-driven transaction-manager="transactionManager" />-->
+    <!-- enable the configuration of transactional behavior based on annotations -->
+    <tx:annotation-driven transaction-manager="transactionManager" />
 
 </beans>

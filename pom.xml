@@ -8,65 +8,76 @@
     <artifactId>GameXO-aid</artifactId>
     <version>1.0-SNAPSHOT</version>
 
+    <properties>
+        <servlet.version>3.1.0</servlet.version>
+        <jstl.version>1.2</jstl.version>
+        <spring.version>4.2.1.RELEASE</spring.version>
+        <hibernate.version>4.2.0.Final</hibernate.version>
+        <mysql.socketactory.version>1.0.1</mysql.socketactory.version>
+        <mysql.connector.version>5.1.30</mysql.connector.version>
+        <google.appengine.version>1.9.42</google.appengine.version>
+    </properties>
+
     <dependencies>
 
         <dependency>
             <groupId>javax.servlet</groupId>
             <artifactId>jstl</artifactId>
-            <version>1.2</version>
+            <version>${jstl.version}</version>
         </dependency>
         <dependency>
             <groupId>javax.servlet</groupId>
             <artifactId>javax.servlet-api</artifactId>
-            <version>3.1.0</version>
+            <version>${servlet.version}</version>
         </dependency>
 
         <dependency>
             <groupId>org.springframework</groupId>
             <artifactId>spring-core</artifactId>
-            <version>4.2.1.RELEASE</version>
+            <version>${spring.version}</version>
         </dependency>
         <dependency>
             <groupId>org.springframework</groupId>
             <artifactId>spring-context</artifactId>
-            <version>4.2.1.RELEASE</version>
+            <version>${spring.version}</version>
         </dependency>
         <dependency>
             <groupId>org.springframework</groupId>
             <artifactId>spring-webmvc</artifactId>
-            <version>4.2.1.RELEASE</version>
+            <version>${spring.version}</version>
         </dependency>
         <dependency>
             <groupId>org.springframework</groupId>
             <artifactId>spring-orm</artifactId>
-            <version>4.2.1.RELEASE</version>
+            <version>${spring.version}</version>
         </dependency>
 
         <dependency>
             <groupId>org.hibernate</groupId>
             <artifactId>hibernate-core</artifactId>
-            <version>4.2.0.Final</version>
+            <version>${hibernate.version}</version>
         </dependency>
         <dependency>
             <groupId>org.hibernate</groupId>
             <artifactId>hibernate-entitymanager</artifactId>
-            <version>4.2.0.Final</version>
+            <version>${hibernate.version}</version>
         </dependency>
+
         <dependency>
             <groupId>com.google.cloud.sql</groupId>
             <artifactId>mysql-socket-factory</artifactId>
-            <version>1.0.1</version>
+            <version>${mysql.socketactory.version}</version>
         </dependency>
         <dependency>
             <groupId>mysql</groupId>
             <artifactId>mysql-connector-java</artifactId>
-            <version>5.1.30</version>
+            <version>${mysql.connector.version}</version>
         </dependency>
 
         <dependency>
             <groupId>com.google.appengine</groupId>
             <artifactId>appengine-api-1.0-sdk</artifactId>
-            <version>1.9.42</version>
+            <version>${google.appengine.version}</version>
         </dependency>
 
     </dependencies>

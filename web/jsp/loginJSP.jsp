@@ -15,6 +15,7 @@
 <c:if test="${authorized eq false}">
     <h2>Authorization Error</h2>
 </c:if>
+${message}
 
 </body>
 </html>
