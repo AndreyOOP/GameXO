@@ -2,6 +2,7 @@ package jfiles.model;
 
 import javax.persistence.*;
 
+//todo to remove later
 @Entity
 @Table(name = "testuserauth", schema = "xodatabase", catalog = "")
 public class TableEntity {

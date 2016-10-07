@@ -1,4 +1,4 @@
-1) Create Repository GameXO on github
+п»ї1) Create Repository GameXO on github
 
 2) locally on git shell
 	cd 'local directory'
@@ -12,10 +12,10 @@
 	project-artifacts - add all libraries to artifact
 
 4) Create new Google Application
-	https://console.cloud.google.com - создать проект
+	https://console.cloud.google.com - пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ
 	GameXO, gamexo-gae
 
-5) SQL - создать экземпляр (будучи в проекте GameXO), создать базу данных второго поколения
+5) SQL - пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ (пїЅпїЅпїЅпїЅпїЅпїЅ пїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ GameXO), пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ
 	google-db
 	add allowed network (find your external ip), visit https://www.whatismyip.com/
 	94.153.230.50
@@ -25,7 +25,7 @@
 	allowed networks: 94.153.230.50
 	address: 23.251.133.78
 	
-	управление доступом-пользователи-изменить пароль пользователя root -> change to 1111
+	пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ-пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ-пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ root -> change to 1111
 
 6) open SQL Workbench, connect to google cloud sql
 	connect to database 23.251.133.78 (root, 1111)
@@ -69,7 +69,11 @@
 git add --all (directories and files to be tracked)
 git commit -m "text about changes"
 git push --all <url of git repository>
-	
+
+9) in case of errors during artifact deployement - just delete & create artifact again (error like
+missing appengine-web.xml, missing web.xml etc
+
+10) added users log1-3 with password p1-3 to cloud database	
 	
 
 

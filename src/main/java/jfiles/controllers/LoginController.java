@@ -9,19 +9,20 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 
+//todo to remove later
 @Controller
 public class LoginController {
 
     @Autowired
     private TabService tabService;
 
-    @RequestMapping(value = "/")
-    public String index(){
+//    @RequestMapping(value = "/")
+//    public String index(){
+//
+//        return "index";
+//    }
 
-        return "index";
-    }
-
-    @RequestMapping(value = "/login", method = RequestMethod.POST)
+    @RequestMapping(value = "/loginzz", method = RequestMethod.POST)
     public String loginPagePost(Model model,
                                 @RequestParam String login,
                                 @RequestParam String password){

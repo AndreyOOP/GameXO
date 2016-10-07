@@ -12,12 +12,13 @@
 
     <context:component-scan base-package="jfiles" />
 
-    <!--<bean id="dbDevelopment" class="org.springframework.jdbc.datasource.DriverManagerDataSource">-->
-        <!--<property name="driverClassName" value="com.mysql.jdbc.Driver" />-->
-        <!--<property name="url" value="jdbc:mysql://localhost/xodatabaselocal?useSSL=false" />-->
-        <!--<property name="username" value="root" />-->
-        <!--<property name="password" value="1111" />-->
-    <!--</bean>-->
+
+    <!--<bean id="dbDevelopment" class="org.springframework.jdbc.datasource.DriverManagerDataSource">
+        <property name="driverClassName" value="com.mysql.jdbc.Driver" />
+        <property name="url" value="jdbc:mysql://localhost/xodatabaselocal?useSSL=false" />
+        <property name="username" value="root" />
+        <property name="password" value="1111" />
+    </bean>-->
 
     <bean id="dbProduction" class="org.springframework.jdbc.datasource.DriverManagerDataSource">
         <property name="driverClassName" value="com.mysql.jdbc.GoogleDriver" />
@@ -47,5 +48,8 @@
     </bean>
     <!-- enable the configuration of transactional behavior based on annotations -->
     <tx:annotation-driven transaction-manager="transactionManager" />
+
+    <!--todo is it necessary?-->
+    <bean id="pageServiceBean" class="jfiles.service.PageService"></bean>
 
 </beans>
