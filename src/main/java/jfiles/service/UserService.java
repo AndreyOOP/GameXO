@@ -18,10 +18,6 @@ public class UserService{
     @Autowired
     private UserDAO userDAO;
 
-//    public void setUserDAO(UserDAO userDAO) {
-//        this.userDAO = userDAO;
-//    }
-
     @Transactional
     public UserEntity getUserByName(String name) {
         return userDAO.getUserByName(name);
@@ -111,11 +107,14 @@ public class UserService{
     private byte[] toBytes(MultipartFile avatarFile){
 
         try {
-            return avatarFile.getBytes();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
 
-        return null;
+            return avatarFile.getBytes();
+
+        } catch (Exception e) {
+
+            e.printStackTrace();
+
+            return new byte[] {1};
+        }
     }
 }

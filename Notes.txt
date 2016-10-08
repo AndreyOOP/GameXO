@@ -1,4 +1,9 @@
-﻿1) Create Repository GameXO on github
+﻿0)
+    Java JDK version should be 1.7 download http://www.oracle.com/technetwork/java/javase/downloads/jdk7-downloads-1880260.html
+    Git shell for windows https://desktop.github.com/
+    download Google App Engine https://cloud.google.com/appengine/downloads?csw=1
+
+1) Create Repository GameXO on github
 
 2) locally on git shell
 	cd 'local directory'
@@ -73,7 +78,11 @@ git push --all <url of git repository>
 9) in case of errors during artifact deployement - just delete & create artifact again (error like
 missing appengine-web.xml, missing web.xml etc
 
-10) added users log1-3 with password p1-3 to cloud database	
+10) added users log1-3 with password p1-3 to cloud database
+11) problem with mapping "/authorized/menu/welcome" -> issue url//authorized/menu/welcome... could not find file
+should be "authorized/menu/welcome"
+12) issue with multipart file upload (not solved atm)...
+    issue with mail send (seems as well related to multipart), try without web editing
 	
 
 
