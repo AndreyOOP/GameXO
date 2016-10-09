@@ -29,7 +29,7 @@ public class Registration {
     private UserService userService;
 
 //    @Autowired
-//    private HTMLMail    htmlMail;
+    private HTMLMail    htmlMail;
 
     @Autowired
     private LoginSession loginSession;
@@ -112,7 +112,9 @@ public class Registration {
 //        userService.addUser(userName, userPassword, Role.USER, userEmail, avatarFile);
         userService.addUser(userName, userPassword, Role.USER, userEmail, avatarFile);
 
+        htmlMail = new HTMLMail();
 //        htmlMail.sendEmail( userName, userPassword, userEmail, Email.WELCOME); //todo add to separate thread, 5-10 sec pending during registration
+        htmlMail.sendSimpleMail( userName, userPassword, userEmail, Email.WELCOME);
 
         if( loginSession.isUserAlreadyLoggedIn(userName))
             return Page.ERROR;

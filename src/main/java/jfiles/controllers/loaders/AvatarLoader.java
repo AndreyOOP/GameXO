@@ -23,7 +23,7 @@ public class AvatarLoader {
 
         byte[] avatarPicBytes = userService.getUserByName(userName).getAvatarPic();
 
-        if ( avatarPicBytes == null || avatarPicBytes.length < 1){
+        if ( avatarPicBytes == null || avatarPicBytes.length < 2){
             avatarPicBytes = userService.getUserByName("default_picture").getAvatarPic();
         }
 

@@ -3,7 +3,7 @@
 
   <application>gamexo-gae</application>
 
-  <version>4</version>
+  <version>5</version>
 
   <threadsafe>true</threadsafe>
 

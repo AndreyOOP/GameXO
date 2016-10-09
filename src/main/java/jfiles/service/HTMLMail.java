@@ -1,5 +1,17 @@
 package jfiles.service;
 
+import java.io.IOException;
+import java.io.UnsupportedEncodingException;
+import java.util.Properties;
+import javax.mail.Message;
+import javax.mail.MessagingException;
+import javax.mail.Session;
+import javax.mail.Transport;
+import javax.mail.internet.AddressException;
+import javax.mail.internet.InternetAddress;
+import javax.mail.internet.MimeMessage;
+import javax.mail.PasswordAuthentication;
+
 import jfiles.Constants.Email;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.mail.javamail.JavaMailSender;
@@ -7,6 +19,7 @@ import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.stereotype.Service;
 
 import javax.mail.MessagingException;
+import javax.mail.Session;
 import javax.mail.internet.MimeMessage;
 
 /**Service for email generation and sending*/
@@ -19,6 +32,62 @@ public class HTMLMail {
 //    public void setMailSender(JavaMailSender mailSender) {
 //        this.mailSender = mailSender;
 //    }
+    public void sendSimpleMail(String userName, String userPassword, String userEmail, int type) {
+
+        final String username = Email.FROM;
+//        final String password = "oingdut3d@";
+        final String password = "qzwxec12";
+
+        Properties props = new Properties();
+        props.put("mail.smtp.auth", "true");
+        props.put("mail.smtp.starttls.enable", "true");
+        props.put("mail.smtp.host", "smtp.gmail.com");
+        props.put("mail.smtp.port", "587");
+
+        Session session = Session.getInstance(props,
+                new javax.mail.Authenticator() {
+                    protected PasswordAuthentication getPasswordAuthentication() {
+                        return new PasswordAuthentication(username, password);
+                    }
+                });
+
+
+
+        // [START simple_example]
+
+//        Session session = Session.getDefaultInstance(props, null);
+
+        try {
+
+            Message msg = new MimeMessage(session);
+
+            msg.setFrom(new InternetAddress(Email.FROM, "xxas"));
+
+            msg.addRecipient(Message.RecipientType.TO, new InternetAddress(userEmail, "Mr. User"));
+
+            msg.setSubject("Your Example.com account has been activated 3");
+
+            msg.setContent("cdscvsd   zsade", "text/html");
+
+//            msg.setText("Testv zf sdvg f");
+
+            Transport transport = session.getTransport("smtp");
+            transport.connect("smtp.gmail.com", username, password);
+            transport.sendMessage(msg, msg.getAllRecipients());
+            transport.close();
+
+//            Transport.send(msg);
+
+
+        } catch (AddressException e) {
+            // ...
+        } catch (MessagingException e) {
+            // ...
+        } catch (UnsupportedEncodingException e) {
+            // ...
+        }
+        // [END simple_example]
+    }
 
     /**Method sends email of specified type to specified recipient<br>
      * Types are stored into <i>Email</i> interface (welcome message, password reset message, user information updated message) */
