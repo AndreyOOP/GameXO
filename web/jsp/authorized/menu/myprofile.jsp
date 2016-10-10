@@ -1,8 +1,15 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 
+<%@ page import="com.google.appengine.api.blobstore.BlobstoreServiceFactory" %>
+<%@ page import="com.google.appengine.api.blobstore.BlobstoreService" %>
+
+<%
+    BlobstoreService blobstoreService = BlobstoreServiceFactory.getBlobstoreService();
+%>
+
 <div class="row">
     <div class="col-md-4" >
-        <form class="form-horizontal" action="/myprofile/${authKey}" method="POST" enctype="multipart/form-data">
+        <form class="form-horizontal" action="<%= blobstoreService.createUploadUrl("/myprofile") %>" method="POST" enctype="multipart/form-data">
             <fieldset>
                 <legend><h3>Profile of ${userName} :</h3></legend>
                 <div class="form-group">
@@ -33,6 +40,15 @@
                         <span class="help-block">${MyProfile_ErrorMessage_Avatar}</span>
                     </div>
                 </div>
+
+                <%--todo to hide--%>
+                <%--<input type="hidden" class="form-control" name="authKey" value="${authKey}">--%>
+                <div class="form-group" style="display:none">
+                    <div class="col-md-9" >
+                        <input type="number" name="authKey" class="form-control" value="${authKey}">
+                    </div>
+                </div>
+
                 <div class="form-group">
                     <div class="col-md-9 col-md-offset-3">
                         <a href="/welcome/${authKey}" class="btn btn-default">Cancel</a>

@@ -124,10 +124,11 @@ public class PageService<T> {
                 return !currentEmail.contentEquals( formUserEmail);
             }
 
-            case Check.NEW_AVATAR:{
+            //todo check this check)
+            /*case Check.NEW_AVATAR:{
 
                 return !avatarFile.getOriginalFilename().isEmpty();
-            }
+            }*/
 
             default: return false;
         }

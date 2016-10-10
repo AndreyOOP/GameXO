@@ -2,8 +2,10 @@
 <beans xmlns="http://www.springframework.org/schema/beans"
        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
        xmlns:context="http://www.springframework.org/schema/context" xmlns:p="http://www.springframework.org/schema/p"
-       xmlns:tx="http://www.springframework.org/schema/tx"
-       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx.xsd">
+       xmlns:tx="http://www.springframework.org/schema/tx" xmlns:mvc="http://www.springframework.org/schema/mvc"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx.xsd http://www.springframework.org/schema/mvc http://www.springframework.org/schema/mvc/spring-mvc.xsd">
+
+    <mvc:annotation-driven />
 
     <bean class="org.springframework.web.servlet.view.InternalResourceViewResolver">
         <property name="prefix" value="/jsp/" />
@@ -50,11 +52,16 @@
     <tx:annotation-driven transaction-manager="transactionManager" />
 
     <!--todo is it necessary?-->
-    <bean id="pageServiceBean" class="jfiles.service.PageService"></bean>
+    <!--<bean id="pageServiceBean" class="jfiles.service.PageService"></bean>-->
 
 
     <bean id="multipartResolver" class="org.springframework.web.multipart.commons.CommonsMultipartResolver">
         <property name="maxUploadSize" value="100000" /> <!-- setting maximum upload size -->
+    </bean>
+
+    <bean id="PasswordGenerator" class="jfiles.service.PasswordGenerator">
+        <property name="passwordLength" value="4" />
+        <property name="addSpecialChar" value="true" />
     </bean>
 
     <!--<bean id="mailSender" class="org.springframework.mail.javamail.JavaMailSenderImpl">
