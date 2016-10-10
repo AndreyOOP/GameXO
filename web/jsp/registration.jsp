@@ -13,9 +13,17 @@
 </head>
 <body>
 
+<%@ page import="com.google.appengine.api.blobstore.BlobstoreServiceFactory" %>
+<%@ page import="com.google.appengine.api.blobstore.BlobstoreService" %>
+
+<%
+    BlobstoreService blobstoreService = BlobstoreServiceFactory.getBlobstoreService();
+%>
+
+
 <div class="row">
     <div class="col-md-4" >
-        <form class="form-horizontal" action="/registration" method="POST" <%--enctype="multipart/form-data"--%>>
+        <form class="form-horizontal" action="<%= blobstoreService.createUploadUrl("/registration") %>" method="POST" enctype="multipart/form-data">
             <fieldset>
                 <legend><h3>Registration Form:</h3></legend>
                 <div class="form-group">
@@ -39,12 +47,12 @@
                         <span class="help-block">${Registration_ErrorMessage_UserEmail}</span>
                     </div>
                 </div>
-                <%--<div class="form-group">
+                <div class="form-group">
                     <label for="inputFile" class="col-md-3 control-label">Avatar Image</label>
                     <div class="col-md-9" >
                         <input type="file" name="avatarFile" class="form-control" id="inputFile" placeholder="File">
                     </div>
-                </div>--%>
+                </div>
                 <div class="form-group">
                     <div class="col-md-9 col-md-offset-3">
                         <a href="/" class="btn btn-default">Cancel</a>

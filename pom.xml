@@ -96,11 +96,11 @@
         </dependency>
 
         <!--For multipart file upload-->
-        <!--<dependency> &lt;!&ndash; Apache Commons FileUpload &ndash;&gt;
+        <dependency> <!-- Apache Commons FileUpload -->
             <groupId>commons-fileupload</groupId>
             <artifactId>commons-fileupload</artifactId>
             <version>${fileupload.version}</version>
-        </dependency>-->
+        </dependency>
         <dependency> <!-- Apache Commons IO -->
             <groupId>commons-io</groupId>
             <artifactId>commons-io</artifactId>

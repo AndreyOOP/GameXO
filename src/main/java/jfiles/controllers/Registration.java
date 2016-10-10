@@ -1,5 +1,8 @@
 package jfiles.controllers;
 
+import com.google.appengine.api.blobstore.BlobKey;
+import com.google.appengine.api.blobstore.BlobstoreService;
+import com.google.appengine.api.blobstore.BlobstoreServiceFactory;
 import jfiles.Constants.*;
 import jfiles.Constants.PageService.Check;
 import jfiles.Constants.PageService.Message;
@@ -9,12 +12,14 @@ import jfiles.service.PageService;
 import jfiles.service.SessionLogin.LoginSession;
 import jfiles.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.multipart.MultipartFile;
+
+import javax.servlet.http.HttpServletRequest;
+import java.util.List;
+import java.util.Map;
 
 /**Controller is responsible for registration menu*/
 @org.springframework.stereotype.Controller
@@ -35,6 +40,7 @@ public class Registration {
     private LoginSession loginSession;
     //endregion
 
+    private BlobstoreService blobstoreService = BlobstoreServiceFactory.getBlobstoreService();
     //todo solve upload problem (it is related to google GAE)
     /**Make checks of input data<br>
      * Add User record to database<br>
@@ -45,7 +51,8 @@ public class Registration {
                                @RequestParam String userName,
                                @RequestParam String userPassword,
                                @RequestParam String userEmail,
-                               @RequestParam(value = "avatarFile", required = false) MultipartFile avatarFile){
+                               HttpServletRequest req){
+//                               @RequestParam(value = "avatarFile", required = false) MultipartFile avatarFile){ //MultipartFile requires Apache commons fileupload which is not allowed on GAE
 
 
         pageService.setModel(model)
@@ -109,12 +116,19 @@ public class Registration {
         //endregion
 
 
-//        userService.addUser(userName, userPassword, Role.USER, userEmail, avatarFile);
-        userService.addUser(userName, userPassword, Role.USER, userEmail, avatarFile);
+      userService.addUser(userName, userPassword, Role.USER, userEmail, getAvatarFileInBytes(req));
+       /* UserEntity ue = new UserEntity();
+        ue.setName(userName);
+        ue.setPassword(userPassword);
+        ue.setRole(Role.USER);
+        ue.setEmail(userEmail);
 
-        htmlMail = new HTMLMail();
+        ue.setAvatarPic(getAvatarFileInBytes(req));
+
+        userService.addUser(ue);*/
+
+//        htmlMail = new HTMLMail(); //todo temporary disable mail sending
 //        htmlMail.sendEmail( userName, userPassword, userEmail, Email.WELCOME); //todo add to separate thread, 5-10 sec pending during registration
-        htmlMail.sendSimpleMail( userName, userPassword, userEmail, Email.WELCOME);
 
         if( loginSession.isUserAlreadyLoggedIn(userName))
             return Page.ERROR;
@@ -131,6 +145,23 @@ public class Registration {
     public String openRegistrationPage(){
 
         return Page.REGISTRATION;
+    }
+
+    private byte[] getAvatarFileInBytes(HttpServletRequest req){
+
+
+        try {
+
+            Map<String, List<BlobKey>> blobs = blobstoreService.getUploads(req);
+            BlobKey blobKey = blobs.get("avatarFile").get(0);
+
+            return blobstoreService.fetchData(blobKey, 0, 1024*100); //100 kb
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            return new byte[] {0};
+        }
+
     }
 
 }

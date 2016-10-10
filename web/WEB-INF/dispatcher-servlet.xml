@@ -52,9 +52,10 @@
     <!--todo is it necessary?-->
     <bean id="pageServiceBean" class="jfiles.service.PageService"></bean>
 
-    <!--<bean id="multipartResolver" class="org.springframework.web.multipart.commons.CommonsMultipartResolver">
-        <property name="maxUploadSize" value="100000" /> &lt;!&ndash; setting maximum upload size &ndash;&gt;
-    </bean>-->
+
+    <bean id="multipartResolver" class="org.springframework.web.multipart.commons.CommonsMultipartResolver">
+        <property name="maxUploadSize" value="100000" /> <!-- setting maximum upload size -->
+    </bean>
 
     <!--<bean id="mailSender" class="org.springframework.mail.javamail.JavaMailSenderImpl">
         <property name="host" value="smtp.gmail.com" />

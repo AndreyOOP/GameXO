@@ -34,13 +34,13 @@ public class UserService{
     }
 
     @Transactional
-    public void addUser(String userName, String userPassword, int userRole, String userEmail, MultipartFile avatarFile) {
+    public void addUser(String userName, String userPassword, int userRole, String userEmail, byte[] avatarFile) {
 
         UserEntity newUser = new UserEntity();
 
         newUser.setName     ( userName);
         newUser.setPassword ( userPassword);
-        newUser.setAvatarPic( toBytes(avatarFile));
+        newUser.setAvatarPic( avatarFile);
         newUser.setRole     ( userRole);
         newUser.setEmail    ( userEmail);
 
@@ -68,7 +68,8 @@ public class UserService{
     }
 
     @Transactional
-    public void updateUserInDatabase(String userName, String userPassword, String userEmail, MultipartFile avatarFile) {
+    public void updateUserInDatabase(String userName, String userPassword, String userEmail, byte[] avatarFile) {
+//    public void updateUserInDatabase(String userName, String userPassword, String userEmail, MultipartFile avatarFile) {
 
         UserEntity updateUser = getUserByName( userName);
 
@@ -76,13 +77,14 @@ public class UserService{
 
         updateUser.setEmail    ( userEmail);
 
-        updateUser.setAvatarPic( toBytes(avatarFile));
+//        updateUser.setAvatarPic( toBytes(avatarFile));
+        updateUser.setAvatarPic( avatarFile);
 
         update( updateUser);
     }
 
     @Transactional
-    public void updateUserInDatabase(String userName, String userPassword, String userEmail, MultipartFile avatarFile, int userRole) {
+    public void updateUserInDatabase(String userName, String userPassword, String userEmail, byte[] avatarFile, int userRole) {
 
         UserEntity updateUser = getUserByName( userName);
 
@@ -90,7 +92,8 @@ public class UserService{
 
         updateUser.setEmail    ( userEmail);
 
-        updateUser.setAvatarPic( toBytes(avatarFile));
+//        updateUser.setAvatarPic( toBytes(avatarFile));
+        updateUser.setAvatarPic( avatarFile);
 
         updateUser.setRole     ( userRole);
 
@@ -104,7 +107,7 @@ public class UserService{
     }
 
     /**Converts Multipart File to bytes for database storage*/
-    private byte[] toBytes(MultipartFile avatarFile){
+    /*private byte[] toBytes(MultipartFile avatarFile){
 
         try {
 
@@ -116,5 +119,5 @@ public class UserService{
 
             return new byte[] {1};
         }
-    }
+    }*/
 }
