@@ -15,7 +15,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 public class AvatarLoader {
 
     @Autowired
-//    @Qualifier(value = "UserServiceBean")
     private UserService userService;
 
     @RequestMapping("/avatar/{userName}")

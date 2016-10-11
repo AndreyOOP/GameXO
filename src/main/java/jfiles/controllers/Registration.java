@@ -7,6 +7,7 @@ import jfiles.Constants.*;
 import jfiles.Constants.PageService.Check;
 import jfiles.Constants.PageService.Message;
 import jfiles.Constants.PageService.Tag;
+import jfiles.service.BlobStoreGAE;
 import jfiles.service.HTMLMail;
 import jfiles.service.PageService;
 import jfiles.service.SessionLogin.LoginSession;
@@ -40,7 +41,7 @@ public class Registration {
     private LoginSession loginSession;
     //endregion
 
-    private BlobstoreService blobstoreService = BlobstoreServiceFactory.getBlobstoreService();
+//    private BlobstoreService blobstoreService = BlobstoreServiceFactory.getBlobstoreService();
     //todo solve upload problem (it is related to google GAE)
     /**Make checks of input data<br>
      * Add User record to database<br>
@@ -116,16 +117,13 @@ public class Registration {
         //endregion
 
 
-      userService.addUser(userName, userPassword, Role.USER, userEmail, getAvatarFileInBytes(req));
-       /* UserEntity ue = new UserEntity();
-        ue.setName(userName);
-        ue.setPassword(userPassword);
-        ue.setRole(Role.USER);
-        ue.setEmail(userEmail);
+//      userService.addUser(userName, userPassword, Role.USER, userEmail, getAvatarFileInBytes(req));
+        //todo to think about max size upload
+        String blobKey = BlobStoreGAE.getBlobKey(req); //uploads and get the Key
+        if( blobKey.isEmpty()) //if no avatar is uploaded
+            blobKey = ""; //set default value
 
-        ue.setAvatarPic(getAvatarFileInBytes(req));
-
-        userService.addUser(ue);*/
+        userService.addUser(userName, userPassword, Role.USER, userEmail, blobKey);
 
 //        htmlMail = new HTMLMail(); //todo temporary disable mail sending
 //        htmlMail.sendEmail( userName, userPassword, userEmail, Email.WELCOME); //todo add to separate thread, 5-10 sec pending during registration
@@ -147,7 +145,7 @@ public class Registration {
         return Page.REGISTRATION;
     }
 
-    private byte[] getAvatarFileInBytes(HttpServletRequest req){
+    /*private byte[] getAvatarFileInBytes(HttpServletRequest req){
 
 
         try {
@@ -163,5 +161,5 @@ public class Registration {
         }
 
     }
-
+*/
 }

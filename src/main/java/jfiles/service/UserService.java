@@ -48,6 +48,20 @@ public class UserService{
     }
 
     @Transactional
+    public void addUser(String userName, String userPassword, int userRole, String userEmail, String blobKey){
+
+        UserEntity newUser = new UserEntity();
+
+        newUser.setName     ( userName);
+        newUser.setPassword ( userPassword);
+        newUser.setBlobKey  ( blobKey);
+        newUser.setRole     ( userRole);
+        newUser.setEmail    ( userEmail);
+
+        addUser( newUser);
+    }
+
+    @Transactional
     public void remove(String user) {
         userDAO.remove(user);
     }
@@ -67,7 +81,7 @@ public class UserService{
         update( updateUser);
     }
 
-    @Transactional
+    /*@Transactional
     public void updateUserInDatabase(String userName, String userPassword, String userEmail, byte[] avatarFile) {
 //    public void updateUserInDatabase(String userName, String userPassword, String userEmail, MultipartFile avatarFile) {
 
@@ -79,6 +93,20 @@ public class UserService{
 
 //        updateUser.setAvatarPic( toBytes(avatarFile));
         updateUser.setAvatarPic( avatarFile);
+
+        update( updateUser);
+    }*/
+
+    @Transactional
+    public void updateUserInDatabase(String userName, String userPassword, String userEmail, String blobKey) {
+
+        UserEntity updateUser = getUserByName( userName);
+
+        updateUser.setPassword ( userPassword);
+
+        updateUser.setEmail    ( userEmail);
+
+        updateUser.setBlobKey( blobKey);
 
         update( updateUser);
     }

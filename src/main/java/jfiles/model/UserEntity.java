@@ -13,6 +13,7 @@ public class UserEntity {
     private byte[] avatarPic;
     private int role;
     private String email;
+    private String blobKey;
 
     @Id
     @Column(name = "name")
@@ -62,6 +63,16 @@ public class UserEntity {
 
     public void setEmail(String email) {
         this.email = email;
+    }
+
+    @Basic
+    @Column(name = "blobKey")
+    public String getBlobKey() {
+        return blobKey;
+    }
+
+    public void setBlobKey(String blobKey) {
+        this.blobKey = blobKey;
     }
 
     /**Method implementation is used into preparation of .csv tables*/

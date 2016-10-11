@@ -59,6 +59,7 @@
         </form>
     </div>
     <div class="col-md-8" >
-        <img src="/avatar/${userName}" />
+        <%--<img src="/avatar/${userName}" />--%>
+        <img src="/blob/${authKey}" />
     </div>
 </div>

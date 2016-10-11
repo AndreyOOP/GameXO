@@ -11,6 +11,7 @@ public class Session {
     private String userName;
     private String userPassword;
     private String userEmail;
+    private String blobKey;
     private int    userRole;
 
     private int    authKey;
@@ -22,6 +23,7 @@ public class Session {
         userName     = userEntity.getName();
         userPassword = userEntity.getPassword();
         userRole     = userEntity.getRole();
+        blobKey      = userEntity.getBlobKey();
         userEmail    = userEntity.getEmail();
     }
 
@@ -63,5 +65,13 @@ public class Session {
 
     public void setAuthKey(int authKey) {
         this.authKey = authKey;
+    }
+
+    public String getBlobKey() {
+        return blobKey;
+    }
+
+    public void setBlobKey(String blobKey) {
+        this.blobKey = blobKey;
     }
 }

@@ -64,6 +64,10 @@
         <property name="addSpecialChar" value="true" />
     </bean>
 
+    <bean id="BlobStore" class="jfiles.service.BlobStoreGAE">
+        <property name="maxUploadSize" value="102400" />
+    </bean>
+
     <!--<bean id="mailSender" class="org.springframework.mail.javamail.JavaMailSenderImpl">
         <property name="host" value="smtp.gmail.com" />
         <property name="port" value="587" />

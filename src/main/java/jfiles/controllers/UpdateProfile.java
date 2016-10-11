@@ -25,6 +25,8 @@ import javax.servlet.http.HttpServletRequest;
 import java.util.List;
 import java.util.Map;
 
+import jfiles.service.BlobStoreGAE;
+
 /**Controller is responsible for update personal information page*/
 @org.springframework.stereotype.Controller
 public class UpdateProfile {
@@ -132,17 +134,33 @@ public class UpdateProfile {
             updateEmail = true;
         }
 
+
         //todo check this
-        /*if( pageService.isFieldUpdated( Check.NEW_AVATAR)){
+//        if( pageService.isFieldUpdated( Check.NEW_AVATAR)){
+//            updateAvatar = true;
+//        }
+        Session session = loginSession.getSession(authKey);
+        String currBlob = session.getBlobKey();
+
+        String blobKey = BlobStoreGAE.getBlobKey(req);
+
+        if( blobKey.isEmpty()){
+
+            blobKey = currBlob;
+        } else {
 
             updateAvatar = true;
-        }*/
-
+            //todo remove old previous blob
+        }
 
         if( updatePassword || updateEmail || updateAvatar){
 
-            userService.updateUserInDatabase( userName, userPassword, userEmail, getAvatarFileInBytes(req));
+            userService.updateUserInDatabase( userName, userPassword, userEmail, blobKey);
 
+            //todo to check - after any update should be updated login session as well
+            session.setUserPassword(userPassword);
+            session.setUserEmail(userEmail);
+            session.setBlobKey(blobKey);
             //todo setup email service
 //            htmlMail.sendEmail( userName, userPassword, userEmail, Email.UPDATE);
 
@@ -167,25 +185,6 @@ public class UpdateProfile {
     public String prepareMyProfileContent(){
 
         return Page.MYPROFILE;
-    }
-
-//    todo move to separate service for picture upload
-    private BlobstoreService blobstoreService = BlobstoreServiceFactory.getBlobstoreService();
-
-    private byte[] getAvatarFileInBytes(HttpServletRequest req){
-
-        try {
-
-            Map<String, List<BlobKey>> blobs = blobstoreService.getUploads(req);
-            BlobKey blobKey = blobs.get("avatarFile").get(0);
-
-            return blobstoreService.fetchData(blobKey, 0, 1024*100); //100 kb
-
-        } catch (Exception e) {
-            e.printStackTrace();
-            return new byte[] {0};
-        }
-
     }
 
 }
