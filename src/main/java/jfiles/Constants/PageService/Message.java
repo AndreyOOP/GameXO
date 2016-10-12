@@ -20,8 +20,11 @@ public interface Message {
 
     String EMAIL_ALREADY_REGISTERED = "This email already in use";
 
+    String AVATAR_SIZE              = "Image size too big. (Should be less than 100KB)";
+
     String UPDATED                  = "Successfully updated";
     String NOTHING_UPDATE           = "Nothing to update";
 
     String ADD_RECORD_FIELD_BLANK   = "Should not be blank";
+
 }

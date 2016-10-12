@@ -51,6 +51,7 @@
                     <label for="inputFile" class="col-md-3 control-label">Avatar Image</label>
                     <div class="col-md-9" >
                         <input type="file" name="avatarFile" class="form-control" id="inputFile" placeholder="File">
+                        <span class="help-block">${Registration_ErrorMessage_Avatar}</span>
                     </div>
                 </div>
                 <div class="form-group">

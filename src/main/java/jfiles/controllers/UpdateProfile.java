@@ -86,7 +86,7 @@ public class UpdateProfile {
                    .setFormUserName(userName)
                    .setFormUserPassword(userPassword)
                    .setFormUserEmail(userEmail)
-//                   .setAvatarFile(avatarFile)
+                   .setHttpServletRequest(req)
 
                    .add( Tag.MAIN_MENU_USER_NAME           , userName)
                    .add( Tag.MAIN_MENU_USER_ROLE           , userService.getUserByName(userName).getRole())
@@ -134,24 +134,23 @@ public class UpdateProfile {
             updateEmail = true;
         }
 
-
-        //todo check this
-//        if( pageService.isFieldUpdated( Check.NEW_AVATAR)){
-//            updateAvatar = true;
-//        }
-        Session session = loginSession.getSession(authKey);
-        String currBlob = session.getBlobKey();
-
         String blobKey = BlobStoreGAE.getBlobKey(req);
+        Session session = loginSession.getSession(authKey);
 
-        if( blobKey.isEmpty()){
+        if( !blobKey.isEmpty()){
 
-            blobKey = currBlob;
-        } else {
+            if( pageService.makeCheck( Check.AVATAR_SIZE)){
+
+                pageService.add( Tag.MYPROFILE_ERR_AVATAR, Message.AVATAR_SIZE);
+                return Page.MAIN_MENU;
+            }
 
             updateAvatar = true;
-            //todo remove old previous blob
+
+        } else {
+            blobKey = session.getBlobKey();
         }
+
 
         if( updatePassword || updateEmail || updateAvatar){
 
@@ -161,6 +160,7 @@ public class UpdateProfile {
             session.setUserPassword(userPassword);
             session.setUserEmail(userEmail);
             session.setBlobKey(blobKey);
+
             //todo setup email service
 //            htmlMail.sendEmail( userName, userPassword, userEmail, Email.UPDATE);
 

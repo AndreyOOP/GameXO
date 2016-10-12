@@ -1,13 +1,12 @@
 package jfiles.service;
 
-import com.google.appengine.api.blobstore.BlobKey;
-import com.google.appengine.api.blobstore.BlobstoreService;
-import com.google.appengine.api.blobstore.BlobstoreServiceFactory;
+import com.google.appengine.api.blobstore.*;
 import org.springframework.stereotype.Service;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.List;
 import java.util.Map;
 
@@ -15,6 +14,7 @@ import java.util.Map;
 public class BlobStoreGAE {
 
     private static int maxUploadSize;
+    private static String defaultPicture;
 
     private static BlobstoreService blobstoreService = BlobstoreServiceFactory.getBlobstoreService();
 
@@ -28,6 +28,9 @@ public class BlobStoreGAE {
         try {
 
             Map<String, List<BlobKey>> blobs = blobstoreService.getUploads(req);
+
+            if(blobs.size() == 0) return "";
+
             return blobs.get("avatarFile").get(0).getKeyString();
 
         } catch (Exception e) {
@@ -36,30 +39,57 @@ public class BlobStoreGAE {
         }
     }
 
-//    public static byte[] getAvatarFileInBytes(HttpServletRequest req){
-//
-//        try {
-//
-//            Map<String, List<BlobKey>> blobs = blobstoreService.getUploads(req);
-//            BlobKey blobKey = blobs.get("avatarFile").get(0);
-//
-//            return blobstoreService.fetchData(blobKey, 0, maxUploadSize);
-//
-//        } catch (Exception e) {
-//            e.printStackTrace();
-//            return new byte[] {0};
-//        }
-//    }
+    //todo how to solve? now it will anyway upload picture, if it is too big - send error message and delete it...
+    public static Boolean isSizeTooBig(HttpServletRequest req){
 
-    /*public static Boolean isNewFile(HttpServletRequest req){
+        try {
 
-        Map<String, List<BlobKey>> blobs = blobstoreService.getUploads(req);
+            Map<String, List<FileInfo>> x = blobstoreService.getFileInfos(req);
 
-        return blobs.size() > 0;
-    }*/
+            if (x.get("avatarFile").get(0).getSize() > maxUploadSize){
+
+                Map<String, List<BlobKey>> blobs = blobstoreService.getUploads(req);
+
+                blobstoreService.delete( blobs.get("avatarFile").get(0));
+
+                return true;
+            }
+
+            return false;
+
+        } catch (Exception e) {
+
+            e.printStackTrace();
+
+            return false;
+        }
+    }
+
+    public static Boolean isFileExist(HttpServletRequest req){
+
+        try {
+
+            Map<String, List<FileInfo>> x = blobstoreService.getFileInfos(req);
+
+            return x.get("avatarFile").size() > 0;
+
+        } catch (Exception e) {
+
+            e.printStackTrace();
+
+            return false;
+        }
+    }
 
     public static void setMaxUploadSize(int maxUploadSize) {
         BlobStoreGAE.maxUploadSize = maxUploadSize;
     }
 
+    public static void setDefaultPicture(String defaultPicture) {
+        BlobStoreGAE.defaultPicture = defaultPicture;
+    }
+
+    public static String getDefaultPicture() {
+        return defaultPicture;
+    }
 }

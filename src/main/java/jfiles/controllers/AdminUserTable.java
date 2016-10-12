@@ -17,6 +17,8 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import javax.servlet.http.HttpServletRequest;
+
 /**Controller for work with menu <i>Admin->Users Table</i><br>
  * Responsible for display User table content, creating new records and edit existing records*/
 @org.springframework.stereotype.Controller
@@ -121,8 +123,8 @@ public class AdminUserTable {
         String email       = userService.getUserByName(resetUser).getEmail();
 
         userService.updateUserInDatabase(resetUser, newPassword);
-
-        htmlMail.sendEmail( resetUser, newPassword, email, Email.PASSWORD_RESET); //todo separate thread, approx 10 second to send email
+//todo update email service
+//        htmlMail.sendEmail( resetUser, newPassword, email, Email.PASSWORD_RESET); //todo separate thread, approx 10 second to send email
 
         page.setRedirectAttributes(redirectAttributes)
                 .addRedirect( Tag.MAIN_MENU_AUTH_KEY      , authKey)
@@ -140,9 +142,10 @@ public class AdminUserTable {
                              @RequestParam String formuserName,
                              @RequestParam String userPassword,
                              @RequestParam String userEmail,
-                             @RequestParam(value = "avatarFile", required = false) MultipartFile avatarFile,
+//                             @RequestParam(value = "avatarFile", required = false) MultipartFile avatarFile,
                              @RequestParam String userRole,
-                             @RequestParam int tableCurrentPage){
+                             @RequestParam int tableCurrentPage,
+                             HttpServletRequest req){
 
 
         Session session = loginSession.getSession(authKey);
@@ -158,6 +161,7 @@ public class AdminUserTable {
             .setFormUserPassword(userPassword)
             .setFormUserEmail(userEmail)
             .setFormUserRole(userRole)
+            .setHttpServletRequest(req)
 
             .add( Tag.MAIN_MENU_AUTH_KEY           , authKey)
             .add( Tag.MAIN_MENU_USER_ROLE          , session.getUserRole())
@@ -207,10 +211,17 @@ public class AdminUserTable {
             page.add( Tag.ADMIN_USER_ERR_EMAIL, Message.EMAIL_ALREADY_REGISTERED);
             return Page.MAIN_MENU;
         }
+
+        if( page.makeCheck( Check.AVATAR_SIZE)){
+
+            page.add( Tag.ADMIN_USER_ERR_AVATAR, Message.AVATAR_SIZE);
+            return Page.MAIN_MENU;
+        }
         //endregion
 
         //todo to add avatar upload support
-        userService.addUser(formuserName, userPassword, getRoleId( userRole), userEmail, new byte[] {0});
+        userService.addUser(formuserName, userPassword, getRoleId( userRole), userEmail, BlobStoreGAE.getBlobKey(req));
+//        userService.addUser(formuserName, userPassword, getRoleId( userRole), userEmail, new byte[] {0});
 
         page.addRedirect( Tag.MAIN_MENU_AUTH_KEY      , authKey)
             .addRedirect( Tag.ADMIN_USER_CURRENT_PAGE , tableCurrentPage);
@@ -272,7 +283,8 @@ public class AdminUserTable {
                              @RequestParam String userPassword,
                              @RequestParam String userEmail,
                              @RequestParam String userRole,
-                             @RequestParam(value = "avatarFile", required = false) MultipartFile avatarFile){
+                             HttpServletRequest req){
+//                             @RequestParam(value = "avatarFile", required = false) MultipartFile avatarFile){
 
         Session session = loginSession.getSession(authKey);
 
@@ -287,6 +299,7 @@ public class AdminUserTable {
                 .setFormUserPassword(userPassword)
                 .setFormUserEmail(userEmail)
                 .setRedirectAttributes(redirectAttributes)
+                .setHttpServletRequest(req)
 
                 .add( Tag.MAIN_MENU_AUTH_KEY           , authKey)
                 .add( Tag.MAIN_MENU_IS_ADMIN_USER_PAGE , true)
@@ -325,8 +338,31 @@ public class AdminUserTable {
             }
         }
 
+        UserEntity ue = new UserEntity();
+
+        String blobKey = BlobStoreGAE.getBlobKey(req);
+        if( !blobKey.isEmpty()){
+
+            if( page.makeCheck( Check.AVATAR_SIZE)){
+
+                page.add( Tag.ADMIN_USER_ERR_AVATAR, Message.AVATAR_SIZE);
+                return Page.MAIN_MENU;
+            }
+
+            ue.setBlobKey(blobKey);
+        } else {
+//            blobKey = userService.getUserByName(editName).getBlobKey(); //it is
+        }
+
+        ue.setName(editName);
+        ue.setPassword(userPassword);
+        ue.setEmail(userEmail);
+
+        ue.setRole( getRoleId(userRole));
         //todo to add avatar upload support
-        userService.updateUserInDatabase(editName, userPassword, userEmail, new byte[] {0}, getRoleId(userRole));
+        userService.update(ue);
+
+//        userService.updateUserInDatabase(editName, userPassword, userEmail, new byte[] {0}, getRoleId(userRole));
 
         page.addRedirect( Tag.MAIN_MENU_AUTH_KEY      , authKey)
             .addRedirect( Tag.ADMIN_USER_CURRENT_PAGE , tableCurrentPage);

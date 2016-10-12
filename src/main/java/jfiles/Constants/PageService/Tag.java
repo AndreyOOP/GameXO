@@ -15,6 +15,7 @@ public interface Tag {
     String REGISTRATION_ERR_USER_NAME       = "Registration_ErrorMessage_UserId";
     String REGISTRATION_ERR_USER_PASSWORD   = "Registration_ErrorMessage_UserPassword";
     String REGISTRATION_ERR_EMAIL           = "Registration_ErrorMessage_UserEmail";
+    String REGISTRATION_ERR_AVATAR_SIZE     = "Registration_ErrorMessage_Avatar";
 
     String MAIN_MENU_USER_NAME              = "userName";
     String MAIN_MENU_USER_ROLE              = "userRole";
@@ -58,6 +59,7 @@ public interface Tag {
     String ADMIN_USER_SAVED_EMAIL           = "SavedEmail";
     String ADMIN_USER_ERR_EMAIL             = "ErrorMessage_UserEmail";
     String ADMIN_USER_SHOW_EDIT_MENU        = "showEditMenuX";
+    String ADMIN_USER_ERR_AVATAR            = "ErrorMessage_Avatar";
 
     String GAME_GAME_FOUND                  = "gameFound";
     String GAME_FIELD_SIZE                  = "matrixSize";

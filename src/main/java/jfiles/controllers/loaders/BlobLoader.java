@@ -1,5 +1,6 @@
 package jfiles.controllers.loaders;
 
+import com.google.appengine.api.blobstore.BlobKey;
 import jfiles.service.BlobStoreGAE;
 import jfiles.service.SessionLogin.LoginSession;
 import jfiles.service.SessionLogin.Session;
@@ -24,7 +25,10 @@ public class BlobLoader {
 
         String blobKey = session.getBlobKey();
 
+//        new BlobKey(blobKey);
+
         BlobStoreGAE.serveBlob(blobKey, res);
+//        BlobStoreGAE.serveBlob(new BlobKey(blobKey).getKeyString(), res);
     }
 
 }

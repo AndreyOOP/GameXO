@@ -22,7 +22,8 @@ public interface Check {
     int NEW_PASSWORD              = 13;
 
     int NEW_AVATAR                = 14;
+    int AVATAR_SIZE               = 15;
 
-    int VS_USER_NAME_BLANK        = 15;
-    int VS_USER_MISSING_IN_DB     = 16;
+    int VS_USER_NAME_BLANK        = 16;
+    int VS_USER_MISSING_IN_DB     = 17;
 }

@@ -1,12 +1,19 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 
+<%@ page import="com.google.appengine.api.blobstore.BlobstoreServiceFactory" %>
+<%@ page import="com.google.appengine.api.blobstore.BlobstoreService" %>
+
+<%
+    BlobstoreService blobstoreService = BlobstoreServiceFactory.getBlobstoreService();
+%>
+
 <h3>&nbsp;</h3>
 <p>&nbsp;<br>&nbsp;</p>
 
 <div class="row">
     <div class="col-md-4" >
-        <form class="form-horizontal" action="/edituser" method="POST" enctype="multipart/form-data">
+        <form class="form-horizontal" action="<%= blobstoreService.createUploadUrl("/edituser") %>" method="POST" enctype="multipart/form-data">
             <fieldset>
                 <legend><h3>Edit user :</h3></legend>
 

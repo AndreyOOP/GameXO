@@ -4,11 +4,12 @@ import jfiles.Constants.PageService.Check;
 import jfiles.Constants.Role;
 import jfiles.model.UserEntity;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 import org.springframework.ui.Model;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+
+import javax.servlet.http.HttpServletRequest;
 
 /**Service checks the data provided by user (it check Login, Registration, Admin menu forms)*/
 @Service("pageService")
@@ -19,6 +20,7 @@ public class PageService<T> {
 
     private Model model;
     private RedirectAttributes redirectAttributes;
+    private HttpServletRequest req;
 
     private String userName;
     private String formUserName;
@@ -97,6 +99,10 @@ public class PageService<T> {
                 String password       = userEntity.getPassword();
 
                 return !password.contentEquals(formUserPassword);
+
+            case Check.AVATAR_SIZE:
+
+                return BlobStoreGAE.isSizeTooBig(req);
 
             default: return false;
         }
@@ -183,6 +189,11 @@ public class PageService<T> {
 
     public PageService setRedirectAttributes(RedirectAttributes redirectAttributes){
         this.redirectAttributes = redirectAttributes;
+        return this;
+    }
+
+    public PageService setHttpServletRequest(HttpServletRequest req){
+        this.req = req;
         return this;
     }
 }

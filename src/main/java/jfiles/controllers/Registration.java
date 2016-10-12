@@ -41,7 +41,7 @@ public class Registration {
     private LoginSession loginSession;
     //endregion
 
-//    private BlobstoreService blobstoreService = BlobstoreServiceFactory.getBlobstoreService();
+
     //todo solve upload problem (it is related to google GAE)
     /**Make checks of input data<br>
      * Add User record to database<br>
@@ -53,13 +53,13 @@ public class Registration {
                                @RequestParam String userPassword,
                                @RequestParam String userEmail,
                                HttpServletRequest req){
-//                               @RequestParam(value = "avatarFile", required = false) MultipartFile avatarFile){ //MultipartFile requires Apache commons fileupload which is not allowed on GAE
 
 
         pageService.setModel(model)
                    .setFormUserName(userName)
                    .setFormUserPassword(userPassword)
                    .setFormUserEmail(userEmail)
+                   .setHttpServletRequest(req)
 
                    .add( Tag.REGISTRATION_SAVED_USER_NAME     , userName)
                    .add( Tag.REGISTRATION_SAVED_USER_PASSWORD , userPassword)
@@ -114,14 +114,18 @@ public class Registration {
             pageService.add( Tag.REGISTRATION_ERR_EMAIL, Message.EMAIL_ALREADY_REGISTERED);
             return Page.REGISTRATION;
         }
+
+        if ( pageService.makeCheck( Check.AVATAR_SIZE)) {
+
+            pageService.add( Tag.REGISTRATION_ERR_AVATAR_SIZE, Message.AVATAR_SIZE);
+            return Page.REGISTRATION;
+        }
         //endregion
 
-
-//      userService.addUser(userName, userPassword, Role.USER, userEmail, getAvatarFileInBytes(req));
-        //todo to think about max size upload
         String blobKey = BlobStoreGAE.getBlobKey(req); //uploads and get the Key
-        if( blobKey.isEmpty()) //if no avatar is uploaded
-            blobKey = ""; //set default value
+
+        if( blobKey.isEmpty()) //todo not work after deploy, why?
+            blobKey = "AMIfv96s63HkcOxuJ4tE5SYtzJqEtlYE9il1_O-IpHarIpChB1MoGO5Bejx-QuRT_zqdIY8Z8ncwuOH0vFOxDLmBgsntJRdGK5rlHRYQBKQyQ7FuKfjOZB0h7wwa2VV8IQYWiJeNJVKQoYGNMZr-9FO6SieObPcPtg";
 
         userService.addUser(userName, userPassword, Role.USER, userEmail, blobKey);
 
@@ -145,21 +149,4 @@ public class Registration {
         return Page.REGISTRATION;
     }
 
-    /*private byte[] getAvatarFileInBytes(HttpServletRequest req){
-
-
-        try {
-
-            Map<String, List<BlobKey>> blobs = blobstoreService.getUploads(req);
-            BlobKey blobKey = blobs.get("avatarFile").get(0);
-
-            return blobstoreService.fetchData(blobKey, 0, 1024*100); //100 kb
-
-        } catch (Exception e) {
-            e.printStackTrace();
-            return new byte[] {0};
-        }
-
-    }
-*/
 }

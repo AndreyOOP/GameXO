@@ -71,7 +71,7 @@ public class Login {
         }
         //endregion
 
-        if( loginSession.isUserAlreadyLoggedIn(userName))
+        if( loginSession.isUserAlreadyLoggedIn(userName)) //todo think about, if someone will not correctly logout pending...
             return Page.ERROR;
 
         int authKey = loginSession.generateAuthorizationKey();
