@@ -22,6 +22,31 @@ import javax.mail.MessagingException;
 import javax.mail.Session;
 import javax.mail.internet.MimeMessage;
 
+import java.io.IOException;
+import java.util.Properties;
+import javax.mail.Message;
+import javax.mail.MessagingException;
+import javax.mail.Session;
+import javax.mail.Transport;
+import javax.mail.internet.AddressException;
+import javax.mail.internet.InternetAddress;
+import javax.mail.internet.MimeMessage;
+// [END simple_includes]
+
+// [START multipart_includes]
+import java.io.InputStream;
+import java.io.ByteArrayInputStream;
+import java.io.UnsupportedEncodingException;
+import javax.activation.DataHandler;
+import javax.mail.Multipart;
+import javax.mail.internet.MimeBodyPart;
+import javax.mail.internet.MimeMultipart;
+// [END multipart_includes]
+
+import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
 /**Service for email generation and sending*/
 @Service("htmlEmail")
 public class HTMLMail {
@@ -32,52 +57,25 @@ public class HTMLMail {
 //    public void setMailSender(JavaMailSender mailSender) {
 //        this.mailSender = mailSender;
 //    }
-    public void sendSimpleMail(String userName, String userPassword, String userEmail, int type) {
 
-        final String username = Email.FROM;
-//        final String password = "oingdut3d@";
-        final String password = "qzwxec12";
+    public void sendTestEmail(String userName, String userPassword, String userEmail, int type){
 
         Properties props = new Properties();
-        props.put("mail.smtp.auth", "true");
-        props.put("mail.smtp.starttls.enable", "true");
-        props.put("mail.smtp.host", "smtp.gmail.com");
-        props.put("mail.smtp.port", "587");
-
-        Session session = Session.getInstance(props,
-                new javax.mail.Authenticator() {
-                    protected PasswordAuthentication getPasswordAuthentication() {
-                        return new PasswordAuthentication(username, password);
-                    }
-                });
-
-
-
-        // [START simple_example]
-
-//        Session session = Session.getDefaultInstance(props, null);
+        Session session = Session.getDefaultInstance(props, null);
 
         try {
 
             Message msg = new MimeMessage(session);
 
-            msg.setFrom(new InternetAddress(Email.FROM, "xxas"));
+            msg.setFrom(new InternetAddress("xo.pass.service@gmail.com", "Example.com Admin"));
 
             msg.addRecipient(Message.RecipientType.TO, new InternetAddress(userEmail, "Mr. User"));
 
-            msg.setSubject("Your Example.com account has been activated 3");
+            msg.setSubject("Test message");
 
-            msg.setContent("cdscvsd   zsade", "text/html");
+            msg.setText("Email text");
 
-//            msg.setText("Testv zf sdvg f");
-
-            Transport transport = session.getTransport("smtp");
-            transport.connect("smtp.gmail.com", username, password);
-            transport.sendMessage(msg, msg.getAllRecipients());
-            transport.close();
-
-//            Transport.send(msg);
-
+            Transport.send(msg);
 
         } catch (AddressException e) {
             // ...
@@ -86,7 +84,6 @@ public class HTMLMail {
         } catch (UnsupportedEncodingException e) {
             // ...
         }
-        // [END simple_example]
     }
 
     /**Method sends email of specified type to specified recipient<br>

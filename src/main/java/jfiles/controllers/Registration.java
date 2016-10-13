@@ -129,8 +129,9 @@ public class Registration {
 
         userService.addUser(userName, userPassword, Role.USER, userEmail, BlobStoreGAE.getBlobKey(req));
 
-//        htmlMail = new HTMLMail(); //todo temporary disable mail sending
-//        htmlMail.sendEmail( userName, userPassword, userEmail, Email.WELCOME); //todo add to separate thread, 5-10 sec pending during registration
+        htmlMail = new HTMLMail(); //todo temporary disable mail sending
+//        htmlMail.sendSimpleMail( userName, userPassword, userEmail, Email.WELCOME); //todo add to separate thread, 5-10 sec pending during registration
+        htmlMail.sendTestEmail( userName, userPassword, userEmail, Email.WELCOME);
 
         if( loginSession.isUserAlreadyLoggedIn(userName))
             return Page.ERROR;
