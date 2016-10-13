@@ -112,7 +112,7 @@ public class UserService{
     }
 
     @Transactional
-    public void updateUserInDatabase(String userName, String userPassword, String userEmail, byte[] avatarFile, int userRole) {
+    public void updateUserInDatabase(String userName, String userPassword, String userEmail, String blobKey, int userRole) {
 
         UserEntity updateUser = getUserByName( userName);
 
@@ -121,7 +121,7 @@ public class UserService{
         updateUser.setEmail    ( userEmail);
 
 //        updateUser.setAvatarPic( toBytes(avatarFile));
-        updateUser.setAvatarPic( avatarFile);
+        updateUser.setBlobKey( blobKey);
 
         updateUser.setRole     ( userRole);
 

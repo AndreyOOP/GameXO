@@ -14,15 +14,16 @@
 
     <context:component-scan base-package="jfiles" />
 
-
-    <bean id="dbDevelopment" class="org.springframework.jdbc.datasource.DriverManagerDataSource">
+    <!--Local-->
+    <bean id="dbX" class="org.springframework.jdbc.datasource.DriverManagerDataSource">
         <property name="driverClassName" value="com.mysql.jdbc.Driver" />
         <property name="url" value="jdbc:mysql://localhost/xodatabase?useSSL=false" />
         <property name="username" value="root" />
         <property name="password" value="1111" />
     </bean>
 
-    <!--<bean id="dbProduction" class="org.springframework.jdbc.datasource.DriverManagerDataSource">
+    <!--Cloud-->
+    <!--<bean id="dbX" class="org.springframework.jdbc.datasource.DriverManagerDataSource">
         <property name="driverClassName" value="com.mysql.jdbc.GoogleDriver" />
         <property name="url" value="jdbc:google:mysql://gamexo-gae:europe-west1:google-db/xodatabase" />
         <property name="username" value="root" />
@@ -34,7 +35,7 @@
     <bean id="entityManagerFactory"
           class="org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean"
           p:packagesToScan="jfiles"
-          p:dataSource-ref="dbDevelopment">
+          p:dataSource-ref="dbX">
 
         <property name="jpaVendorAdapter">
             <bean class="org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter">
@@ -51,10 +52,7 @@
     <!-- enable the configuration of transactional behavior based on annotations -->
     <tx:annotation-driven transaction-manager="transactionManager" />
 
-    <!--todo is it necessary?-->
-    <!--<bean id="pageServiceBean" class="jfiles.service.PageService"></bean>-->
-
-
+    //todo is it necessary? double option
     <bean id="multipartResolver" class="org.springframework.web.multipart.commons.CommonsMultipartResolver">
         <property name="maxUploadSize" value="100000" /> <!-- setting maximum upload size -->
     </bean>
@@ -66,7 +64,7 @@
 
     <bean id="BlobStore" class="jfiles.service.BlobStoreGAE">
         <property name="maxUploadSize" value="102400" />
-        <!--<property name="defaultPicture" value="f38DzF1JcSl_YqMbavBoLA" /> &lt;!&ndash;local DB&ndash;&gt;-->
+        <property name="defaultPicture" value="edMI2L0Z4Ah-OZq9wlX-EA" /> <!--local DB-->
         <!--<property name="defaultPicture" value="AMIfv96s63HkcOxuJ4tE5SYtzJqEtlYE9il1_O-IpHarIpChB1MoGO5Bejx-QuRT_zqdIY8Z8ncwuOH0vFOxDLmBgsntJRdGK5rlHRYQBKQyQ7FuKfjOZB0h7wwa2VV8IQYWiJeNJVKQoYGNMZr-9FO6SieObPcPtg" /> &lt;!&ndash;local DB&ndash;&gt;-->
     </bean>
 

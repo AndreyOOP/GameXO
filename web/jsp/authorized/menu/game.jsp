@@ -14,7 +14,7 @@
             <td><h1 align="center">${player2}</h1></td>
         </tr>
         <tr>
-            <td> <img src="/avatar/${player1}" /> &nbsp; &nbsp; &nbsp; </td>
+            <td> <img src="/blob/${authKey}" /> &nbsp; &nbsp; &nbsp; </td>
             <td>
                 <table border="1" align="center">
                     <c:forEach var="i" begin="0" end="${matrixSize-1}" >
@@ -36,7 +36,7 @@
                     </c:forEach>
                 </table>
             </td>
-            <td> &nbsp; &nbsp; &nbsp; <img src="/avatar/${player2}" /> </td>
+            <td> &nbsp; &nbsp; &nbsp; <img src="/blobVsPlayer/${player2}" /> </td>
         </tr>
     </table>
     <br>

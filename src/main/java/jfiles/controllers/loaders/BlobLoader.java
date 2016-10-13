@@ -1,9 +1,11 @@
 package jfiles.controllers.loaders;
 
-import com.google.appengine.api.blobstore.BlobKey;
 import jfiles.service.BlobStoreGAE;
+import jfiles.service.Game.GamePool;
+import jfiles.service.Game.GameSession;
 import jfiles.service.SessionLogin.LoginSession;
 import jfiles.service.SessionLogin.Session;
+import jfiles.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -18,6 +20,9 @@ public class BlobLoader {
     @Autowired
     private LoginSession loginSession;
 
+    @Autowired
+    private UserService userService;
+
     @RequestMapping("/blob/{authKey}")
     public void blob(@PathVariable("authKey") int authKey, HttpServletResponse res) throws IOException {
 
@@ -25,10 +30,15 @@ public class BlobLoader {
 
         String blobKey = session.getBlobKey();
 
-//        new BlobKey(blobKey);
+        BlobStoreGAE.serveBlob(blobKey, res);
+    }
+
+    @RequestMapping("/blobVsPlayer/{name}")
+    public void blob(@PathVariable("name") String name, HttpServletResponse res) throws IOException {
+
+        String blobKey = userService.getUserByName(name).getBlobKey();
 
         BlobStoreGAE.serveBlob(blobKey, res);
-//        BlobStoreGAE.serveBlob(new BlobKey(blobKey).getKeyString(), res);
     }
 
 }

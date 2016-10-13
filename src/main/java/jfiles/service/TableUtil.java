@@ -24,8 +24,8 @@ public class TableUtil {
     private int next;
     private int prev;
 
-//    @Autowired
-//    private StatisticService statisticService;
+    @Autowired
+    private StatisticService statisticService;
 
     @Autowired
 //    @Qualifier(value = "UserServiceBean")
@@ -35,12 +35,12 @@ public class TableUtil {
     public TableUtil(){}
 
     /**Extracts <i>Statistic</i> records which should be displayed on page with number 'page'*/
-//    public List<StatisticEntity> getServiceRecords(int page){
-//
-//        List<StatisticEntity> allRecords = statisticService.getAllRecords();
-//
-//        return allRecords.subList( getFromLine(), getToLine());
-//    }
+    public List<StatisticEntity> getServiceRecords(int page){
+
+        List<StatisticEntity> allRecords = statisticService.getAllRecords();
+
+        return allRecords.subList( getFromLine(), getToLine());
+    }
 
     /**Extracts <i>User</i> records which should be displayed on page with number 'page'*/
     public List<UserEntity> getUserRecords(int page){
@@ -99,7 +99,7 @@ public class TableUtil {
 
         if(tableName == Table.STATISCTIC){
 
-//            records = (List)statisticService.getAllRecords();
+            records = (List)statisticService.getAllRecords();
             table.append("Id;User;VsUser;Win;Loose;Even\n");
 
         } else if (tableName == Table.USER){

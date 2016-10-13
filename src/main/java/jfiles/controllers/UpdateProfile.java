@@ -81,6 +81,9 @@ public class UpdateProfile {
         Boolean updateEmail    = false;
         Boolean updateAvatar   = false;
 
+        Session session = loginSession.getSession(authKey);
+        String  blobKey = session.getBlobKey();
+
         pageService.setModel(model)
                    .setUserName(userName)
                    .setFormUserName(userName)
@@ -134,10 +137,8 @@ public class UpdateProfile {
             updateEmail = true;
         }
 
-        String blobKey = BlobStoreGAE.getBlobKey(req);
-        Session session = loginSession.getSession(authKey);
 
-        if( !blobKey.isEmpty()){
+        if( BlobStoreGAE.isNewFile(req)){
 
             if( pageService.makeCheck( Check.AVATAR_SIZE)){
 
@@ -145,10 +146,9 @@ public class UpdateProfile {
                 return Page.MAIN_MENU;
             }
 
-            updateAvatar = true;
+            blobKey = BlobStoreGAE.getBlobKey(req); //new blob key of avatar
 
-        } else {
-            blobKey = session.getBlobKey();
+            updateAvatar = true;
         }
 
 

@@ -11,7 +11,7 @@ public interface XO {
     int BLANK   = -1;
 
     int FIELD_SIZE    = 10;
-    int WIN_LINE_SIZE = 4;
+    int WIN_LINE_SIZE = 5;
 
     int WIN   =  11;
     int LOOSE = -11;

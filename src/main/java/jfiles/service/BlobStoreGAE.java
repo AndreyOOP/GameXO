@@ -6,7 +6,6 @@ import org.springframework.stereotype.Service;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.io.InputStream;
 import java.util.List;
 import java.util.Map;
 
@@ -27,15 +26,24 @@ public class BlobStoreGAE {
 
         try {
 
-            Map<String, List<BlobKey>> blobs = blobstoreService.getUploads(req);
+            Map<String, List<BlobKey>> blobs     = blobstoreService.getUploads(req);
+            Map<String, List<FileInfo>> blobInfo = blobstoreService.getFileInfos(req);
 
-            if(blobs.size() == 0) return "";
+            //bug fix
+            //during upload form without file on google blobstore sometimes appears file containing 0, sometime nothing
+            //this part checks size if it is too small - just use default picture
+            if( blobInfo.get("avatarFile").get(0).getSize() < 10){
+
+                blobstoreService.delete( blobs.get("avatarFile").get(0)); //remove 0 blob
+
+                return defaultPicture; //todo, it is possible to get default value from database, so it is possible to change picture without server restart
+            }
 
             return blobs.get("avatarFile").get(0).getKeyString();
 
         } catch (Exception e) {
             e.printStackTrace();
-            return "";
+            return defaultPicture;
         }
     }
 
@@ -65,18 +73,25 @@ public class BlobStoreGAE {
         }
     }
 
-    public static Boolean isFileExist(HttpServletRequest req){
+    public static Boolean isNewFile(HttpServletRequest req){
 
         try {
 
-            Map<String, List<FileInfo>> x = blobstoreService.getFileInfos(req);
+            Map<String, List<BlobKey>>  blobs    = blobstoreService.getUploads(req);
+            Map<String, List<FileInfo>> blobInfo = blobstoreService.getFileInfos(req);
 
-            return x.get("avatarFile").size() > 0;
+            if( blobInfo.get("avatarFile").get(0).getSize() < 10){
+
+                blobstoreService.delete( blobs.get("avatarFile").get(0));
+
+                return false;
+            }
+
+            return true;
 
         } catch (Exception e) {
 
             e.printStackTrace();
-
             return false;
         }
     }

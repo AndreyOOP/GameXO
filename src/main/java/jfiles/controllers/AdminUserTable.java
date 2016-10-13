@@ -142,7 +142,6 @@ public class AdminUserTable {
                              @RequestParam String formuserName,
                              @RequestParam String userPassword,
                              @RequestParam String userEmail,
-//                             @RequestParam(value = "avatarFile", required = false) MultipartFile avatarFile,
                              @RequestParam String userRole,
                              @RequestParam int tableCurrentPage,
                              HttpServletRequest req){
@@ -221,7 +220,7 @@ public class AdminUserTable {
 
         //todo to add avatar upload support
         userService.addUser(formuserName, userPassword, getRoleId( userRole), userEmail, BlobStoreGAE.getBlobKey(req));
-//        userService.addUser(formuserName, userPassword, getRoleId( userRole), userEmail, new byte[] {0});
+
 
         page.addRedirect( Tag.MAIN_MENU_AUTH_KEY      , authKey)
             .addRedirect( Tag.ADMIN_USER_CURRENT_PAGE , tableCurrentPage);
@@ -284,9 +283,9 @@ public class AdminUserTable {
                              @RequestParam String userEmail,
                              @RequestParam String userRole,
                              HttpServletRequest req){
-//                             @RequestParam(value = "avatarFile", required = false) MultipartFile avatarFile){
 
         Session session = loginSession.getSession(authKey);
+        String blobKey  = userService.getUserByName(editName).getBlobKey();
 
         if( session.getUserRole() != Role.SUPER_ADMIN){
             return Page.ERROR;
@@ -338,31 +337,20 @@ public class AdminUserTable {
             }
         }
 
-        UserEntity ue = new UserEntity();
-
-        String blobKey = BlobStoreGAE.getBlobKey(req);
-        if( !blobKey.isEmpty()){
+        //todo on gae it did not work
+        if ( BlobStoreGAE.isNewFile(req)) {
 
             if( page.makeCheck( Check.AVATAR_SIZE)){
 
-                page.add( Tag.ADMIN_USER_ERR_AVATAR, Message.AVATAR_SIZE);
+                page.add( Tag.ADMIN_USER_ERR_AVATAR, Message.AVATAR_SIZE); //todo check this link
                 return Page.MAIN_MENU;
             }
 
-            ue.setBlobKey(blobKey);
-        } else {
-//            blobKey = userService.getUserByName(editName).getBlobKey(); //it is
+            blobKey = BlobStoreGAE.getBlobKey(req);
         }
 
-        ue.setName(editName);
-        ue.setPassword(userPassword);
-        ue.setEmail(userEmail);
+        userService.updateUserInDatabase(editName, userPassword, userEmail, blobKey, getRoleId(userRole));
 
-        ue.setRole( getRoleId(userRole));
-        //todo to add avatar upload support
-        userService.update(ue);
-
-//        userService.updateUserInDatabase(editName, userPassword, userEmail, new byte[] {0}, getRoleId(userRole));
 
         page.addRedirect( Tag.MAIN_MENU_AUTH_KEY      , authKey)
             .addRedirect( Tag.ADMIN_USER_CURRENT_PAGE , tableCurrentPage);
