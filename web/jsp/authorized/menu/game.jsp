@@ -16,6 +16,7 @@
         <tr>
             <td> <img src="/blob/${authKey}" /> &nbsp; &nbsp; &nbsp; </td>
             <td>
+                <%--<iframe id='dynamic-content' src='/matrix/${authKey}' />--%> <%--todo for refresh only gae field--%>
                 <table border="1" align="center">
                     <c:forEach var="i" begin="0" end="${matrixSize-1}" >
                         <tr>

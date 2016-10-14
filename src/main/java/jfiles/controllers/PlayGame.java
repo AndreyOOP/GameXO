@@ -11,6 +11,7 @@ import jfiles.service.SessionLogin.Session;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -82,7 +83,6 @@ public class PlayGame {
                     page.add( Tag.GAME_MESSAGE, "Your Turn");
             }
         }
-
         return Page.MAIN_MENU;
     }
 
@@ -173,6 +173,50 @@ public class PlayGame {
 
         return Page.GAME;
     }
+
+    /*@RequestMapping("/matrix/{authKey}") //todo later it is just for refresh only game field without picture etc
+    public String refreshMatrix(Model model, @PathVariable int authKey){
+
+        Session session = loginSession.getSession(authKey);
+
+        if( session == null)
+            return Page.ERROR;
+
+        GameSession gameSession = gamePool.getGame( session.getUserName());
+
+        if(gameSession != null){
+
+            page.setModel(model)
+                    .add( Tag.GAME_GAME_FOUND , true)
+                    .add( Tag.GAME_FIELD_SIZE , XO.FIELD_SIZE)
+                    .add( Tag.GAME_MATRIX     , gameSession.getMatrix())
+                    .add( Tag.GAME_PLAYER_1   , gameSession.getPlayer1())
+                    .add( Tag.GAME_PLAYER_2   , gameSession.getPlayer2());
+
+            String user = session.getUserName();
+
+            if( gameSession.isGameOver()){
+
+                if( gameSession.getPlayer1().contentEquals(user))
+                    setGameEndStatus( gameSession.getPlayer1Status());
+
+                if( gameSession.getPlayer2().contentEquals(user))
+                    setGameEndStatus( gameSession.getPlayer2Status());
+
+            } else {
+
+                page.add( Tag.GAME_MESSAGE, "Opponent Turn");
+
+                if( gameSession.isPlayer1Turn(user))
+                    page.add( Tag.GAME_MESSAGE, "Your Turn");
+
+                if( gameSession.isPlayer2Turn(user))
+                    page.add( Tag.GAME_MESSAGE, "Your Turn");
+            }
+        }
+
+        return "authorized/menu/matrix";
+    }*/
 
     private void setGameEndStatus(int status){
 
