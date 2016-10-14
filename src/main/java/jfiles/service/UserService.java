@@ -120,7 +120,6 @@ public class UserService{
 
         updateUser.setEmail    ( userEmail);
 
-//        updateUser.setAvatarPic( toBytes(avatarFile));
         updateUser.setBlobKey( blobKey);
 
         updateUser.setRole     ( userRole);
@@ -134,18 +133,4 @@ public class UserService{
         return userDAO.getRecordsWithEmail(email).size() > 0;
     }
 
-    /**Converts Multipart File to bytes for database storage*/
-    /*private byte[] toBytes(MultipartFile avatarFile){
-
-        try {
-
-            return avatarFile.getBytes();
-
-        } catch (Exception e) {
-
-            e.printStackTrace();
-
-            return new byte[] {1};
-        }
-    }*/
 }

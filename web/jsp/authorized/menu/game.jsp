@@ -79,7 +79,7 @@
     function autoRefresh() {
         window.location.reload();
     }
-    setInterval('autoRefresh()', 1500)
+    setInterval('autoRefresh()', 2000)
     
     function setValue(i, j){
 

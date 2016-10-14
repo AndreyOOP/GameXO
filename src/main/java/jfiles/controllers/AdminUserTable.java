@@ -32,7 +32,6 @@ public class AdminUserTable {
     private PageService page;
 
     @Autowired
-//    @Qualifier(value = "UserServiceBean")
     private UserService       userService;
 
     @Autowired
@@ -123,8 +122,8 @@ public class AdminUserTable {
         String email       = userService.getUserByName(resetUser).getEmail();
 
         userService.updateUserInDatabase(resetUser, newPassword);
-//todo update email service
-//        htmlMail.sendEmail( resetUser, newPassword, email, Email.PASSWORD_RESET); //todo separate thread, approx 10 second to send email
+
+        htmlMail.sendEmail( resetUser, newPassword, email, Email.PASSWORD_RESET);
 
         page.setRedirectAttributes(redirectAttributes)
                 .addRedirect( Tag.MAIN_MENU_AUTH_KEY      , authKey)

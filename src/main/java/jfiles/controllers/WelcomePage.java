@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
-/**Controller is responsible for welcome menu display*/
+/**Controller is responsible for welcome menu display*/ //todo add remove game session
 @org.springframework.stereotype.Controller
 public class WelcomePage {
 

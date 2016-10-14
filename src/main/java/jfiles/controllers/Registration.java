@@ -1,8 +1,5 @@
 package jfiles.controllers;
 
-import com.google.appengine.api.blobstore.BlobKey;
-import com.google.appengine.api.blobstore.BlobstoreService;
-import com.google.appengine.api.blobstore.BlobstoreServiceFactory;
 import jfiles.Constants.*;
 import jfiles.Constants.PageService.Check;
 import jfiles.Constants.PageService.Message;
@@ -19,8 +16,6 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import javax.servlet.http.HttpServletRequest;
-import java.util.List;
-import java.util.Map;
 
 /**Controller is responsible for registration menu*/
 @org.springframework.stereotype.Controller
@@ -31,10 +26,9 @@ public class Registration {
     private PageService pageService;
 
     @Autowired
-//    @Qualifier(value = "UserServiceBean")
     private UserService userService;
 
-//    @Autowired
+    @Autowired
     private HTMLMail    htmlMail;
 
     @Autowired
@@ -129,9 +123,9 @@ public class Registration {
 
         userService.addUser(userName, userPassword, Role.USER, userEmail, BlobStoreGAE.getBlobKey(req));
 
-        htmlMail = new HTMLMail(); //todo temporary disable mail sending
+//        htmlMail = new HTMLMail(); //todo temporary disable mail sending
 //        htmlMail.sendSimpleMail( userName, userPassword, userEmail, Email.WELCOME); //todo add to separate thread, 5-10 sec pending during registration
-        htmlMail.sendTestEmail( userName, userPassword, userEmail, Email.WELCOME);
+        htmlMail.sendEmail( userName, userPassword, userEmail, Email.WELCOME);
 
         if( loginSession.isUserAlreadyLoggedIn(userName))
             return Page.ERROR;

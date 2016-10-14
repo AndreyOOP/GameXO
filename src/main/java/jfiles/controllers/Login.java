@@ -8,6 +8,7 @@ import jfiles.service.PageService;
 import jfiles.service.SessionLogin.LoginSession;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.context.annotation.Scope;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -32,7 +33,8 @@ public class Login {
 
     /**Make user name and password checks, if successful generates authorization key and load main menu*/
     @RequestMapping(value = "/login", method = RequestMethod.POST)
-    public String login(Model model,
+    @Scope("request")
+    public synchronized String login(Model model,
                         @RequestParam String userName,
                         @RequestParam String userPassword){
 
@@ -71,8 +73,12 @@ public class Login {
         }
         //endregion
 
-        if( loginSession.isUserAlreadyLoggedIn(userName)) //todo think about, if someone will not correctly logout pending...
-            return Page.ERROR;
+//        if( loginSession.isUserAlreadyLoggedIn(userName)) //todo think about, if someone will not correctly logout pending...
+//            return Page.ERROR;
+
+        if( loginSession.isUserAlreadyLoggedIn(userName)){
+            loginSession.removeUserByName(userName);
+        }
 
         int authKey = loginSession.generateAuthorizationKey();
 

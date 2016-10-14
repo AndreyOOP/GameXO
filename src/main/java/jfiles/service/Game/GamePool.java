@@ -14,8 +14,8 @@ import java.util.List;
 @Service("GamePool")
 public class GamePool {
 
-    @Autowired
-    private UserService userService;
+//    @Autowired
+//    private UserService userService;
 
     @Autowired
     private StatisticService statisticService;

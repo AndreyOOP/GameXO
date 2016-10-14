@@ -68,4 +68,9 @@
         <property name="defaultPicture" value="AMIfv96s63HkcOxuJ4tE5SYtzJqEtlYE9il1_O-IpHarIpChB1MoGO5Bejx-QuRT_zqdIY8Z8ncwuOH0vFOxDLmBgsntJRdGK5rlHRYQBKQyQ7FuKfjOZB0h7wwa2VV8IQYWiJeNJVKQoYGNMZr-9FO6SieObPcPtg" /> <!--local DB-->
     </bean>
 
+    <bean id="Email" class="jfiles.service.HTMLMail">
+        <property name="fromAddress" value="xo.pass.service@gmail.com"/>
+        <property name="fromText" value="XO Admin"/>
+    </bean>
+
 </beans>

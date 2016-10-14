@@ -7,16 +7,16 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 
 import java.util.HashMap;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**Pool of authorized users*/
 @Service
 public class LoginSession {
 
     @Autowired
-//    @Qualifier(value = "UserServiceBean")
     private UserService userService;
 
-    private HashMap<Integer, Session> loggedUsers = new HashMap<Integer, Session>();
+    private ConcurrentHashMap<Integer, Session> loggedUsers = new ConcurrentHashMap<>();
 
     /**Create login session for user<br>
      * Add user to <i>logged user</i> list*/
@@ -39,6 +39,15 @@ public class LoginSession {
         }
 
         return false;
+    }
+
+    public void removeUserByName(String userName){
+
+        for(Session s: loggedUsers.values()){
+            if( s.getUserName().contentEquals( userName)){
+                removeSession( s.getAuthKey());
+            }
+        }
     }
 
     public Session getSession(int authKey){

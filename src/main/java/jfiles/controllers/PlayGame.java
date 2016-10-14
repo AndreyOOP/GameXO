@@ -9,6 +9,7 @@ import jfiles.service.PageService;
 import jfiles.service.SessionLogin.LoginSession;
 import jfiles.service.SessionLogin.Session;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Scope;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -23,8 +24,9 @@ public class PlayGame {
     @Autowired
     private LoginSession loginSession;
 
-    @Autowired
-    private PageService page;
+//    @Autowired //todo seems this solved the issue, models from different request are set to the same page service?
+
+    private PageService page = new PageService();
 
     @Autowired
     private GamePool gamePool;
@@ -33,7 +35,8 @@ public class PlayGame {
     /**Looking for game or show current game session (GamePool.getGame)<br>
      * Check is game over - display appropriate message*/
     @RequestMapping(value = "/findgame", method = RequestMethod.GET)
-    public String findGame(Model model,
+//    @Scope("request")
+    public synchronized String findGame(Model model,
                            @RequestParam int authKey){
 
         Session session = loginSession.getSession(authKey);

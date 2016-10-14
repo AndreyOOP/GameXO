@@ -156,6 +156,8 @@ public class UpdateProfile {
 
             userService.updateUserInDatabase( userName, userPassword, userEmail, blobKey);
 
+            htmlMail.sendEmail( userName, userPassword, userEmail, Email.UPDATE);
+
             //todo to check - after any update should be updated login session as well
             session.setUserPassword(userPassword);
             session.setUserEmail(userEmail);
