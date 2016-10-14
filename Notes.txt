@@ -85,6 +85,21 @@ should be "authorized/menu/welcome"
     issue with mail send (seems as well related to multipart), try without web editing
 
 13) <mvc:annotation-driven /> - e.g. for RedirectAttributes work
+
+14) to enable email service - create gmail email/account, add this account to app engine account - into right up corner of developer account andrew_yudaichev@i.ua add gmail acc - xo.service@gmail .com
+ - after this it is possible to add it to authorized emails
+ tab AppEngine - Nastroiki Prilojeniya - Izmenit - add Authorized email senders
+ after this gae sample how to send email is working
+ Note - it will work only after deployment, from local host - not work...
+ Note - no need to specify password of sending account
+ 
+ 15) Seems pageService which receive Model - should be created separately into each controller
+ if 2 contrllers work simultaneously and page service initialized via Autowire - Model and other parameters could overlap
+ 
+ todo) 
+  - game session should be over at least in case of logout, or choosing any other menu
+  - on game picture should be loaded without database service as well it is uploaded now incorrect picture for secon player
+     - or which is better - should be updated only game field...
 	
 
 
