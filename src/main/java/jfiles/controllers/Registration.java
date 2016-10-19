@@ -4,6 +4,7 @@ import jfiles.Constants.*;
 import jfiles.Constants.PageService.Check;
 import jfiles.Constants.PageService.Message;
 import jfiles.Constants.PageService.Tag;
+import jfiles.model.UserEntity;
 import jfiles.service.BlobStoreGAE;
 import jfiles.service.HTMLMail;
 import jfiles.service.PageService;
@@ -96,6 +97,8 @@ public class Registration {
             return Page.REGISTRATION;
         }
 
+        pageService.setRegistrationCheck( userService.getRecordsWithUserNameOrEmail(userName, userEmail));
+
         if( pageService.makeCheck( Check.USER_ALREADY_REGISTERED)){
 
             pageService.add( Tag.REGISTRATION_ERR_USER_NAME, Message.USER_ALREADY_REGISTERED);
@@ -115,7 +118,15 @@ public class Registration {
         }
         //endregion
 
-        userService.addUser(userName, userPassword, Role.USER, userEmail, BlobStoreGAE.getBlobKey(req));
+        UserEntity registeredUser = new UserEntity();
+        registeredUser.setName(userName);
+        registeredUser.setPassword(userPassword);
+        registeredUser.setRole(Role.USER);
+        registeredUser.setEmail(userEmail);
+        registeredUser.setBlobKey(BlobStoreGAE.getBlobKey(req));
+
+//        userService.addUser(userName, userPassword, Role.USER, userEmail, BlobStoreGAE.getBlobKey(req));
+        userService.addUser( registeredUser);
 
         htmlMail.sendEmail( userName, userPassword, userEmail, Email.WELCOME);
 
@@ -124,7 +135,8 @@ public class Registration {
 
         int authKey = loginSession.generateAuthorizationKey();
 
-        loginSession.addUser(authKey, userName);
+//        loginSession.addUser(authKey, userName); //todo update
+        loginSession.addUser(authKey, registeredUser); //todo update
 
         return "redirect:/welcome/" + authKey;
     }

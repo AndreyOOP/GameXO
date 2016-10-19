@@ -133,4 +133,10 @@ public class UserService{
         return userDAO.getRecordsWithEmail(email).size() > 0;
     }
 
+    @Transactional
+    public List<UserEntity> getRecordsWithUserNameOrEmail(String userName, String userEmail){
+
+        return userDAO.getRecordsWithUserNameOrEmail( userName, userEmail);
+    }
+
 }

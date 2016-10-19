@@ -10,6 +10,7 @@ import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import javax.servlet.http.HttpServletRequest;
+import java.util.List;
 
 /**Service checks the data provided by user (it check Login, Registration, Admin menu forms)*/
 @Service("pageService")
@@ -32,6 +33,8 @@ public class PageService<T> {
     private MultipartFile avatarFile;
 
     private UserEntity loginEntity;
+
+    private List<UserEntity> registrationCheck;
 
     /**Method adds required attribute to JSP page*/
     public PageService add(String attribute, T value){
@@ -75,7 +78,25 @@ public class PageService<T> {
                 return userService.getUserByName(formVsUserName) == null;
 
             case Check.USER_ALREADY_REGISTERED:
-                return userService.getUserByName(formUserName) != null;
+
+                Boolean ch1 = false;
+                Boolean ch2 = false;
+
+                try {
+                    ch1 = registrationCheck.get(0).getName().contentEquals( formUserName);
+                } catch (Exception e) {
+//                    e.printStackTrace();
+                }
+
+                try {
+                    ch2 = registrationCheck.get(1).getName().contentEquals( formUserName);
+                } catch (Exception e) {
+//                    e.printStackTrace();
+                }
+
+                return ch1 || ch2;
+
+//                return userService.getUserByName(formUserName) != null;
 
             case Check.USER_ROLE:
                 return !(formUserRole.contentEquals( Role.USER_NAME) ||
@@ -93,7 +114,24 @@ public class PageService<T> {
                          formUserPassword.matches(".*[abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ].*"));
 
             case Check.EMAIL_IN_DATABASE:
-                return userService.isEmailInDatabase(formUserEmail);
+
+                Boolean ch_1 = false;
+                Boolean ch_2 = false;
+
+                try {
+                    ch_1 = registrationCheck.get(0).getEmail().contentEquals( formUserEmail);
+                } catch (Exception e) {
+//                    e.printStackTrace();
+                }
+
+                try {
+                    ch_2 = registrationCheck.get(1).getEmail().contentEquals( formUserEmail);
+                } catch (Exception e) {
+//                    e.printStackTrace();
+                }
+
+                return ch_1 || ch_2;
+//                return userService.isEmailInDatabase(formUserEmail);
 
             case Check.PASSWORD_MATCH:
                 return !loginEntity.getPassword().contentEquals( formUserPassword);
@@ -196,6 +234,11 @@ public class PageService<T> {
 
     public PageService setLoginEntity(UserEntity loginEntity){
         this.loginEntity = loginEntity;
+        return this;
+    }
+
+    public PageService setRegistrationCheck(List<UserEntity> registrationCheck){
+        this.registrationCheck = registrationCheck;
         return this;
     }
 }

@@ -90,7 +90,6 @@ public class Login {
         int authKey = loginSession.generateAuthorizationKey();
 
         loginSession.addUser(authKey, loginEntity);
-//        loginSession.addUser(authKey, userName);
 
         pageService.add( Tag.MAIN_MENU_USER_NAME    , userName)
                    .add( Tag.MAIN_MENU_USER_ROLE    , loginSession.getSession(authKey).getUserRole())

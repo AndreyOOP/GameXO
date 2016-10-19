@@ -52,4 +52,12 @@ public class UserDAO{
 
         return emails;
     }
+
+    public List<UserEntity> getRecordsWithUserNameOrEmail(String name, String email){
+
+        List<UserEntity> list = entityManager
+                                .createQuery("SELECT U FROM UserEntity U WHERE U.name = '" + name + "' OR U.email = '" + email + "'")
+                                .getResultList();
+        return list;
+    }
 }
