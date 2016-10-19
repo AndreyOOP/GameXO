@@ -22,8 +22,7 @@ import javax.servlet.http.HttpServletRequest;
 public class Registration {
 
     //region Services declaration
-    @Autowired
-    private PageService pageService;
+    private PageService pageService = new PageService();
 
     @Autowired
     private UserService userService;
@@ -116,15 +115,8 @@ public class Registration {
         }
         //endregion
 
-//        String blobKey = BlobStoreGAE.getBlobKey(req); //uploads and get the Key
-
-//        if( blobKey.isEmpty()) //todo not work after deploy, why?
-//            blobKey = "AMIfv96s63HkcOxuJ4tE5SYtzJqEtlYE9il1_O-IpHarIpChB1MoGO5Bejx-QuRT_zqdIY8Z8ncwuOH0vFOxDLmBgsntJRdGK5rlHRYQBKQyQ7FuKfjOZB0h7wwa2VV8IQYWiJeNJVKQoYGNMZr-9FO6SieObPcPtg";
-
         userService.addUser(userName, userPassword, Role.USER, userEmail, BlobStoreGAE.getBlobKey(req));
 
-//        htmlMail = new HTMLMail(); //todo temporary disable mail sending
-//        htmlMail.sendSimpleMail( userName, userPassword, userEmail, Email.WELCOME); //todo add to separate thread, 5-10 sec pending during registration
         htmlMail.sendEmail( userName, userPassword, userEmail, Email.WELCOME);
 
         if( loginSession.isUserAlreadyLoggedIn(userName))

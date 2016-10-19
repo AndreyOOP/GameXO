@@ -18,8 +18,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 public class Statistic {
 
     //region Services declaration
-    @Autowired
-    private PageService page;
+    private PageService page = new PageService();
 
     @Autowired
     private LoginSession loginSession;

@@ -30,6 +30,13 @@ public class LoginSession {
 
     }
 
+    public void addUser(int authKey, UserEntity loginEntity){
+
+        Session session = new Session(loginEntity);
+
+        loggedUsers.put(authKey, session);
+    }
+
     public Boolean isUserAlreadyLoggedIn(String userName){
 
         for(Session s: loggedUsers.values()){

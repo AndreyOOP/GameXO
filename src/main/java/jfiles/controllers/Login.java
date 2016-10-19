@@ -4,8 +4,10 @@ import jfiles.Constants.Page;
 import jfiles.Constants.PageService.Check;
 import jfiles.Constants.PageService.Message;
 import jfiles.Constants.PageService.Tag;
+import jfiles.model.UserEntity;
 import jfiles.service.PageService;
 import jfiles.service.SessionLogin.LoginSession;
+import jfiles.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Scope;
@@ -19,8 +21,10 @@ import org.springframework.web.bind.annotation.RequestParam;
 @org.springframework.stereotype.Controller
 public class Login {
 
+    private PageService pageService = new PageService();
+
     @Autowired
-    private PageService pageService;
+    private UserService userService;
 
     @Autowired
     private LoginSession loginSession;
@@ -60,6 +64,9 @@ public class Login {
             return Page.LOGIN;
         }
 
+        UserEntity loginEntity = userService.getUserByName( userName);
+        pageService.setLoginEntity( loginEntity);
+
         if( pageService.makeCheck( Check.USER_MISSING_IN_DATABASE)){
 
             pageService.add( Tag.LOGIN_ERR_USER_NAME, Message.USER_NAME_NOT_FOUND);
@@ -82,7 +89,8 @@ public class Login {
 
         int authKey = loginSession.generateAuthorizationKey();
 
-        loginSession.addUser(authKey, userName);
+        loginSession.addUser(authKey, loginEntity);
+//        loginSession.addUser(authKey, userName);
 
         pageService.add( Tag.MAIN_MENU_USER_NAME    , userName)
                    .add( Tag.MAIN_MENU_USER_ROLE    , loginSession.getSession(authKey).getUserRole())

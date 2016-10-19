@@ -31,6 +31,8 @@ public class PageService<T> {
 
     private MultipartFile avatarFile;
 
+    private UserEntity loginEntity;
+
     /**Method adds required attribute to JSP page*/
     public PageService add(String attribute, T value){
 
@@ -66,7 +68,8 @@ public class PageService<T> {
                 return formUserName.contains(" ");
 
             case Check.USER_MISSING_IN_DATABASE:
-                return userService.getUserByName(formUserName) == null;
+                return loginEntity == null;
+//                return userService.getUserByName(formUserName) == null;
 
             case Check.VS_USER_MISSING_IN_DB:
                 return userService.getUserByName(formVsUserName) == null;
@@ -93,12 +96,12 @@ public class PageService<T> {
                 return userService.isEmailInDatabase(formUserEmail);
 
             case Check.PASSWORD_MATCH:
+                return !loginEntity.getPassword().contentEquals( formUserPassword);
+//                UserEntity userEntity = userService.getUserByName(formUserName);
 
-                UserEntity userEntity = userService.getUserByName(formUserName);
+//                String password       = userEntity.getPassword();
 
-                String password       = userEntity.getPassword();
-
-                return !password.contentEquals(formUserPassword);
+//                return !password.contentEquals(formUserPassword);
 
             case Check.AVATAR_SIZE:
 
@@ -140,12 +143,6 @@ public class PageService<T> {
         }
     }
 
-
-    /*@Autowired
-    @Qualifier(value = "UserServiceBean")
-    public void setUserService(UserService userService) {
-        this.userService = userService;
-    }*/
 
     public PageService setModel(Model model) {
         this.model = model;
@@ -194,6 +191,11 @@ public class PageService<T> {
 
     public PageService setHttpServletRequest(HttpServletRequest req){
         this.req = req;
+        return this;
+    }
+
+    public PageService setLoginEntity(UserEntity loginEntity){
+        this.loginEntity = loginEntity;
         return this;
     }
 }

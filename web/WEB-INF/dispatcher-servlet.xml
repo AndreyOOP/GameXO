@@ -15,20 +15,20 @@
     <context:component-scan base-package="jfiles" />
 
     <!--Local-->
-    <!--<bean id="dbX" class="org.springframework.jdbc.datasource.DriverManagerDataSource">
+    <bean id="dbX" class="org.springframework.jdbc.datasource.DriverManagerDataSource">
         <property name="driverClassName" value="com.mysql.jdbc.Driver" />
         <property name="url" value="jdbc:mysql://localhost/xodatabase?useSSL=false" />
         <property name="username" value="root" />
         <property name="password" value="1111" />
-    </bean>-->
+    </bean>
 
     <!--Cloud-->
-    <bean id="dbX" class="org.springframework.jdbc.datasource.DriverManagerDataSource">
+    <!--<bean id="dbX" class="org.springframework.jdbc.datasource.DriverManagerDataSource">
         <property name="driverClassName" value="com.mysql.jdbc.GoogleDriver" />
         <property name="url" value="jdbc:google:mysql://gamexo-gae:europe-west1:google-db/xodatabase" />
         <property name="username" value="root" />
         <property name="password" value="1111" />
-    </bean>
+    </bean>-->
 
     <!--todo packagesToScan maybe change to model ? what exactly it looking for ?-->
     <!--todo property generateDdl what is it ?-->
@@ -64,8 +64,8 @@
 
     <bean id="BlobStore" class="jfiles.service.BlobStoreGAE">
         <property name="maxUploadSize" value="102400" />
-        <!--<property name="defaultPicture" value="edMI2L0Z4Ah-OZq9wlX-EA" /> &lt;!&ndash;local DB&ndash;&gt;-->
-        <property name="defaultPicture" value="AMIfv96s63HkcOxuJ4tE5SYtzJqEtlYE9il1_O-IpHarIpChB1MoGO5Bejx-QuRT_zqdIY8Z8ncwuOH0vFOxDLmBgsntJRdGK5rlHRYQBKQyQ7FuKfjOZB0h7wwa2VV8IQYWiJeNJVKQoYGNMZr-9FO6SieObPcPtg" /> <!--local DB-->
+        <property name="defaultPicture" value="edMI2L0Z4Ah-OZq9wlX-EA" /> <!--local DB-->
+        <!--<property name="defaultPicture" value="AMIfv96s63HkcOxuJ4tE5SYtzJqEtlYE9il1_O-IpHarIpChB1MoGO5Bejx-QuRT_zqdIY8Z8ncwuOH0vFOxDLmBgsntJRdGK5rlHRYQBKQyQ7FuKfjOZB0h7wwa2VV8IQYWiJeNJVKQoYGNMZr-9FO6SieObPcPtg" /> &lt;!&ndash;local DB&ndash;&gt;-->
     </bean>
 
     <bean id="Email" class="jfiles.service.HTMLMail">

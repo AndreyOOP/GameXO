@@ -35,11 +35,9 @@ public class UpdateProfile {
     @Autowired
     private LoginSession loginSession;
 
-    @Autowired
-    private PageService pageService;
+    private PageService pageService = new PageService();
 
     @Autowired
-//    @Qualifier(value = "UserServiceBean")
     private UserService userService;
 
     @Autowired
@@ -163,8 +161,6 @@ public class UpdateProfile {
             session.setUserEmail(userEmail);
             session.setBlobKey(blobKey);
 
-            //todo setup email service
-//            htmlMail.sendEmail( userName, userPassword, userEmail, Email.UPDATE);
 
             if( updatePassword)
                 pageService.add( Tag.MYPROFILE_ERR_USER_PASSWORD, Message.UPDATED);

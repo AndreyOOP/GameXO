@@ -16,8 +16,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 public class WelcomePage {
 
     //region Services declaration
-    @Autowired
-    private PageService pageService;
+    private PageService pageService = new PageService();
 
     @Autowired
     private LoginSession loginSession;

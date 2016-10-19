@@ -25,8 +25,7 @@ public class AdminStatisticTable {
     @Autowired
     private TableUtil tableUtil;
 
-    @Autowired
-    private PageService page;
+    private PageService page = new PageService();
 
     @Autowired
     private LoginSession loginSession;

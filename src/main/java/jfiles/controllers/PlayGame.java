@@ -24,8 +24,6 @@ public class PlayGame {
     @Autowired
     private LoginSession loginSession;
 
-//    @Autowired //todo seems this solved the issue, models from different request are set to the same page service?
-
     private PageService page = new PageService();
 
     @Autowired
@@ -35,7 +33,6 @@ public class PlayGame {
     /**Looking for game or show current game session (GamePool.getGame)<br>
      * Check is game over - display appropriate message*/
     @RequestMapping(value = "/findgame", method = RequestMethod.GET)
-//    @Scope("request")
     public synchronized String findGame(Model model,
                            @RequestParam int authKey){
 

@@ -28,8 +28,7 @@ public class AdminUserTable {
     @Autowired
     private TableUtil         tableUtil;
 
-    @Autowired
-    private PageService page;
+    private PageService page = new PageService();
 
     @Autowired
     private UserService       userService;
