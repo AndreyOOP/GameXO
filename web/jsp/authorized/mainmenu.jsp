@@ -46,6 +46,7 @@
                         <ul class="dropdown-menu" role="menu">
                             <li><a href="<c:url value='/admin/users?authKey=${authKey}&tableCurrentPage=0' />">Users Table</a></li>
                             <li><a href="<c:url value='/admin/statistic?authKey=${authKey}&tableCurrentPage=0' />">Statistic Table</a></li>
+                            <li><a href="<c:url value='/admin/status?authKey=${authKey}&tableCurrentPage=0' />">Status Table</a></li>
                         </ul>
                     </li>
                 </c:if>
@@ -72,6 +73,10 @@
 
 <c:if test="${isAdminStatistic eq true}">
     <jsp:include page="/adminstatisticpagecontent" />
+</c:if>
+
+<c:if test="${isAdminStatus eq true}">
+    <jsp:include page="/adminstatuspagecontent" />
 </c:if>
 
 <c:if test="${isFindGame eq true}"> <%--open Game Page--%>

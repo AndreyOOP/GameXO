@@ -142,4 +142,8 @@ public class GamePool {
 //    public void setStatisticService(StatisticService statisticService) {
 //        this.statisticService = statisticService;
 //    }
+
+    public List<GameSession> getGameSessions(){
+        return gameSessions;
+    }
 }

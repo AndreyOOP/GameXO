@@ -2,6 +2,7 @@ package jfiles.controllers;
 
 import jfiles.Constants.Page;
 import jfiles.Constants.PageService.Tag;
+import jfiles.service.Game.GamePool;
 import jfiles.service.PageService;
 import jfiles.service.SessionLogin.LoginSession;
 import jfiles.service.SessionLogin.Session;
@@ -19,6 +20,9 @@ public class WelcomePage {
     private PageService pageService = new PageService();
 
     @Autowired
+    private GamePool gamePool;
+
+    @Autowired
     private LoginSession loginSession;
     //endregion
 
@@ -30,6 +34,12 @@ public class WelcomePage {
 
         if(session == null)
             return Page.ERROR;
+
+        try {
+            gamePool.removeUser( session.getUserName()); //todo add try
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
 
         pageService.setModel(model)
 

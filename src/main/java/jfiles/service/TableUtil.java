@@ -3,12 +3,16 @@ package jfiles.service;
 import jfiles.Constants.Table;
 import jfiles.model.StatisticEntity;
 import jfiles.model.UserEntity;
+import jfiles.service.SessionLogin.LoginSession;
+import jfiles.service.SessionLogin.Session;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**Service for preparation <i>Statistic</i> and <i>User</i> tables.<br>
  * It prepares page list (e.g << 2 3 4 6 >> ) which is shown under table . List created based on displayed page number*/
@@ -31,6 +35,9 @@ public class TableUtil {
 //    @Qualifier(value = "UserServiceBean")
     private UserService       userService;
 
+    @Autowired
+    private LoginSession loginSession;
+
 
     public TableUtil(){}
 
@@ -49,6 +56,16 @@ public class TableUtil {
 
         return allRecords.subList( getFromLine(), getToLine());
     }
+
+    public List<Session> getOnlineUsers(int page){
+
+        //todo to update
+        Collection<Session> allRecords = loginSession.getLoggedUsers().values();
+        List<Session> list = new ArrayList<>(allRecords);
+
+        return list.subList( getFromLine(), getToLine());
+    }
+
 
     /**Calculates page number <b>From</b> which should begin page list*/
     public int getFromPage() {

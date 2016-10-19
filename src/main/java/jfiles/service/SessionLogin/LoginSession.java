@@ -50,9 +50,10 @@ public class LoginSession {
 
     public void removeUserByName(String userName){
 
-        for(Session s: loggedUsers.values()){
-            if( s.getUserName().contentEquals( userName)){
-                removeSession( s.getAuthKey());
+        for(Integer authKey: loggedUsers.keySet()){
+            if( loggedUsers.get(authKey).getUserName().contentEquals( userName)){
+                removeSession( authKey);
+                return;
             }
         }
     }
@@ -81,4 +82,8 @@ public class LoginSession {
         return authKey;
     }
 
+    //todo temoporary solution !
+    public ConcurrentHashMap<Integer, Session> getLoggedUsers(){
+        return loggedUsers;
+    }
 }

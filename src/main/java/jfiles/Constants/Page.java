@@ -26,6 +26,9 @@ public interface Page {
     String ADMIN_STATISTIC_ADD  = "authorized/menu/adminstatistics/addrecord";
     String ADMIN_STATISTIC_EDIT = "authorized/menu/adminstatistics/editrecord";
 
+    String ADMIN_STATUS         = "authorized/menu/adminstatus/adminstatuspage";
+    String ADMIN_STATUS_MENU    = "admin/status";
+
     String MYPROFILE            = "authorized/menu/myprofile";
 
     String ERROR                = "error";

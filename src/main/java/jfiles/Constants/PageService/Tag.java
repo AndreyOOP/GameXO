@@ -23,6 +23,7 @@ public interface Tag {
     String MAIN_MENU_WELCOME_PAGE           = "isWelcomePage";
     String MAIN_MENU_IS_PROFILE_PAGE        = "isProfile";
     String MAIN_MENU_ADMIN_STATISTIC_PAGE   = "isAdminStatistic";
+    String MAIN_MENU_ADMIN_STATUS_PAGE      = "isAdminStatus";
     String MAIN_MENU_IS_FIND_GAME           = "isFindGame";
     String MAIN_MENU_IS_STATISTIC           = "isStatisticPage";
     String MAIN_MENU_AUTH_KEY               = "authKey";
@@ -60,6 +61,9 @@ public interface Tag {
     String ADMIN_USER_ERR_EMAIL             = "ErrorMessage_UserEmail";
     String ADMIN_USER_SHOW_EDIT_MENU        = "showEditMenuX";
     String ADMIN_USER_ERR_AVATAR            = "ErrorMessage_Avatar";
+
+    String ADMIN_STATUS_RECORDS_LIST        = "admin_status_online";
+    String ADMIN_STATUS_CURRENT_PAGE        = "tableCurrentPage";
 
     String GAME_GAME_FOUND                  = "gameFound";
     String GAME_FIELD_SIZE                  = "matrixSize";
