@@ -49,12 +49,22 @@ public class TableUtil {
         return allRecords.subList( getFromLine(), getToLine());
     }
 
+    public List<StatisticEntity> getServiceRecords(List<StatisticEntity> list){
+
+        return list.subList( getFromLine(), getToLine());
+    }
+
     /**Extracts <i>User</i> records which should be displayed on page with number 'page'*/
     public List<UserEntity> getUserRecords(int page){
 
         List<UserEntity> allRecords = userService.getAllUsers();
 
         return allRecords.subList( getFromLine(), getToLine());
+    }
+
+    public List<UserEntity> getUserRecords(List<UserEntity> list){
+
+        return list.subList( getFromLine(), getToLine());
     }
 
     public List<Session> getOnlineUsers(int page){

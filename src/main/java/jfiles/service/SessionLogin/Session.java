@@ -1,7 +1,10 @@
 package jfiles.service.SessionLogin;
 
+import jfiles.model.StatisticEntity;
 import jfiles.model.UserEntity;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
 
 /**Session contains information about authorized(logged in) user<br>
  * User information extracted once during authorization after this it could be accessed via <i>authorization key</i> (it is stored into HashMap into LoginSession class)*/
@@ -15,6 +18,9 @@ public class Session {
     private int    userRole;
 
     private int    authKey;
+
+    private List<UserEntity> userEntities;
+    private List<StatisticEntity> statisticEntities;
 
     public Session(){}
 
@@ -73,5 +79,21 @@ public class Session {
 
     public void setBlobKey(String blobKey) {
         this.blobKey = blobKey;
+    }
+
+    public List<UserEntity> getUserEntities() {
+        return userEntities;
+    }
+
+    public void setUserEntities(List<UserEntity> userEntities) {
+        this.userEntities = userEntities;
+    }
+
+    public List<StatisticEntity> getStatisticEntities() {
+        return statisticEntities;
+    }
+
+    public void setStatisticEntities(List<StatisticEntity> statisticEntities) {
+        this.statisticEntities = statisticEntities;
     }
 }

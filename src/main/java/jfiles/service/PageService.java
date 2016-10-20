@@ -16,7 +16,7 @@ import java.util.List;
 @Service("pageService")
 public class PageService<T> {
 
-    @Autowired
+//    @Autowired
     private UserService userService;
 
     private Model model;
@@ -171,11 +171,11 @@ public class PageService<T> {
                 return !currentEmail.contentEquals( formUserEmail);
             }
 
-            //todo check this check)
-            /*case Check.NEW_AVATAR:{
+            case Check.NEW_AVATAR:{
 
-                return !avatarFile.getOriginalFilename().isEmpty();
-            }*/
+                return BlobStoreGAE.isNewFile(req);
+//                return !avatarFile.getOriginalFilename().isEmpty();
+            }
 
             default: return false;
         }
@@ -239,6 +239,11 @@ public class PageService<T> {
 
     public PageService setRegistrationCheck(List<UserEntity> registrationCheck){
         this.registrationCheck = registrationCheck;
+        return this;
+    }
+
+    public PageService setUserService(UserService userService) {
+        this.userService = userService;
         return this;
     }
 }

@@ -121,7 +121,11 @@ public class AdminStatusTable {
             return Page.ERROR; //todo change to auth error
 
         //loginSession.removeUserByName( deleteRecordId); game session
-        gamePool.removeUser( deleteRecordId);
+        try {
+            gamePool.removeUser( deleteRecordId);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
 
         page.setRedirectAttributes( redirectAttributes);
 

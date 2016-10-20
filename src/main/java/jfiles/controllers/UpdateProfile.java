@@ -136,7 +136,8 @@ public class UpdateProfile {
         }
 
 
-        if( BlobStoreGAE.isNewFile(req)){
+//        if( BlobStoreGAE.isNewFile(req)){
+        if( pageService.isFieldUpdated( Check.NEW_AVATAR)){
 
             if( pageService.makeCheck( Check.AVATAR_SIZE)){
 
@@ -160,7 +161,6 @@ public class UpdateProfile {
             session.setUserPassword(userPassword);
             session.setUserEmail(userEmail);
             session.setBlobKey(blobKey);
-
 
             if( updatePassword)
                 pageService.add( Tag.MYPROFILE_ERR_USER_PASSWORD, Message.UPDATED);

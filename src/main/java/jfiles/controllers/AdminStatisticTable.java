@@ -6,6 +6,7 @@ import jfiles.Constants.PageService.Message;
 import jfiles.Constants.PageService.Tag;
 import jfiles.Constants.Role;
 import jfiles.model.StatisticEntity;
+import jfiles.model.UserEntity;
 import jfiles.service.*;
 import jfiles.service.SessionLogin.LoginSession;
 import jfiles.service.SessionLogin.Session;
@@ -15,6 +16,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+
+import java.util.List;
 
 /**Controller for work with menu <i>Admin->Statistic Table</i><br>
  * Responsible for display Statistics table content, creating new records and edit existing records*/
@@ -48,7 +51,12 @@ public class AdminStatisticTable {
         if( !(session.getUserRole() == Role.ADMIN || session.getUserRole() == Role.SUPER_ADMIN))
             return Page.ERROR;
 
-        tableUtil.setParam( currentPage, statisticService.getAllRecords().size());
+        if ( session.getStatisticEntities() == null) {
+            session.setStatisticEntities( statisticService.getAllRecords());
+        }
+
+//        tableUtil.setParam( currentPage, statisticService.getAllRecords().size());
+        tableUtil.setParam( currentPage, session.getStatisticEntities().size());
 
 
         page.setModel(model)
@@ -58,7 +66,7 @@ public class AdminStatisticTable {
             .add( Tag.MAIN_MENU_ADMIN_STATISTIC_PAGE, true)
             .add( Tag.MAIN_MENU_AUTH_KEY, authKey)
 
-            .add( Tag.ADMIN_STATISTIC_RECORDS_LIST , tableUtil.getServiceRecords(currentPage))
+            .add( Tag.ADMIN_STATISTIC_RECORDS_LIST , tableUtil.getServiceRecords(session.getStatisticEntities()))
             .add( Tag.ADMIN_STATISTIC_CURRENT_PAGE , currentPage)
             .add( Tag.TABLE_FROM_PAGE              , tableUtil.getFromPage())
             .add( Tag.TABLE_TO_PAGE                , tableUtil.getToPage())
@@ -86,7 +94,7 @@ public class AdminStatisticTable {
         if(session.getUserRole() != Role.SUPER_ADMIN)
             return Page.ERROR;
 
-        tableUtil.setParam(tableCurrentPage, statisticService.getAllRecords().size());
+        tableUtil.setParam(tableCurrentPage, session.getStatisticEntities().size());
 
         page.setModel(model)
             .setFormUserName(formUserName)
@@ -98,7 +106,7 @@ public class AdminStatisticTable {
             .add( Tag.MAIN_MENU_USER_ROLE           , session.getUserRole())
             .add( Tag.MAIN_MENU_ADMIN_STATISTIC_PAGE, true)
 
-            .add( Tag.ADMIN_STATISTIC_RECORDS_LIST , tableUtil.getServiceRecords(tableCurrentPage))
+            .add( Tag.ADMIN_STATISTIC_RECORDS_LIST , tableUtil.getServiceRecords(session.getStatisticEntities()))
             .add( Tag.ADMIN_STATISTIC_CURRENT_PAGE , tableCurrentPage)
             .add( Tag.ADMIN_STATISTIC_SHOW_ADD_MENU, true)
             .add( Tag.TABLE_FROM_PAGE              , tableUtil.getFromPage())
@@ -146,6 +154,8 @@ public class AdminStatisticTable {
         page.addRedirect( Tag.MAIN_MENU_AUTH_KEY           , authKey)
             .addRedirect( Tag.ADMIN_STATISTIC_CURRENT_PAGE , tableCurrentPage);
 
+        session.setStatisticEntities(null);
+
         return "redirect:" + Page.ADMIN_STATISTIC_MENU;
     }
 
@@ -162,9 +172,10 @@ public class AdminStatisticTable {
         if(session.getUserRole() != Role.SUPER_ADMIN)
             return Page.ERROR;
 
-        tableUtil.setParam( tableCurrentPage, statisticService.getAllRecords().size());
+        tableUtil.setParam( tableCurrentPage, session.getStatisticEntities().size());
 
-        StatisticEntity record = statisticService.getRecordById(recordId);
+//        StatisticEntity record = statisticService.getRecordById(recordId);
+        StatisticEntity record = getRecordById(recordId, session.getStatisticEntities());
 
         page.setModel(model)
 
@@ -211,7 +222,7 @@ public class AdminStatisticTable {
         if(session.getUserRole() != Role.SUPER_ADMIN)
             return Page.ERROR;
 
-        tableUtil.setParam(tableCurrentPage, statisticService.getAllRecords().size());
+        tableUtil.setParam(tableCurrentPage, session.getStatisticEntities().size());
 
 
         page.setModel(model)
@@ -223,7 +234,7 @@ public class AdminStatisticTable {
             .add( Tag.MAIN_MENU_USER_ROLE            , session.getUserRole())
             .add( Tag.MAIN_MENU_ADMIN_STATISTIC_PAGE , true)
 
-            .add( Tag.ADMIN_STATISTIC_RECORDS_LIST   , tableUtil.getServiceRecords(tableCurrentPage))
+            .add( Tag.ADMIN_STATISTIC_RECORDS_LIST   , tableUtil.getServiceRecords(session.getStatisticEntities()))
             .add( Tag.ADMIN_STATISTIC_CURRENT_PAGE   , tableCurrentPage)
             .add( Tag.ADMIN_STATISTIC_SHOW_EDIT_MENU , true)
             .add( Tag.TABLE_FROM_PAGE                , tableUtil.getFromPage())
@@ -258,6 +269,8 @@ public class AdminStatisticTable {
         page.addRedirect( Tag.MAIN_MENU_AUTH_KEY, authKey)
             .addRedirect(Tag.ADMIN_STATISTIC_CURRENT_PAGE, tableCurrentPage);
 
+        session.setStatisticEntities(null);
+
         return "redirect:" + Page.ADMIN_STATISTIC_MENU;
     }
 
@@ -279,6 +292,8 @@ public class AdminStatisticTable {
 
         page.addRedirect( Tag.MAIN_MENU_AUTH_KEY           , authKey)
             .addRedirect( Tag.ADMIN_STATISTIC_CURRENT_PAGE , tablePage);
+
+        session.setStatisticEntities(null);
 
         return "redirect:" + Page.ADMIN_STATISTIC_MENU;
     }
@@ -302,5 +317,27 @@ public class AdminStatisticTable {
     public String loadAddRecordJSP(){
 
         return Page.ADMIN_STATISTIC_ADD;
+    }
+
+    private StatisticEntity getRecordById(int id, List<StatisticEntity> list){
+
+        StatisticEntity editRec = new StatisticEntity();
+
+        for(StatisticEntity u: list){
+
+            if( u.getId() == id){
+
+                editRec.setId( u.getId());
+                editRec.setUser( u.getUser());
+                editRec.setVsUser( u.getVsUser());
+                editRec.setLoose( u.getLoose());
+                editRec.setEven( u.getEven());
+                editRec.setWin( u.getWin());
+
+                return editRec;
+            }
+        }
+
+        return null;
     }
 }

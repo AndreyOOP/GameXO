@@ -18,6 +18,7 @@ import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import javax.servlet.http.HttpServletRequest;
+import java.util.List;
 
 /**Controller for work with menu <i>Admin->Users Table</i><br>
  * Responsible for display User table content, creating new records and edit existing records*/
@@ -56,9 +57,14 @@ public class AdminUserTable {
         if( !(session.getUserRole() == Role.ADMIN || session.getUserRole() == Role.SUPER_ADMIN))
             return Page.ERROR;
 
-        tableUtil.setParam( tableCurrentPage, userService.getAllUsers().size());
+        if ( session.getUserEntities() == null) {
+            session.setUserEntities( userService.getAllUsers());
+        }
+
+        tableUtil.setParam( tableCurrentPage, session.getUserEntities().size());
 
         page.setModel(model)
+            .setUserService(userService)
 
             .add( Tag.MAIN_MENU_AUTH_KEY           , authKey)
             .add( Tag.MAIN_MENU_USER_NAME          , session.getUserName())
@@ -66,7 +72,7 @@ public class AdminUserTable {
             .add( Tag.MAIN_MENU_IS_ADMIN_USER_PAGE , true)
 
             .add( Tag.ADMIN_USER_CURRENT_PAGE , tableCurrentPage)
-            .add( Tag.ADMIN_USER_LIST         , tableUtil.getUserRecords(tableCurrentPage))
+            .add( Tag.ADMIN_USER_LIST         , tableUtil.getUserRecords( session.getUserEntities()))
             .add( Tag.TABLE_FROM_PAGE         , tableUtil.getFromPage())
             .add( Tag.TABLE_TO_PAGE           , tableUtil.getToPage())
             .add( Tag.TABLE_PREVIOUS          , tableUtil.getPrev())
@@ -94,6 +100,8 @@ public class AdminUserTable {
         }else{
             return Page.ERROR;
         }
+
+        session.setUserEntities(null); //this will trigger update
 
         page.setRedirectAttributes(redirectAttributes)
                 .addRedirect( Tag.MAIN_MENU_AUTH_KEY      , authKey)
@@ -150,7 +158,7 @@ public class AdminUserTable {
         if( session.getUserRole() != Role.SUPER_ADMIN)
             return Page.ERROR;
 
-        tableUtil.setParam(tableCurrentPage, userService.getAllUsers().size());
+        tableUtil.setParam(tableCurrentPage, session.getUserEntities().size());
 
         page.setModel(model)
             .setRedirectAttributes(redirectAttributes)
@@ -169,7 +177,7 @@ public class AdminUserTable {
             .add( Tag.TABLE_PREVIOUS               , tableUtil.getPrev())
             .add( Tag.TABLE_NEXT                   , tableUtil.getNext())
 
-            .add( Tag.ADMIN_USER_LIST            , tableUtil.getUserRecords( tableCurrentPage))
+            .add( Tag.ADMIN_USER_LIST            , tableUtil.getUserRecords( session.getUserEntities()))
             .add( Tag.ADMIN_USER_SHOW_ADD_MENU   , true)
             .add( Tag.ADMIN_USER_CURRENT_PAGE    , tableCurrentPage)
             .add( Tag.ADMIN_USER_SAVED_NAME      , formuserName)
@@ -185,12 +193,6 @@ public class AdminUserTable {
             return Page.MAIN_MENU;
         }
 
-        if( page.makeCheck( Check.USER_ALREADY_REGISTERED)){
-
-            page.add( Tag.ADMIN_USER_ERR_USER_NAME, Message.USER_ALREADY_REGISTERED);
-            return Page.MAIN_MENU;
-        }
-
         if( page.makeCheck( Check.PASSWORD_BLANK)){
 
             page.add( Tag.ADMIN_USER_ERR_USER_PASSWORD, Message.PASSWORD_BLANK);
@@ -200,6 +202,14 @@ public class AdminUserTable {
         if( page.makeCheck( Check.USER_ROLE)) {
 
             page.add( Tag.ADMIN_USER_ERR_USER_ROLE, Message.USER_ROLE_NOT_FOUND);
+            return Page.MAIN_MENU;
+        }
+
+        page.setRegistrationCheck( userService.getRecordsWithUserNameOrEmail( formuserName, userEmail));
+
+        if( page.makeCheck( Check.USER_ALREADY_REGISTERED)){
+
+            page.add( Tag.ADMIN_USER_ERR_USER_NAME, Message.USER_ALREADY_REGISTERED);
             return Page.MAIN_MENU;
         }
 
@@ -219,6 +229,7 @@ public class AdminUserTable {
         //todo to add avatar upload support
         userService.addUser(formuserName, userPassword, getRoleId( userRole), userEmail, BlobStoreGAE.getBlobKey(req));
 
+        session.setUserEntities(null);
 
         page.addRedirect( Tag.MAIN_MENU_AUTH_KEY      , authKey)
             .addRedirect( Tag.ADMIN_USER_CURRENT_PAGE , tableCurrentPage);
@@ -241,9 +252,10 @@ public class AdminUserTable {
             return Page.ERROR;
         }
 
-        tableUtil.setParam(tableCurrentPage, userService.getAllUsers().size());
+        tableUtil.setParam(tableCurrentPage, session.getUserEntities().size());
 
-        UserEntity editUserEnt = userService.getUserByName(editUser);
+        UserEntity editUserEnt = getUserByName(editUser, session.getUserEntities());
+//        UserEntity editUserEnt = userService.getUserByName(editUser);
 
         page.setModel(model)
 
@@ -257,7 +269,7 @@ public class AdminUserTable {
                 .add( Tag.TABLE_PREVIOUS  , tableUtil.getPrev())
                 .add( Tag.TABLE_NEXT      , tableUtil.getNext())
 
-                .add( Tag.ADMIN_USER_LIST            , tableUtil.getUserRecords( tableCurrentPage))
+                .add( Tag.ADMIN_USER_LIST            , tableUtil.getUserRecords( session.getUserEntities()))
                 .add( Tag.ADMIN_USER_SHOW_EDIT_MENU  , true)
                 .add( Tag.ADMIN_USER_CURRENT_PAGE    , tableCurrentPage)
 
@@ -283,13 +295,15 @@ public class AdminUserTable {
                              HttpServletRequest req){
 
         Session session = loginSession.getSession(authKey);
-        String blobKey  = userService.getUserByName(editName).getBlobKey();
+
+        String blobKey = getUserByName(editName, session.getUserEntities()).getBlobKey();
+//        String blobKey  = userService.getUserByName(editName).getBlobKey();
 
         if( session.getUserRole() != Role.SUPER_ADMIN){
             return Page.ERROR;
         }
 
-        tableUtil.setParam(tableCurrentPage, userService.getAllUsers().size());
+        tableUtil.setParam(tableCurrentPage, session.getUserEntities().size());
 
         page.setModel(model)
                 .setUserName(editName)
@@ -307,7 +321,7 @@ public class AdminUserTable {
                 .add( Tag.TABLE_PREVIOUS  , tableUtil.getPrev())
                 .add( Tag.TABLE_NEXT      , tableUtil.getNext())
 
-                .add( Tag.ADMIN_USER_LIST            , tableUtil.getUserRecords( tableCurrentPage))
+                .add( Tag.ADMIN_USER_LIST            , tableUtil.getUserRecords( session.getUserEntities()))
                 .add( Tag.ADMIN_USER_SHOW_EDIT_MENU  , true)
                 .add( Tag.ADMIN_USER_CURRENT_PAGE    , tableCurrentPage)
 
@@ -335,12 +349,11 @@ public class AdminUserTable {
             }
         }
 
-        //todo on gae it did not work
-        if ( BlobStoreGAE.isNewFile(req)) {
+        if ( page.makeCheck( Check.NEW_AVATAR)) {
 
             if( page.makeCheck( Check.AVATAR_SIZE)){
 
-                page.add( Tag.ADMIN_USER_ERR_AVATAR, Message.AVATAR_SIZE); //todo check this link
+                page.add( Tag.ADMIN_USER_ERR_AVATAR, Message.AVATAR_SIZE);
                 return Page.MAIN_MENU;
             }
 
@@ -349,6 +362,7 @@ public class AdminUserTable {
 
         userService.updateUserInDatabase(editName, userPassword, userEmail, blobKey, getRoleId(userRole));
 
+        session.setUserEntities(null);
 
         page.addRedirect( Tag.MAIN_MENU_AUTH_KEY      , authKey)
             .addRedirect( Tag.ADMIN_USER_CURRENT_PAGE , tableCurrentPage);
@@ -405,4 +419,24 @@ public class AdminUserTable {
         return Role.USER_NAME;
     }
 
+    private UserEntity getUserByName(String name, List<UserEntity> list){
+
+        UserEntity editUserEnt = new UserEntity();
+
+        for(UserEntity u: list){
+
+            if( u.getName().contentEquals( name)){
+
+                editUserEnt.setName( u.getName());
+                editUserEnt.setPassword( u.getPassword());
+                editUserEnt.setEmail( u.getEmail());
+                editUserEnt.setRole( u.getRole());
+                editUserEnt.setBlobKey( u.getBlobKey());
+
+                return editUserEnt;
+            }
+        }
+
+        return null;
+    }
 }
