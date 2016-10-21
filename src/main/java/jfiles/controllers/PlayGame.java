@@ -56,7 +56,9 @@ public class PlayGame {
                 .add( Tag.GAME_FIELD_SIZE , XO.FIELD_SIZE)
                 .add( Tag.GAME_MATRIX     , gameSession.getMatrix())
                 .add( Tag.GAME_PLAYER_1   , gameSession.getPlayer1())
-                .add( Tag.GAME_PLAYER_2   , gameSession.getPlayer2());
+                .add( Tag.GAME_PLAYER_2   , gameSession.getPlayer2())
+            .add("key1", gameSession.getBlobPlayer1())
+            .add("key2", gameSession.getBlobPlayer2());
 
             String user = session.getUserName();
 

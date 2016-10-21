@@ -15,6 +15,17 @@ public class StatisticEntity {
     private int loose;
     private int even;
 
+    public StatisticEntity(){}
+
+    public StatisticEntity(int id, String user, String vsUser, int win, int loose, int even) {
+        this.id = id;
+        this.user = user;
+        this.vsUser = vsUser;
+        this.win = win;
+        this.loose = loose;
+        this.even = even;
+    }
+
     @Id
     @Column(name = "id")
     public int getId() {

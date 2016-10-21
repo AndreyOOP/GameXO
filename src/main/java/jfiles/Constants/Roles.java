@@ -18,9 +18,9 @@ public enum Roles {
         return id;
     }
 
-//    public String text(){
-//        return text;
-//    }
+    public String text(){
+        return text;
+    }
 
     public static Roles id(String text){
 
@@ -31,15 +31,5 @@ public enum Roles {
         }
         return null;
     }
-
-//    public static Roles id(int id){
-//
-//        for(Roles r: values()){
-//            if(r.id == id){
-//                return r;
-//            }
-//        }
-//        return null;
-//    }
 
 }

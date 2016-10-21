@@ -85,6 +85,9 @@ public class StatisticDAO {
 //        Session session = sessionFactory.getCurrentSession();
 
         entityManager.persist(record);
+//        StatisticEntity se = (StatisticEntity) entityManager.find(StatisticEntity.class, record);
+
+//        se.getId();
     }
 
     public void update(StatisticEntity record) {
@@ -98,6 +101,11 @@ public class StatisticDAO {
 //        Session session = sessionFactory.getCurrentSession();
 
         StatisticEntity record = (StatisticEntity)entityManager.find(StatisticEntity.class, id);
+
+        entityManager.remove(record);
+    }
+
+    public void deleteRecord(StatisticEntity record) {
 
         entityManager.remove(record);
     }

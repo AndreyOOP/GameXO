@@ -76,6 +76,11 @@ public class StatisticService {
         statisticDAO.deleteRecord(id);
     }
 
+    @Transactional
+    public void deleteRecord(StatisticEntity se) {
+        statisticDAO.deleteRecord(se);
+    }
+
     /**Increment win counter for user-vsUser unique record<br>
      * If combination not found - create new record. (It means that players play in the first time) */
     @Transactional

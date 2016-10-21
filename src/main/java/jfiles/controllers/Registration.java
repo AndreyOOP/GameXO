@@ -118,14 +118,13 @@ public class Registration {
         }
         //endregion
 
-        UserEntity registeredUser = new UserEntity();
-        registeredUser.setName(userName);
-        registeredUser.setPassword(userPassword);
-        registeredUser.setRole(Role.USER);
-        registeredUser.setEmail(userEmail);
-        registeredUser.setBlobKey(BlobStoreGAE.getBlobKey(req));
+        UserEntity registeredUser = new UserEntity(userName, userPassword, Roles.USER.id(), userEmail, BlobStoreGAE.getBlobKey(req));
+//        registeredUser.setName(userName);
+//        registeredUser.setPassword(userPassword);
+//        registeredUser.setRole(Roles.USER.id());
+//        registeredUser.setEmail(userEmail);
+//        registeredUser.setBlobKey(BlobStoreGAE.getBlobKey(req));
 
-//        userService.addUser(userName, userPassword, Role.USER, userEmail, BlobStoreGAE.getBlobKey(req));
         userService.addUser( registeredUser);
 
         htmlMail.sendEmail( userName, userPassword, userEmail, Email.WELCOME);
@@ -135,8 +134,7 @@ public class Registration {
 
         int authKey = loginSession.generateAuthorizationKey();
 
-//        loginSession.addUser(authKey, userName); //todo update
-        loginSession.addUser(authKey, registeredUser); //todo update
+        loginSession.addUser(authKey, registeredUser);
 
         return "redirect:/welcome/" + authKey;
     }

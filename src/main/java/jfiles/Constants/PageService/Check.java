@@ -9,6 +9,7 @@ public interface Check {
     int USER_CONTAIN_SPACE        = 2;
     int USER_LENGTH               = 3;
     int USER_MISSING_IN_DATABASE  = 4;
+    int USER_MISSING_IN_DATABASE_2= 18;
     int USER_ROLE                 = 5;
     int USER_ALREADY_REGISTERED   = 6;
 

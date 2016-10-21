@@ -1,7 +1,7 @@
 package jfiles.service;
 
 import jfiles.Constants.PageService.Check;
-import jfiles.Constants.Role;
+import jfiles.Constants.Roles;
 import jfiles.model.UserEntity;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -74,6 +74,10 @@ public class PageService<T> {
                 return loginEntity == null;
 //                return userService.getUserByName(formUserName) == null;
 
+            case Check.USER_MISSING_IN_DATABASE_2:
+//                return loginEntity == null;
+                return userService.getUserByName(formUserName) == null;
+
             case Check.VS_USER_MISSING_IN_DB:
                 return userService.getUserByName(formVsUserName) == null;
 
@@ -99,9 +103,9 @@ public class PageService<T> {
 //                return userService.getUserByName(formUserName) != null;
 
             case Check.USER_ROLE:
-                return !(formUserRole.contentEquals( Role.USER_NAME) ||
-                        formUserRole.contentEquals( Role.ADMIN_NAME) ||
-                        formUserRole.contentEquals( Role.SUPER_ADMIN_NAME));
+                return !(formUserRole.contentEquals(Roles.USER.text()) ||
+                         formUserRole.contentEquals(Roles.ADMIN.text()) ||
+                         formUserRole.contentEquals(Roles.SUPER_ADMIN.text()));
 
             case Check.PASSWORD_BLANK:
                 return formUserPassword.length() == 0;

@@ -14,8 +14,8 @@ import java.util.List;
 @Service("GamePool")
 public class GamePool {
 
-//    @Autowired
-//    private UserService userService;
+    @Autowired
+    private UserService userService;
 
     @Autowired
     private StatisticService statisticService;
@@ -129,7 +129,9 @@ public class GamePool {
         gameSession.setPlayer1( player1);
         gameSession.setPlayer2( player2);
         gameSession.setTurn1(true);
-//        gameSession.setPlayer2BlobKey( userService.getUserByName(player2).getBlobKey());
+
+        gameSession.setBlobPlayer1( userService.getUserByName(player1).getBlobKey());
+        gameSession.setBlobPlayer2( userService.getUserByName(player2).getBlobKey());
 
         lookingForGame.remove(player1);
         lookingForGame.remove(player2);

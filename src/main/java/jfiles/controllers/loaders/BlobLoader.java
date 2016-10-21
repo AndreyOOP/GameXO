@@ -36,9 +36,9 @@ public class BlobLoader {
     @RequestMapping("/blobVsPlayer/{name}")
     public void blob(@PathVariable("name") String name, HttpServletResponse res) throws IOException {
 
-        String blobKey = userService.getUserByName(name).getBlobKey();
+//        String blobKey = userService.getUserByName(name).getBlobKey();
 
-        BlobStoreGAE.serveBlob(blobKey, res);
+        BlobStoreGAE.serveBlob(name, res);
     }
 
 }

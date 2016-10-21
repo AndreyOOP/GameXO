@@ -22,6 +22,9 @@ public class GameSession {
     private int player2Status;
     private Boolean isGameOver = false;
 
+    private String blobPlayer1;
+    private String blobPlayer2;
+
     public GameSession(){}
 
     public GameSession(StatisticService statisticService){
@@ -263,4 +266,19 @@ public class GameSession {
         return player2Status;
     }
 
+    public String getBlobPlayer1() {
+        return blobPlayer1;
+    }
+
+    public void setBlobPlayer1(String blobPlayer1) {
+        this.blobPlayer1 = blobPlayer1;
+    }
+
+    public String getBlobPlayer2() {
+        return blobPlayer2;
+    }
+
+    public void setBlobPlayer2(String blobPlayer2) {
+        this.blobPlayer2 = blobPlayer2;
+    }
 }

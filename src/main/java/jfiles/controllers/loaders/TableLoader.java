@@ -1,6 +1,5 @@
 package jfiles.controllers.loaders;
 
-import jfiles.Constants.Role;
 import jfiles.Constants.Roles;
 import jfiles.Constants.Table;
 import jfiles.service.SessionLogin.LoginSession;

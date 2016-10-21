@@ -2,7 +2,8 @@ package jfiles.controllers;
 
 import jfiles.Constants.Page;
 import jfiles.Constants.PageService.Tag;
-import jfiles.Constants.Role;
+
+import jfiles.Constants.Roles;
 import jfiles.model.StatisticEntity;
 import jfiles.service.Game.GamePool;
 import jfiles.service.Game.GameSession;
@@ -40,8 +41,9 @@ public class AdminStatusTable {
                               @RequestParam(value = Tag.ADMIN_STATISTIC_CURRENT_PAGE, required = false) int currentPage){
 
         Session session = loginSession.getSession(authKey);
+        int role = session.getUserRole();
 
-        if( !(session.getUserRole() == Role.ADMIN || session.getUserRole() == Role.SUPER_ADMIN))
+        if( !(role == Roles.ADMIN.id() || role == Roles.SUPER_ADMIN.id()))
             return Page.ERROR; //todo change to auth error
 
         //prepare list user name <-> status (online/looking for game)
@@ -75,7 +77,6 @@ public class AdminStatusTable {
                 .add( Tag.MAIN_MENU_ADMIN_STATUS_PAGE   , true)
                 .add( Tag.MAIN_MENU_AUTH_KEY            , authKey)
 
-//                .add( Tag.ADMIN_STATUS_RECORDS_LIST , tableUtil.getOnlineUsers(currentPage))
                 .add( Tag.ADMIN_STATUS_RECORDS_LIST    , statusTable.list())
                 .add( Tag.ADMIN_STATUS_CURRENT_PAGE    , currentPage)
                 .add( Tag.TABLE_FROM_PAGE              , tableUtil.getFromPage())
@@ -94,16 +95,17 @@ public class AdminStatusTable {
                                @RequestParam("tableCurrentPage") String tableCurrentPage){
 
         Session session = loginSession.getSession(authKey);
+        int role = session.getUserRole();
 
-        if( !(session.getUserRole() == Role.ADMIN || session.getUserRole() == Role.SUPER_ADMIN))
+        if( !(role == Roles.ADMIN.id() || role == Roles.SUPER_ADMIN.id()))
             return Page.ERROR; //todo change to auth error
 
         loginSession.removeUserByName( deleteRecordId);
 
         page.setRedirectAttributes( redirectAttributes);
 
-        page.addRedirect( Tag.MAIN_MENU_AUTH_KEY           , authKey)
-                .addRedirect( Tag.ADMIN_STATUS_CURRENT_PAGE , tableCurrentPage);
+        page.addRedirect( Tag.MAIN_MENU_AUTH_KEY        , authKey)
+            .addRedirect( Tag.ADMIN_STATUS_CURRENT_PAGE , tableCurrentPage);
 
         return "redirect:" + Page.ADMIN_STATUS_MENU;
     }
@@ -116,11 +118,11 @@ public class AdminStatusTable {
                                @RequestParam("tableCurrentPage") String tableCurrentPage){
 
         Session session = loginSession.getSession(authKey);
+        int role = session.getUserRole();
 
-        if( !(session.getUserRole() == Role.ADMIN || session.getUserRole() == Role.SUPER_ADMIN))
+        if( !(role == Roles.ADMIN.id() || role == Roles.SUPER_ADMIN.id()))
             return Page.ERROR; //todo change to auth error
 
-        //loginSession.removeUserByName( deleteRecordId); game session
         try {
             gamePool.removeUser( deleteRecordId);
         } catch (Exception e) {
@@ -129,8 +131,8 @@ public class AdminStatusTable {
 
         page.setRedirectAttributes( redirectAttributes);
 
-        page.addRedirect( Tag.MAIN_MENU_AUTH_KEY           , authKey)
-                .addRedirect( Tag.ADMIN_STATUS_CURRENT_PAGE , tableCurrentPage);
+        page.addRedirect( Tag.MAIN_MENU_AUTH_KEY        , authKey)
+            .addRedirect( Tag.ADMIN_STATUS_CURRENT_PAGE , tableCurrentPage);
 
         return "redirect:" + Page.ADMIN_STATUS_MENU;
     }
@@ -140,6 +142,5 @@ public class AdminStatusTable {
 
         return Page.ADMIN_STATUS;
     }
-
 
 }

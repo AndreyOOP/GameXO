@@ -199,4 +199,30 @@ public class TableUtil {
             }
         }
     }
+
+    public StatisticEntity getById(int id, List<StatisticEntity> table){
+
+        for(StatisticEntity se: table){
+            if( se.getId() == id){
+                return se;
+            }
+        }
+        return null;
+    }
+
+    public void updateById(int id, String vsUserName, int win, int loose, int even, List<StatisticEntity> table){
+
+        for(StatisticEntity se: table){
+            if( se.getId() == id){
+
+                se.setVsUser(vsUserName);
+                se.setWin(win);
+                se.setLoose(loose);
+                se.setEven(even);
+
+                return;
+            }
+        }
+    }
+
 }
