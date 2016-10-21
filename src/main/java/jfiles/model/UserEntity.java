@@ -15,6 +15,16 @@ public class UserEntity {
     private String email;
     private String blobKey;
 
+    public UserEntity(){}
+
+    public UserEntity(String name, String password, int role, String email, String blobKey) {
+        this.name = name;
+        this.password = password;
+        this.role = role;
+        this.email = email;
+        this.blobKey = blobKey;
+    }
+
     @Id
     @Column(name = "name")
     public String getName() {

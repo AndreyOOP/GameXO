@@ -36,7 +36,7 @@ public class BlobStoreGAE {
 
                 blobstoreService.delete( blobs.get("avatarFile").get(0)); //remove 0 blob
 
-                return defaultPicture; //todo, it is possible to get default value from database, so it is possible to change picture without server restart
+                return defaultPicture; //todo, it is possible to id default value from database, so it is possible to change picture without server restart
             }
 
             return blobs.get("avatarFile").get(0).getKeyString();

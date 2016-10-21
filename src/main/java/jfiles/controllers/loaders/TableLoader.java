@@ -1,6 +1,7 @@
 package jfiles.controllers.loaders;
 
 import jfiles.Constants.Role;
+import jfiles.Constants.Roles;
 import jfiles.Constants.Table;
 import jfiles.service.SessionLogin.LoginSession;
 import jfiles.service.TableUtil;
@@ -32,7 +33,7 @@ public class TableLoader {
 
         int userRole = loginSession.getSession(authKey).getUserRole();
 
-        if ( userRole == Role.SUPER_ADMIN || userRole == Role.ADMIN ){
+        if ( userRole == Roles.SUPER_ADMIN.id() || userRole == Roles.ADMIN.id() ){
 
             try {
 

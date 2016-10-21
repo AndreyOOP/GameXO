@@ -28,7 +28,7 @@ public class StatisticDAO {
 
 //        Session session = sessionFactory.getCurrentSession();
 
-//        return (StatisticEntity) session.get(StatisticEntity.class, id);
+//        return (StatisticEntity) session.id(StatisticEntity.class, id);
         return (StatisticEntity) entityManager.find(StatisticEntity.class, id);
     }
 

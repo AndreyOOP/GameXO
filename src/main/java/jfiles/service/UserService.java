@@ -66,6 +66,11 @@ public class UserService{
         userDAO.remove(user);
     }
 
+    /*@Transactional
+    public void remove(UserEntity user) {
+        userDAO.remove(user);
+    }*/
+
     @Transactional
     public void update(UserEntity user) {
         userDAO.update(user);

@@ -6,13 +6,11 @@ import jfiles.model.UserEntity;
 import jfiles.service.SessionLogin.LoginSession;
 import jfiles.service.SessionLogin.Session;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
-import java.util.concurrent.ConcurrentHashMap;
 
 /**Service for preparation <i>Statistic</i> and <i>User</i> tables.<br>
  * It prepares page list (e.g << 2 3 4 6 >> ) which is shown under table . List created based on displayed page number*/
@@ -32,11 +30,10 @@ public class TableUtil {
     private StatisticService statisticService;
 
     @Autowired
-//    @Qualifier(value = "UserServiceBean")
     private UserService       userService;
 
-    @Autowired
-    private LoginSession loginSession;
+//    @Autowired
+//    private LoginSession loginSession;
 
 
     public TableUtil(){}
@@ -55,26 +52,26 @@ public class TableUtil {
     }
 
     /**Extracts <i>User</i> records which should be displayed on page with number 'page'*/
-    public List<UserEntity> getUserRecords(int page){
-
-        List<UserEntity> allRecords = userService.getAllUsers();
-
-        return allRecords.subList( getFromLine(), getToLine());
-    }
+//    public List<UserEntity> getUserRecords(int page){
+//
+//        List<UserEntity> allRecords = userService.getAllUsers();
+//
+//        return allRecords.subList( getFromLine(), getToLine());
+//    }
 
     public List<UserEntity> getUserRecords(List<UserEntity> list){
 
         return list.subList( getFromLine(), getToLine());
     }
 
-    public List<Session> getOnlineUsers(int page){
+    /*public List<Session> getOnlineUsers(int page){
 
         //todo to update
         Collection<Session> allRecords = loginSession.getLoggedUsers().values();
         List<Session> list = new ArrayList<>(allRecords);
 
         return list.subList( getFromLine(), getToLine());
-    }
+    }*/
 
 
     /**Calculates page number <b>From</b> which should begin page list*/
@@ -119,17 +116,17 @@ public class TableUtil {
     }
 
     /**Extracts all table records from database, convert it to .csv format*/
-    public byte[] prepareTable(int tableName){
+    public byte[] prepareTable(int tableId){
 
         List<Object> records = new ArrayList<Object>();
         StringBuilder table  = new StringBuilder();
 
-        if(tableName == Table.STATISCTIC){
+        if(tableId == Table.STATISCTIC){
 
             records = (List)statisticService.getAllRecords();
             table.append("Id;User;VsUser;Win;Loose;Even\n");
 
-        } else if (tableName == Table.USER){
+        } else if (tableId == Table.USER){
 
             records = (List)userService.getAllUsers();
             table.append("Name;Password;Role;Email\n");
@@ -159,5 +156,47 @@ public class TableUtil {
         if (to >= linesInTable) to = linesInTable;
 
         return to;
+    }
+
+    public void remove(String name, List<UserEntity> table){
+
+        for(UserEntity ue: table){
+            if( ue.getName().contentEquals(name)){
+                table.remove(ue);
+                return;
+            }
+        }
+    }
+
+//    public void remove(UserEntity entity, List<UserEntity> table){
+//
+//        table.remove(entity);
+//    }
+
+    public UserEntity getByName(String name, List<UserEntity> table){
+
+        for(UserEntity ue: table){
+            if( ue.getName().contentEquals(name)){
+                return ue;
+            }
+        }
+
+        return null;
+    }
+
+    public void update(String name, String userPassword, String userEmail, String blobKey, int userRole, List<UserEntity> table){
+
+        for(UserEntity ue: table){
+
+            if( ue.getName().contentEquals(name)){
+
+                ue.setPassword(userPassword);
+                ue.setEmail(userEmail);
+                ue.setRole( userRole);
+                ue.setBlobKey(blobKey);
+
+                return;
+            }
+        }
     }
 }

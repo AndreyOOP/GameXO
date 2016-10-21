@@ -31,10 +31,10 @@
 
                 <label for="inputRole" class="col-md-3 control-label">Role</label>
                 <div class="col-md-9" >
-                    <select class="form-control" id="inputRole" name="userRole" value="${SavedRole}">
+                    <select class="form-control" id="inputRole" name="userRole" value=${SavedRole}>
                         <option>User</option>
-                        <option>Admin</option>
-                        <option>Super_Admin</option>
+                        <option <c:if test="${SavedRole eq 202}" >selected</c:if>>Admin</option>
+                        <option <c:if test="${SavedRole eq 303}" >selected</c:if>>Super_Admin</option>
                     </select>
                     <span class="help-block">${ErrorMessage_UserRole}</span>
                 </div>

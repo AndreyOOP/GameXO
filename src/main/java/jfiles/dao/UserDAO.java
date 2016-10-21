@@ -32,6 +32,13 @@ public class UserDAO{
         entityManager.remove(ue);
     }
 
+    public void remove(UserEntity user) {
+
+        UserEntity ue = entityManager.find(UserEntity.class, user);
+
+        entityManager.remove(user);
+    }
+
     public void update(UserEntity user) {
 
         entityManager.merge(user);

@@ -5,6 +5,7 @@ import jfiles.Constants.PageService.Check;
 import jfiles.Constants.PageService.Message;
 import jfiles.Constants.PageService.Tag;
 import jfiles.Constants.Role;
+import jfiles.Constants.Roles;
 import jfiles.model.StatisticEntity;
 import jfiles.model.UserEntity;
 import jfiles.service.*;
@@ -48,7 +49,7 @@ public class AdminStatisticTable {
 
         Session session = loginSession.getSession(authKey);
 
-        if( !(session.getUserRole() == Role.ADMIN || session.getUserRole() == Role.SUPER_ADMIN))
+        if( !(session.getUserRole() == Roles.ADMIN.id() || session.getUserRole() == Roles.SUPER_ADMIN.id()))
             return Page.ERROR;
 
         if ( session.getStatisticEntities() == null) {

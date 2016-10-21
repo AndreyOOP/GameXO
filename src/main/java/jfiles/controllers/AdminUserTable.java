@@ -9,12 +9,10 @@ import jfiles.service.*;
 import jfiles.service.SessionLogin.LoginSession;
 import jfiles.service.SessionLogin.Session;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import javax.servlet.http.HttpServletRequest;
@@ -53,15 +51,18 @@ public class AdminUserTable {
                              @RequestParam int tableCurrentPage){
 
         Session session = loginSession.getSession(authKey);
+        int     role    = session.getUserRole();
 
-        if( !(session.getUserRole() == Role.ADMIN || session.getUserRole() == Role.SUPER_ADMIN))
+        if( !(role == Roles.ADMIN.id() || role == Roles.SUPER_ADMIN.id()))
             return Page.ERROR;
 
         if ( session.getUserEntities() == null) {
             session.setUserEntities( userService.getAllUsers());
         }
 
-        tableUtil.setParam( tableCurrentPage, session.getUserEntities().size());
+        List<UserEntity> cachedTable = session.getUserEntities();
+
+        tableUtil.setParam( tableCurrentPage, cachedTable.size());
 
         page.setModel(model)
             .setUserService(userService)
@@ -72,7 +73,7 @@ public class AdminUserTable {
             .add( Tag.MAIN_MENU_IS_ADMIN_USER_PAGE , true)
 
             .add( Tag.ADMIN_USER_CURRENT_PAGE , tableCurrentPage)
-            .add( Tag.ADMIN_USER_LIST         , tableUtil.getUserRecords( session.getUserEntities()))
+            .add( Tag.ADMIN_USER_LIST         , tableUtil.getUserRecords( cachedTable))
             .add( Tag.TABLE_FROM_PAGE         , tableUtil.getFromPage())
             .add( Tag.TABLE_TO_PAGE           , tableUtil.getToPage())
             .add( Tag.TABLE_PREVIOUS          , tableUtil.getPrev())
@@ -91,17 +92,18 @@ public class AdminUserTable {
 
         Session session = loginSession.getSession(authKey);
 
-        if( session.getUserRole() != Role.SUPER_ADMIN)
+        if( session.getUserRole() != Roles.SUPER_ADMIN.id())
             return Page.ERROR;
 
         if( !deleteUser.contentEquals( session.getUserName())){ //to avoid yourself deletion
 
+            List<UserEntity> cachedTable = session.getUserEntities();
+
             userService.remove( deleteUser);
+            tableUtil.remove(deleteUser, cachedTable);
         }else{
             return Page.ERROR;
         }
-
-        session.setUserEntities(null); //this will trigger update
 
         page.setRedirectAttributes(redirectAttributes)
                 .addRedirect( Tag.MAIN_MENU_AUTH_KEY      , authKey)
@@ -120,15 +122,22 @@ public class AdminUserTable {
                                 @RequestParam int tableCurrentPage){
 
 
-        int role = loginSession.getSession(authKey).getUserRole();
+        Session session = loginSession.getSession(authKey);
+        int     role    = session.getUserRole();
 
-        if( !(role == Role.ADMIN || role == Role.SUPER_ADMIN))
+        List<UserEntity> cachedTable = session.getUserEntities();
+
+        if( !(role == Roles.ADMIN.id() || role == Roles.SUPER_ADMIN.id()))
             return Page.ERROR;
 
-        String newPassword = passwordGenerator.generate();
-        String email       = userService.getUserByName(resetUser).getEmail();
+        UserEntity entityForUpdate = tableUtil.getByName(resetUser, cachedTable);
 
-        userService.updateUserInDatabase(resetUser, newPassword);
+        String email = entityForUpdate.getEmail();
+
+        String newPassword = passwordGenerator.generate();
+
+        entityForUpdate.setPassword(newPassword);
+        userService.update(entityForUpdate);
 
         htmlMail.sendEmail( resetUser, newPassword, email, Email.PASSWORD_RESET);
 
@@ -155,10 +164,12 @@ public class AdminUserTable {
 
         Session session = loginSession.getSession(authKey);
 
-        if( session.getUserRole() != Role.SUPER_ADMIN)
+        List<UserEntity> cachedTable = session.getUserEntities();
+
+        if( session.getUserRole() != Roles.SUPER_ADMIN.id())
             return Page.ERROR;
 
-        tableUtil.setParam(tableCurrentPage, session.getUserEntities().size());
+        tableUtil.setParam(tableCurrentPage, cachedTable.size());
 
         page.setModel(model)
             .setRedirectAttributes(redirectAttributes)
@@ -177,12 +188,12 @@ public class AdminUserTable {
             .add( Tag.TABLE_PREVIOUS               , tableUtil.getPrev())
             .add( Tag.TABLE_NEXT                   , tableUtil.getNext())
 
-            .add( Tag.ADMIN_USER_LIST            , tableUtil.getUserRecords( session.getUserEntities()))
+            .add( Tag.ADMIN_USER_LIST            , tableUtil.getUserRecords( cachedTable))
             .add( Tag.ADMIN_USER_SHOW_ADD_MENU   , true)
             .add( Tag.ADMIN_USER_CURRENT_PAGE    , tableCurrentPage)
             .add( Tag.ADMIN_USER_SAVED_NAME      , formuserName)
             .add( Tag.ADMIN_USER_SAVED_PASSWORD  , userPassword)
-            .add( Tag.ADMIN_USER_SAVED_USER_ROLE , userRole)
+            .add( Tag.ADMIN_USER_SAVED_USER_ROLE , Roles.id(userRole).id())
             .add( Tag.ADMIN_USER_SAVED_EMAIL     , userEmail);
 
 
@@ -226,10 +237,12 @@ public class AdminUserTable {
         }
         //endregion
 
-        //todo to add avatar upload support
-        userService.addUser(formuserName, userPassword, getRoleId( userRole), userEmail, BlobStoreGAE.getBlobKey(req));
 
-        session.setUserEntities(null);
+        int    role    = Roles.id(userRole).id(); //id role id by name
+        String blobKey = BlobStoreGAE.getBlobKey(req);
+
+        userService.addUser(formuserName, userPassword, role, userEmail, blobKey);
+        cachedTable.add( new UserEntity(formuserName, userPassword, role, userEmail, blobKey));
 
         page.addRedirect( Tag.MAIN_MENU_AUTH_KEY      , authKey)
             .addRedirect( Tag.ADMIN_USER_CURRENT_PAGE , tableCurrentPage);
@@ -248,14 +261,15 @@ public class AdminUserTable {
 
         Session session = loginSession.getSession(authKey);
 
-        if(session.getUserRole() != Role.SUPER_ADMIN){
+        List<UserEntity> cachedTable = session.getUserEntities();
+
+        if(session.getUserRole() != Roles.SUPER_ADMIN.id()){
             return Page.ERROR;
         }
 
-        tableUtil.setParam(tableCurrentPage, session.getUserEntities().size());
+        tableUtil.setParam(tableCurrentPage, cachedTable.size());
 
-        UserEntity editUserEnt = getUserByName(editUser, session.getUserEntities());
-//        UserEntity editUserEnt = userService.getUserByName(editUser);
+        UserEntity editUserEnt = tableUtil.getByName( editUser, cachedTable);
 
         page.setModel(model)
 
@@ -269,13 +283,13 @@ public class AdminUserTable {
                 .add( Tag.TABLE_PREVIOUS  , tableUtil.getPrev())
                 .add( Tag.TABLE_NEXT      , tableUtil.getNext())
 
-                .add( Tag.ADMIN_USER_LIST            , tableUtil.getUserRecords( session.getUserEntities()))
+                .add( Tag.ADMIN_USER_LIST            , tableUtil.getUserRecords( cachedTable))
                 .add( Tag.ADMIN_USER_SHOW_EDIT_MENU  , true)
                 .add( Tag.ADMIN_USER_CURRENT_PAGE    , tableCurrentPage)
 
                 .add( Tag.ADMIN_USER_SAVED_NAME      , editUser)
                 .add( Tag.ADMIN_USER_SAVED_PASSWORD  , editUserEnt.getPassword())
-                .add( Tag.ADMIN_USER_SAVED_USER_ROLE , getRoleName(editUserEnt.getRole()))
+                .add( Tag.ADMIN_USER_SAVED_USER_ROLE , editUserEnt.getRole())
                 .add( Tag.ADMIN_USER_SAVED_EMAIL     , editUserEnt.getEmail());
 
         return Page.MAIN_MENU;
@@ -296,14 +310,15 @@ public class AdminUserTable {
 
         Session session = loginSession.getSession(authKey);
 
-        String blobKey = getUserByName(editName, session.getUserEntities()).getBlobKey();
-//        String blobKey  = userService.getUserByName(editName).getBlobKey();
+        List<UserEntity> cachedTable = session.getUserEntities();
+        UserEntity       editEntity  = tableUtil.getByName(editName, cachedTable);
+        String           blobKey     = editEntity.getBlobKey();
 
-        if( session.getUserRole() != Role.SUPER_ADMIN){
+        if( session.getUserRole() != Roles.SUPER_ADMIN.id()){
             return Page.ERROR;
         }
 
-        tableUtil.setParam(tableCurrentPage, session.getUserEntities().size());
+        tableUtil.setParam(tableCurrentPage, cachedTable.size());
 
         page.setModel(model)
                 .setUserName(editName)
@@ -321,13 +336,13 @@ public class AdminUserTable {
                 .add( Tag.TABLE_PREVIOUS  , tableUtil.getPrev())
                 .add( Tag.TABLE_NEXT      , tableUtil.getNext())
 
-                .add( Tag.ADMIN_USER_LIST            , tableUtil.getUserRecords( session.getUserEntities()))
+                .add( Tag.ADMIN_USER_LIST            , tableUtil.getUserRecords( cachedTable))
                 .add( Tag.ADMIN_USER_SHOW_EDIT_MENU  , true)
                 .add( Tag.ADMIN_USER_CURRENT_PAGE    , tableCurrentPage)
 
                 .add( Tag.ADMIN_USER_SAVED_NAME      , editName)
                 .add( Tag.ADMIN_USER_SAVED_PASSWORD  , userPassword)
-                .add( Tag.ADMIN_USER_SAVED_USER_ROLE , userRole)
+                .add( Tag.ADMIN_USER_SAVED_USER_ROLE , Roles.id(userRole).id())
                 .add( Tag.ADMIN_USER_SAVED_EMAIL     , userEmail);
 
 
@@ -360,9 +375,11 @@ public class AdminUserTable {
             blobKey = BlobStoreGAE.getBlobKey(req);
         }
 
-        userService.updateUserInDatabase(editName, userPassword, userEmail, blobKey, getRoleId(userRole));
+        int role = Roles.id(userRole).id();
+        userService.updateUserInDatabase(editName, userPassword, userEmail, blobKey, role);
 
-        session.setUserEntities(null);
+        tableUtil.update(editName, userPassword, userEmail, blobKey, role, cachedTable);
+
 
         page.addRedirect( Tag.MAIN_MENU_AUTH_KEY      , authKey)
             .addRedirect( Tag.ADMIN_USER_CURRENT_PAGE , tableCurrentPage);
@@ -391,52 +408,4 @@ public class AdminUserTable {
         return Page.ADMIN_USER_EDIT;
     }
 
-    private int getRoleId(String roleName){
-
-        if( roleName.contentEquals( Role.USER_NAME))
-            return Role.USER;
-
-        if( roleName.contentEquals( Role.ADMIN_NAME))
-            return Role.ADMIN;
-
-        if( roleName.contentEquals( Role.SUPER_ADMIN_NAME))
-            return Role.SUPER_ADMIN;
-
-        return Role.USER;
-    }
-
-    private String getRoleName(int roleId){
-
-        if( roleId == Role.USER)
-            return Role.USER_NAME;
-
-        if( roleId == Role.ADMIN)
-            return Role.ADMIN_NAME;
-
-        if( roleId == Role.SUPER_ADMIN)
-            return Role.SUPER_ADMIN_NAME;
-
-        return Role.USER_NAME;
-    }
-
-    private UserEntity getUserByName(String name, List<UserEntity> list){
-
-        UserEntity editUserEnt = new UserEntity();
-
-        for(UserEntity u: list){
-
-            if( u.getName().contentEquals( name)){
-
-                editUserEnt.setName( u.getName());
-                editUserEnt.setPassword( u.getPassword());
-                editUserEnt.setEmail( u.getEmail());
-                editUserEnt.setRole( u.getRole());
-                editUserEnt.setBlobKey( u.getBlobKey());
-
-                return editUserEnt;
-            }
-        }
-
-        return null;
-    }
 }
