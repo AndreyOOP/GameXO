@@ -9,6 +9,7 @@ import jfiles.service.Game.GameSession;
 import jfiles.service.PageService;
 import jfiles.service.SessionLogin.LoginSession;
 import jfiles.service.SessionLogin.Session;
+import jfiles.service.StatisticService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -26,6 +27,9 @@ public class PlayGame {
 
     @Autowired
     private GamePool gamePool;
+
+    @Autowired
+    private StatisticService statisticService;
     //endregion
 
     /**Looking for game or show current game session (GamePool.getGame)<br>
@@ -50,6 +54,8 @@ public class PlayGame {
             .add( Tag.MAIN_MENU_IS_FIND_GAME , true)
             .add( Tag.GAME_GAME_FOUND        , false);
 
+
+
         GameSession gameSession = gamePool.getGame( session.getUserName());
 
         if(gameSession != null){
@@ -62,6 +68,9 @@ public class PlayGame {
                 .add( Tag.GAME_PLAYER_2   , gameSession.getPlayer2())
                 .add( Tag.GAME_PICTURE_1  , gameSession.getBlobPlayer1())
                 .add( Tag.GAME_PICTURE_2  , gameSession.getBlobPlayer2());
+
+//            gameSession.setRefresh(false);
+//            page.add( "refresh"     , false);
 
             String user = session.getUserName();
 
@@ -77,15 +86,64 @@ public class PlayGame {
 
                 page.add( Tag.GAME_MESSAGE, Message.GAME_OPPONENT_TURN);
 
-                if( gameSession.isPlayer1Turn(user))
+                if( gameSession.isPlayer1Turn(user)){
                     page.add( Tag.GAME_MESSAGE, Message.GAME_YOUR_TURN);
+                    gameSession.setRefreshP1(false);
+                }
 
-                if( gameSession.isPlayer2Turn(user))
+                if (gameSession.isPlayer2Turn(user)) {
                     page.add( Tag.GAME_MESSAGE, Message.GAME_YOUR_TURN);
+                    gameSession.setRefreshP2(false);
+                }
+
             }
         }
 
         return Page.MAIN_MENU;
+    }
+
+    @RequestMapping(value = "/loadtableonly", method = RequestMethod.GET)
+    public String loadGameMatrix(Model model, @RequestParam int authKey){
+
+        PageService page = new PageService().setModel(model);
+
+        Session session = loginSession.getSession(authKey);
+        GameSession gameSession = gamePool.getGame( session.getUserName());
+
+        if(gameSession == null){
+
+            page.add( "refresh1"     , true);
+            page.add( "refresh2"     , true);
+
+        }else{
+
+            if(gameSession.getRefreshP1()){
+                page.add( "refresh1"     , true);
+            } else {
+                page.add( "refresh1"     , false);
+            }
+
+            if(gameSession.getRefreshP2()){
+                page.add( "refresh2"     , true);
+            } else {
+                page.add( "refresh2"     , false);
+            }
+        }
+
+
+
+
+//        if( gameSession.isPlayer1Turn(user))
+//            page.add( "refresh"     , true);
+//        else
+//            page.add( "refresh"     , false);
+//
+//        if( gameSession.isPlayer2Turn(user))
+//            page.add( "refresh"     , true);
+//        else
+//            page.add( "refresh"     , false);
+
+        return "authorized/menu/matrix";
     }
 
     /**If game is in process - define active player, send turn information (position) to server, make 'win' check*/
@@ -118,6 +176,8 @@ public class PlayGame {
                     gameSession.setCellValue( iPos, jPos, XO.X);
                     gameSession.setTurn1(false);
                     gameSession.checkIfWinnerAndUpdateDB(XO.X);
+                    gameSession.setRefresh(true);
+//                    page.add( "refresh"     , true);
                 }
             }
 
@@ -128,6 +188,8 @@ public class PlayGame {
                     gameSession.setCellValue( iPos, jPos, XO.O);
                     gameSession.setTurn1(true);
                     gameSession.checkIfWinnerAndUpdateDB(XO.O);
+                    gameSession.setRefresh(true);
+//                    page.add( "refresh"     , true);
                 }
             }
         }
@@ -137,6 +199,7 @@ public class PlayGame {
             .addRedirect( Tag.MAIN_MENU_AUTH_KEY, authKey);
 
         return "redirect:" + Page.GAME_FIND;
+//        return "redirect:" + "/loadtableonly";
     }
 
     /**Method of <i>New Game</i> button which appears after finishing of the previous game<br>
@@ -184,7 +247,7 @@ public class PlayGame {
 
     @RequestMapping(value = "/endgame")
     public String endGame(Model model,
-                               @RequestParam int authKey){
+                          @RequestParam int authKey){
 
         PageService page = new PageService();
 
@@ -198,6 +261,9 @@ public class PlayGame {
             gameSession.setIsGameOver(true);
             gameSession.setPlayer1Status(XO.LOOSE);
             gameSession.setPlayer2Status(XO.WIN);
+
+            statisticService.addWin(user, gameSession.getPlayer2());
+            statisticService.addLoose(gameSession.getPlayer2(), user);
         }
 
         if( gameSession.getPlayer2().contentEquals(user)){
@@ -205,6 +271,9 @@ public class PlayGame {
             gameSession.setIsGameOver(true);
             gameSession.setPlayer2Status(XO.LOOSE);
             gameSession.setPlayer1Status(XO.WIN);
+
+            statisticService.addWin(gameSession.getPlayer1(), user);
+            statisticService.addLoose(user, gameSession.getPlayer1());
         }
 
         try {
@@ -212,11 +281,6 @@ public class PlayGame {
         } catch (Exception e) {
             e.printStackTrace();
         }
-        /*try {
-            gamePool.removeUser( session.getUserName());
-        } catch (Exception e) {
-            e.printStackTrace();
-        }*/
 
         page.setModel(model)
                 .add( Tag.MAIN_MENU_USER_NAME    , session.getUserName())

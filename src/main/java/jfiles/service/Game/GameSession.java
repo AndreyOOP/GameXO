@@ -22,6 +22,10 @@ public class GameSession {
     private int player2Status;
     private Boolean isGameOver = false;
 
+    private Boolean refresh = true;
+    private Boolean refreshP1 = true;
+    private Boolean refreshP2 = true;
+
     private String blobPlayer1;
     private String blobPlayer2;
 
@@ -292,5 +296,29 @@ public class GameSession {
 
     public void setBlobPlayer2(String blobPlayer2) {
         this.blobPlayer2 = blobPlayer2;
+    }
+
+    public Boolean getRefresh() {
+        return refresh;
+    }
+
+    public void setRefresh(Boolean refresh) {
+        this.refresh = refresh;
+    }
+
+    public Boolean getRefreshP1() {
+        return refreshP1;
+    }
+
+    public void setRefreshP1(Boolean refreshP1) {
+        this.refreshP1 = refreshP1;
+    }
+
+    public Boolean getRefreshP2() {
+        return refreshP2;
+    }
+
+    public void setRefreshP2(Boolean refreshP2) {
+        this.refreshP2 = refreshP2;
     }
 }

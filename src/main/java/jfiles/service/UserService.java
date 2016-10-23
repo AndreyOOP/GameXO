@@ -34,20 +34,6 @@ public class UserService{
     }
 
     @Transactional
-    public void addUser(String userName, String userPassword, int userRole, String userEmail, byte[] avatarFile) {
-
-        UserEntity newUser = new UserEntity();
-
-        newUser.setName     ( userName);
-        newUser.setPassword ( userPassword);
-        newUser.setAvatarPic( avatarFile);
-        newUser.setRole     ( userRole);
-        newUser.setEmail    ( userEmail);
-
-        addUser( newUser);
-    }
-
-    @Transactional
     public void addUser(String userName, String userPassword, int userRole, String userEmail, String blobKey){
 
         UserEntity newUser = new UserEntity();
@@ -66,41 +52,11 @@ public class UserService{
         userDAO.remove(user);
     }
 
-    /*@Transactional
-    public void remove(UserEntity user) {
-        userDAO.remove(user);
-    }*/
 
     @Transactional
     public void update(UserEntity user) {
         userDAO.update(user);
     }
-
-    @Transactional
-    public void updateUserInDatabase(String userName, String userPassword) {
-
-        UserEntity updateUser = getUserByName( userName);
-
-        updateUser.setPassword ( userPassword);
-
-        update( updateUser);
-    }
-
-    /*@Transactional
-    public void updateUserInDatabase(String userName, String userPassword, String userEmail, byte[] avatarFile) {
-//    public void updateUserInDatabase(String userName, String userPassword, String userEmail, MultipartFile avatarFile) {
-
-        UserEntity updateUser = getUserByName( userName);
-
-        updateUser.setPassword ( userPassword);
-
-        updateUser.setEmail    ( userEmail);
-
-//        updateUser.setAvatarPic( toBytes(avatarFile));
-        updateUser.setAvatarPic( avatarFile);
-
-        update( updateUser);
-    }*/
 
     @Transactional
     public void updateUserInDatabase(String userName, String userPassword, String userEmail, String blobKey) {

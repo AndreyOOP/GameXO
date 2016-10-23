@@ -16,4 +16,5 @@ public interface XO {
     int WIN   =  11;
     int LOOSE = -11;
     int EVEN  =  10;
+
 }

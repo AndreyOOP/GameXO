@@ -139,12 +139,6 @@ public class GamePool {
         gameSessions.add(gameSession);
     }
 
-//    @Autowired
-//    @Qualifier(value = "StatisticServiceBean")
-//    public void setStatisticService(StatisticService statisticService) {
-//        this.statisticService = statisticService;
-//    }
-
     public List<GameSession> getGameSessions(){
         return gameSessions;
     }

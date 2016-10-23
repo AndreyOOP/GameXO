@@ -10,10 +10,9 @@ public interface Message {
     String USER_NAME_CONTAIN_SPACES = "User id should not contain space";
     String USER_NAME_NOT_FOUND      = "Entered id could not be found. Please register";
     String USER_NAME_MISSING        = "User name not found";
+    String USER_ROLE_NOT_FOUND      = "This role does not exist";
 
     String WELCOME_SESSION_REMOVED  = "Previous session have been deleted";
-
-    String USER_ROLE_NOT_FOUND      = "This role does not exist";
 
     String PASSWORD_INCORRECT       = "Incorrect password";
     String PASSWORD_BLANK           = "Please enter your password";
@@ -36,6 +35,5 @@ public interface Message {
 
     String GAME_OPPONENT_TURN       = "Opponent Turn";
     String GAME_YOUR_TURN           = "Your Turn";
-
 
 }

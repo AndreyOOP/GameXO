@@ -19,7 +19,6 @@ public class Session {
     private int    userRole;
 
     private int    authKey;
-    private GameSession gameSession;
 
     private List<UserEntity> userEntities;
     private List<StatisticEntity> statisticEntities;
@@ -97,13 +96,5 @@ public class Session {
 
     public void setStatisticEntities(List<StatisticEntity> statisticEntities) {
         this.statisticEntities = statisticEntities;
-    }
-
-    public GameSession getGameSession() {
-        return gameSession;
-    }
-
-    public void setGameSession(GameSession gameSession) {
-        this.gameSession = gameSession;
     }
 }

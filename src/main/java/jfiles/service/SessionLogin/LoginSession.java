@@ -20,16 +20,6 @@ public class LoginSession {
 
     /**Create login session for user<br>
      * Add user to <i>logged user</i> list*/
-    public void addUser(int authKey, String userName){
-
-        UserEntity user = userService.getUserByName(userName);
-
-        Session session = new Session(user);
-
-        loggedUsers.put(authKey, session);
-
-    }
-
     public void addUser(int authKey, UserEntity loginEntity){
 
         Session session = new Session(loginEntity);
@@ -82,7 +72,6 @@ public class LoginSession {
         return authKey;
     }
 
-    //todo temoporary solution !
     public ConcurrentHashMap<Integer, Session> getLoggedUsers(){
         return loggedUsers;
     }

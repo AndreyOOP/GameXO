@@ -34,8 +34,6 @@ public class UserDAO{
 
     public void remove(UserEntity user) {
 
-        UserEntity ue = entityManager.find(UserEntity.class, user);
-
         entityManager.remove(user);
     }
 
@@ -46,7 +44,6 @@ public class UserDAO{
 
     public List<UserEntity> getAllUsers() {
 
-        //todo check query, why it marks as error Entity?
         List<UserEntity> list = entityManager.createQuery("SELECT U FROM UserEntity U").getResultList();
 
         return list;
@@ -54,7 +51,6 @@ public class UserDAO{
 
     public List<String> getRecordsWithEmail(String email) {
 
-        //todo check query
         List<String> emails = entityManager.createQuery("SELECT U.email FROM UserEntity U WHERE U.email = '" + email + "'").getResultList();
 
         return emails;

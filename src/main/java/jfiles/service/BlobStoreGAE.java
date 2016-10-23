@@ -62,7 +62,6 @@ public class BlobStoreGAE {
 
                 return true;
             }
-
             return false;
 
         } catch (Exception e) {
@@ -85,7 +84,6 @@ public class BlobStoreGAE {
 
                 return false;
             }
-
             return true;
 
         } catch (Exception e) {

@@ -81,7 +81,6 @@ public class UpdateProfile {
         Boolean updateAvatar   = false;
 
         pageService.setModel(model)
-                   .setUserName(userName)
                    .setFormUserName(userName)
                    .setFormUserPassword(userPassword)
                    .setFormUserEmail(userEmail)

@@ -16,12 +16,6 @@ public class StatisticService {
     @Autowired
     private StatisticDAO statisticDAO;
 
-//    public StatisticService(){}
-
-//    public void setStatisticDAO(StatisticDAO statisticDAO) {
-//        this.statisticDAO = statisticDAO;
-//    }
-
     @Transactional
     public StatisticEntity getRecordById(int id) {
         return statisticDAO.getStatisticEntryById(id);
@@ -74,11 +68,6 @@ public class StatisticService {
     @Transactional
     public void deleteRecord(int id) {
         statisticDAO.deleteRecord(id);
-    }
-
-    @Transactional
-    public void deleteRecord(StatisticEntity se) {
-        statisticDAO.deleteRecord(se);
     }
 
     /**Increment win counter for user-vsUser unique record<br>

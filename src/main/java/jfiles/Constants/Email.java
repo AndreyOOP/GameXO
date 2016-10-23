@@ -7,8 +7,4 @@ public interface Email {
     int WELCOME        = 0;
     int PASSWORD_RESET = 1;
     int UPDATE         = 2;
-
-//    String FROM = "xo.pass.service@gmail.com";
-    String FROM = "gamexo-gae@appspot.gserviceaccount.com";
-//    gamexo-gae@appspot.gserviceaccount.com
 }

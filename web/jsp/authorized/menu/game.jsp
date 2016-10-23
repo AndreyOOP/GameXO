@@ -20,6 +20,8 @@
         <tr>
             <td> <img src="/blobVsPlayer/${key1}" /> &nbsp; &nbsp; &nbsp; </td>
             <td>
+                <%--<iframe id="x" src="/loadtableonly?authKey=${authKey}"/> ></iframe>--%>
+
                 <table border="1" align="center">
                     <c:forEach var="i" begin="0" end="${matrixSize-1}" >
                         <tr>
@@ -39,6 +41,7 @@
                         </tr>
                     </c:forEach>
                 </table>
+
             </td>
             <td> &nbsp; &nbsp; &nbsp; <img src="/blobVsPlayer/${key2}" /> </td>
         </tr>
@@ -46,6 +49,12 @@
     <br>
     <h1 align="center">${message}</h1>
 </c:if>
+
+<%--add iframe with refresh--%>
+<%--<div style="display: none">--%>
+    <iframe id="x" src="/loadtableonly?authKey=${authKey}"/> ></iframe>
+<%--</div>--%>
+
 
 <c:if test="${youWin eq true}">
     <h1 align="center">Victory!</h1>
@@ -86,17 +95,25 @@
 </div>
 
 <script>
-    
+
     function autoRefresh() {
-        window.location.reload();
+        if(document.getElementById('x').contentWindow.document.getElementById('z1').firstChild.textContent == "true") {
+            window.location.reload();
+        }
+        if(document.getElementById('x').contentWindow.document.getElementById('z2').firstChild.textContent == "true") {
+            window.location.reload();
+        }
     }
     setInterval('autoRefresh()', 2000)
-    
+
     function setValue(i, j){
 
         document.getElementById("turnI").value = i;
         document.getElementById("turnJ").value = j;
+
         document.getElementById("turnForm").submit();
+
+        <%--var posting = $.post('/turn', {authKey:${authKey}}, function(data){alert(data)});--%>
 
     }
 

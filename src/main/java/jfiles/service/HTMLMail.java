@@ -109,16 +109,8 @@ public class HTMLMail {
         return "";
     }
 
-    public String getFromAddress() {
-        return fromAddress;
-    }
-
     public void setFromAddress(String fromAddress) {
         this.fromAddress = fromAddress;
-    }
-
-    public String getFromText() {
-        return fromText;
     }
 
     public void setFromText(String fromText) {

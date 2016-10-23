@@ -23,6 +23,7 @@ public interface Table {
     /**Name of "User" table .csv file which appears during download*/
     String USER_FILE_NAME      = "user_table.csv";
 
+    /**For status table*/
     String ONLINE  = "online";
     String IN_GAME = "playing";
 }

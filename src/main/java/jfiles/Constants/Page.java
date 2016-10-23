@@ -9,7 +9,7 @@ public interface Page {
 
     String MAIN_MENU            = "authorized/mainmenu";
 
-    String WELCOME              = "authorized/menu/welcome"; //todo / is a problem incorrect mapping on GAE...
+    String WELCOME              = "authorized/menu/welcome";
 
     String GAME                 = "authorized/menu/game";
     String GAME_FIND            = "findgame";

@@ -1,6 +1,7 @@
 package jfiles.service;
 
 import jfiles.Constants.Table;
+import jfiles.Constants.XO;
 import jfiles.model.StatisticEntity;
 import jfiles.model.StatusTable.StatusTable;
 import jfiles.model.UserEntity;
@@ -247,16 +248,6 @@ public class TableUtil {
 
             if(name != null)
                 statusTable.setStatusForRecord(name, Table.IN_GAME);
-
-            /*try {
-                String name = gs.getPlayer1();
-                statusTable.setStatusForRecord( name, "in game");
-            } catch (Exception e) {}
-
-            try {
-                String name = gs.getPlayer2();
-                statusTable.setStatusForRecord( name, "in game");
-            } catch (Exception e) {}*/
         }
 
         return statusTable;

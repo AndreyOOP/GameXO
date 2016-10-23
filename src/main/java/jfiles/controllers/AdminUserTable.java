@@ -341,8 +341,7 @@ public class AdminUserTable {
 
         tableUtil.setParam(tableCurrentPage, cachedTable.size());
 
-        page.setUserName(editName)
-            .setFormUserPassword(userPassword)
+        page.setFormUserPassword(userPassword)
             .setFormUserEmail(userEmail)
             .setRedirectAttributes(redirectAttributes)
             .setHttpServletRequest(req)

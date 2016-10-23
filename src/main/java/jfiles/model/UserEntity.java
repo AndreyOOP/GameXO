@@ -3,7 +3,6 @@ package jfiles.model;
 import javax.persistence.*;
 
 /**Class is required for database interaction via hibernate.*/
-//todo check if this is created on cloud
 @Entity
 @Table(name = "user", schema = "xodatabase", catalog = "")
 public class UserEntity {
