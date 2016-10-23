@@ -25,6 +25,9 @@ public class GameSession {
     private String blobPlayer1;
     private String blobPlayer2;
 
+    private Boolean player1Turn;
+    private Boolean player2Turn;
+
     public GameSession(){}
 
     public GameSession(StatisticService statisticService){
@@ -209,6 +212,13 @@ public class GameSession {
         }
     }
 
+    public Boolean isUserTurn(String user){
+//        if(player1.contentEquals(user) && player1Turn) return true;
+//        if(player2.contentEquals(user) && player2Turn) return true;
+
+        return (player1.contentEquals(user) && player1Turn) || (player2.contentEquals(user) && player2Turn);
+    }
+
     public Boolean isGameOver(){
         return isGameOver;
     }
@@ -217,14 +227,16 @@ public class GameSession {
         isGameOver = gameOver;
     }
 
-    public Boolean isPlayer1Turn(String player){
+    public Boolean isPlayer1Turn(){
 
-        return player1.contentEquals(player) && turn1;
+//        return player1.contentEquals(player) && turn1;
+        return player1Turn;
     }
 
-    public Boolean isPlayer2Turn(String player){
+    public Boolean isPlayer2Turn(){
 
-        return player2.contentEquals(player) && !turn1;
+//        return player2.contentEquals(player) && !turn1;
+        return player2Turn;
     }
 
     public void setCellValue(int i, int j, int value){
@@ -236,6 +248,17 @@ public class GameSession {
     public Boolean isCell(int i, int j, int type){
 
         return matrix[i][j] == type;
+    }
+
+    public int getPlayerStatus(String player){
+
+        if(player.contentEquals(player1))
+            return player1Status;
+
+        if(player.contentEquals(player2))
+            return player2Status;
+
+        return -1;
     }
 
     public String getPlayer1() {
@@ -294,4 +317,19 @@ public class GameSession {
         this.blobPlayer2 = blobPlayer2;
     }
 
+    public Boolean getPlayer1Turn() {
+        return player1Turn;
+    }
+
+    public void setPlayer1Turn(Boolean player1Turn) {
+        this.player1Turn = player1Turn;
+    }
+
+    public Boolean getPlayer2Turn() {
+        return player2Turn;
+    }
+
+    public void setPlayer2Turn(Boolean player2Turn) {
+        this.player2Turn = player2Turn;
+    }
 }

@@ -54,9 +54,11 @@ public class PlayGame {
             .add( Tag.MAIN_MENU_IS_FIND_GAME , true)
             .add( Tag.GAME_GAME_FOUND        , false);
 
+        if(session.getGameSession() == null){
+            session.setGameSession( gamePool.getGame( session, session.getUserName()));
+        }
 
-
-        GameSession gameSession = gamePool.getGame( session.getUserName());
+        GameSession gameSession = session.getGameSession();
 
         if(gameSession != null){
 
@@ -73,22 +75,15 @@ public class PlayGame {
 
             if( gameSession.isGameOver()){
 
-                if( gameSession.getPlayer1().contentEquals(user))
-                    setGameEndStatus( page, gameSession.getPlayer1Status());
-
-                if( gameSession.getPlayer2().contentEquals(user))
-                    setGameEndStatus( page, gameSession.getPlayer2Status());
+                setGameEndStatus( page, gameSession.getPlayerStatus(user));
 
             } else {
 
-                page.add( Tag.GAME_MESSAGE, Message.GAME_OPPONENT_TURN);
-
-                if( gameSession.isPlayer1Turn(user)){
+                if( gameSession.isUserTurn(user)){
                     page.add( Tag.GAME_MESSAGE, Message.GAME_YOUR_TURN);
-                }
 
-                if (gameSession.isPlayer2Turn(user)) {
-                    page.add( Tag.GAME_MESSAGE, Message.GAME_YOUR_TURN);
+                } else {
+                    page.add( Tag.GAME_MESSAGE, Message.GAME_OPPONENT_TURN);
                 }
             }
         }
@@ -115,26 +110,27 @@ public class PlayGame {
 
         String player = session.getUserName();
 
-        GameSession gameSession = gamePool.getGame(player);
+        GameSession gameSession = session.getGameSession();
 
         if( !gameSession.isGameOver()){
 
-            if( gameSession.isPlayer1Turn(player)){
+            if( gameSession.isUserTurn(player) && gameSession.isPlayer1Turn()){
 
                 if( gameSession.isCell( iPos , jPos, XO.BLANK)){
 
                     gameSession.setCellValue( iPos, jPos, XO.X);
-                    gameSession.setTurn1(false);
+                    gameSession.setPlayer1Turn(false);
+                    gameSession.setPlayer2Turn(true);
                     gameSession.checkIfWinnerAndUpdateDB(XO.X);
                 }
             }
 
-            if( gameSession.isPlayer2Turn(player)){
-
+            if( gameSession.isUserTurn(player) && gameSession.isPlayer2Turn()){
                 if( gameSession.isCell( iPos , jPos, XO.BLANK)){
 
                     gameSession.setCellValue( iPos, jPos, XO.O);
-                    gameSession.setTurn1(true);
+                    gameSession.setPlayer1Turn(true);
+                    gameSession.setPlayer2Turn(false);
                     gameSession.checkIfWinnerAndUpdateDB(XO.O);
                 }
             }
@@ -157,6 +153,7 @@ public class PlayGame {
 
         Session session = loginSession.getSession(authKey);
 
+        session.setGameSession(null);
         gamePool.removeUser( session.getUserName());
 
         page.setRedirectAttributes(redirectAttributes)
@@ -175,8 +172,12 @@ public class PlayGame {
 
         Session session = loginSession.getSession(authKey);
 
+        session.setGameSession(null);
+
         try {
+//            gamePool.getGame(session.getUserName()).setIsGameOver(true);
             gamePool.removeUser( session.getUserName());
+
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -199,7 +200,9 @@ public class PlayGame {
         Session session = loginSession.getSession(authKey);
 
         String user = session.getUserName();
-        GameSession gameSession = gamePool.getGame(user);
+
+//        GameSession gameSession = gamePool.getGame(user);
+        GameSession gameSession = session.getGameSession();
 
         if( gameSession.getPlayer1().contentEquals(user)){
 
@@ -220,6 +223,8 @@ public class PlayGame {
             statisticService.addWin(gameSession.getPlayer1(), user);
             statisticService.addLoose(user, gameSession.getPlayer1());
         }
+
+        session.setGameSession(null);
 
         try {
             gamePool.removeUser( session.getUserName());

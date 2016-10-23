@@ -22,6 +22,8 @@ public class Session {
 
     private List<UserEntity> userEntities;
     private List<StatisticEntity> statisticEntities;
+    private GameSession gameSession;
+
 
     public Session(){}
 
@@ -96,5 +98,13 @@ public class Session {
 
     public void setStatisticEntities(List<StatisticEntity> statisticEntities) {
         this.statisticEntities = statisticEntities;
+    }
+
+    public GameSession getGameSession() {
+        return gameSession;
+    }
+
+    public void setGameSession(GameSession gameSession) {
+        this.gameSession = gameSession;
     }
 }

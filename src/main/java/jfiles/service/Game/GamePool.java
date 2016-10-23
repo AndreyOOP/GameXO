@@ -1,5 +1,6 @@
 package jfiles.service.Game;
 
+import jfiles.service.SessionLogin.Session;
 import jfiles.service.StatisticService;
 import jfiles.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,10 +27,13 @@ public class GamePool {
     /**Return existing GameSession for userName<br>
      * If there is no GameSession add user to queue of players looking for game and<br>
      * try to find second player. In case of success creates new GameSession*/
-    public GameSession getGame(String userName){
+    public GameSession getGame(Session session, String userName){
+
 
         if( isGameSessionExist( userName)){
-            return getGameSession( userName);
+
+            if(session.getGameSession() == null)
+                return getGameSession( userName);
         }
 
         if ( !isUserInLookingForGameList( userName)){
@@ -37,6 +41,7 @@ public class GamePool {
         }
 
         String player2 = findPair(userName);
+
         if( !player2.equalsIgnoreCase("")){
             createNewGameSession( userName, player2);
         }
@@ -67,7 +72,8 @@ public class GamePool {
 
         for(GameSession gs: gameSessions){
             if( gs.getPlayer1().equalsIgnoreCase(userName) || gs.getPlayer2().equalsIgnoreCase(userName)){
-                return true;
+                if(!gs.isGameOver())
+                    return true;
             }
         }
 
@@ -75,7 +81,7 @@ public class GamePool {
     }
 
     /**Return link to GameSession where player1 or player2 name is equal to userName*/
-    private GameSession getGameSession(String userName){
+    public GameSession getGameSession(String userName){
 
         for(GameSession gs: gameSessions){
             if( gs.getPlayer1().equalsIgnoreCase(userName) || gs.getPlayer2().equalsIgnoreCase(userName)){
@@ -128,7 +134,11 @@ public class GamePool {
         GameSession gameSession = new GameSession( statisticService);
         gameSession.setPlayer1( player1);
         gameSession.setPlayer2( player2);
-        gameSession.setTurn1(true);
+
+//        gameSession.setTurn1(true);
+
+        gameSession.setPlayer1Turn(true);
+        gameSession.setPlayer2Turn(false);
 
         gameSession.setBlobPlayer1( userService.getUserByName(player1).getBlobKey());
         gameSession.setBlobPlayer2( userService.getUserByName(player2).getBlobKey());

@@ -29,7 +29,10 @@ public class StatisticDAO {
         List<StatisticEntity> list = entityManager.createQuery(
                 "SELECT R FROM StatisticEntity R WHERE R.user = '" + userName+ "' AND R.vsUser = '" + vsUserName +"'" ).getResultList();
 
-        return list.get(0);
+        if(list.size() == 0)
+            return null;
+        else
+            return list.get(0);
     }
 
     public List<StatisticEntity> getAllRecords() {
