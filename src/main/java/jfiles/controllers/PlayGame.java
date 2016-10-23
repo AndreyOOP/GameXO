@@ -69,9 +69,6 @@ public class PlayGame {
                 .add( Tag.GAME_PICTURE_1  , gameSession.getBlobPlayer1())
                 .add( Tag.GAME_PICTURE_2  , gameSession.getBlobPlayer2());
 
-//            gameSession.setRefresh(false);
-//            page.add( "refresh"     , false);
-
             String user = session.getUserName();
 
             if( gameSession.isGameOver()){
@@ -88,62 +85,15 @@ public class PlayGame {
 
                 if( gameSession.isPlayer1Turn(user)){
                     page.add( Tag.GAME_MESSAGE, Message.GAME_YOUR_TURN);
-                    gameSession.setRefreshP1(false);
                 }
 
                 if (gameSession.isPlayer2Turn(user)) {
                     page.add( Tag.GAME_MESSAGE, Message.GAME_YOUR_TURN);
-                    gameSession.setRefreshP2(false);
                 }
-
             }
         }
 
         return Page.MAIN_MENU;
-    }
-
-    @RequestMapping(value = "/loadtableonly", method = RequestMethod.GET)
-    public String loadGameMatrix(Model model, @RequestParam int authKey){
-
-        PageService page = new PageService().setModel(model);
-
-        Session session = loginSession.getSession(authKey);
-        GameSession gameSession = gamePool.getGame( session.getUserName());
-
-        if(gameSession == null){
-
-            page.add( "refresh1"     , true);
-            page.add( "refresh2"     , true);
-
-        }else{
-
-            if(gameSession.getRefreshP1()){
-                page.add( "refresh1"     , true);
-            } else {
-                page.add( "refresh1"     , false);
-            }
-
-            if(gameSession.getRefreshP2()){
-                page.add( "refresh2"     , true);
-            } else {
-                page.add( "refresh2"     , false);
-            }
-        }
-
-
-
-
-//        if( gameSession.isPlayer1Turn(user))
-//            page.add( "refresh"     , true);
-//        else
-//            page.add( "refresh"     , false);
-//
-//        if( gameSession.isPlayer2Turn(user))
-//            page.add( "refresh"     , true);
-//        else
-//            page.add( "refresh"     , false);
-
-        return "authorized/menu/matrix";
     }
 
     /**If game is in process - define active player, send turn information (position) to server, make 'win' check*/
@@ -176,8 +126,6 @@ public class PlayGame {
                     gameSession.setCellValue( iPos, jPos, XO.X);
                     gameSession.setTurn1(false);
                     gameSession.checkIfWinnerAndUpdateDB(XO.X);
-                    gameSession.setRefresh(true);
-//                    page.add( "refresh"     , true);
                 }
             }
 
@@ -188,8 +136,6 @@ public class PlayGame {
                     gameSession.setCellValue( iPos, jPos, XO.O);
                     gameSession.setTurn1(true);
                     gameSession.checkIfWinnerAndUpdateDB(XO.O);
-                    gameSession.setRefresh(true);
-//                    page.add( "refresh"     , true);
                 }
             }
         }
@@ -199,7 +145,6 @@ public class PlayGame {
             .addRedirect( Tag.MAIN_MENU_AUTH_KEY, authKey);
 
         return "redirect:" + Page.GAME_FIND;
-//        return "redirect:" + "/loadtableonly";
     }
 
     /**Method of <i>New Game</i> button which appears after finishing of the previous game<br>
