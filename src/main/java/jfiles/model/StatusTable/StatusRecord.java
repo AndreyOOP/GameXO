@@ -1,4 +1,4 @@
-package jfiles.service;
+package jfiles.model.StatusTable;
 
 public class StatusRecord {
 

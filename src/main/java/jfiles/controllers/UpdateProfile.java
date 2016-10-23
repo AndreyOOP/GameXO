@@ -1,30 +1,22 @@
 package jfiles.controllers;
 
-import com.google.appengine.api.blobstore.BlobKey;
-import com.google.appengine.api.blobstore.BlobstoreService;
-import com.google.appengine.api.blobstore.BlobstoreServiceFactory;
 import jfiles.Constants.*;
 import jfiles.Constants.PageService.Check;
 import jfiles.Constants.PageService.Message;
 import jfiles.Constants.PageService.Tag;
+import jfiles.model.UserEntity;
 import jfiles.service.HTMLMail;
 import jfiles.service.PageService;
 import jfiles.service.SessionLogin.LoginSession;
 import jfiles.service.SessionLogin.Session;
 import jfiles.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.multipart.MultipartFile;
-
 import javax.servlet.http.HttpServletRequest;
-import java.util.List;
-import java.util.Map;
-
 import jfiles.service.BlobStoreGAE;
 
 /**Controller is responsible for update personal information page*/
@@ -34,8 +26,6 @@ public class UpdateProfile {
     //region Services declaration
     @Autowired
     private LoginSession loginSession;
-
-    private PageService pageService = new PageService();
 
     @Autowired
     private UserService userService;
@@ -48,11 +38,17 @@ public class UpdateProfile {
     @RequestMapping(value = "/myprofile/{authKey}", method = RequestMethod.GET)
     public String openMyProfile2(Model model, @PathVariable int authKey){
 
+        PageService pageService = new PageService().setModel(model);
+
         Session session = loginSession.getSession(authKey);
 
-        pageService.setModel(model)
+        if(session==null){
 
-                   .add( Tag.MAIN_MENU_USER_NAME           , session.getUserName())
+            pageService.add(Tag.ERROR_NO_LOGIN_SESSION, Tag.ERROR_NO_LOGIN_SESSION);
+            return Page.ERROR;
+        }
+
+        pageService.add( Tag.MAIN_MENU_USER_NAME           , session.getUserName())
                    .add( Tag.MAIN_MENU_USER_ROLE           , session.getUserRole())
                    .add( Tag.MAIN_MENU_IS_PROFILE_PAGE     , true)
                    .add( Tag.MAIN_MENU_AUTH_KEY            , authKey)
@@ -75,12 +71,14 @@ public class UpdateProfile {
                                   @RequestParam String userEmail,
                                   HttpServletRequest req) {
 
+        PageService pageService = new PageService();
+        Session     session     = loginSession.getSession(authKey);
+        String      blobKey     = session.getBlobKey();
+        UserEntity  editEntity  = new UserEntity(session.getUserName(), session.getUserPassword(), session.getUserRole(), session.getUserEmail(), session.getBlobKey());
+
         Boolean updatePassword = false;
         Boolean updateEmail    = false;
         Boolean updateAvatar   = false;
-
-        Session session = loginSession.getSession(authKey);
-        String  blobKey = session.getBlobKey();
 
         pageService.setModel(model)
                    .setUserName(userName)
@@ -88,9 +86,11 @@ public class UpdateProfile {
                    .setFormUserPassword(userPassword)
                    .setFormUserEmail(userEmail)
                    .setHttpServletRequest(req)
+                   .setEditEntity(editEntity)
+                   .setUserService(userService)
 
                    .add( Tag.MAIN_MENU_USER_NAME           , userName)
-                   .add( Tag.MAIN_MENU_USER_ROLE           , userService.getUserByName(userName).getRole())
+                   .add( Tag.MAIN_MENU_USER_ROLE           , session.getUserRole())
                    .add( Tag.MAIN_MENU_IS_PROFILE_PAGE     , true)
                    .add( Tag.MAIN_MENU_AUTH_KEY            , authKey)
 
@@ -100,6 +100,7 @@ public class UpdateProfile {
 
 
         //region Form Input Check
+
         if( pageService.isFieldUpdated( Check.NEW_PASSWORD)){
 
             if( pageService.makeCheck( Check.PASSWORD_BLANK)){
@@ -136,8 +137,7 @@ public class UpdateProfile {
         }
 
 
-//        if( BlobStoreGAE.isNewFile(req)){
-        if( pageService.isFieldUpdated( Check.NEW_AVATAR)){
+        if( pageService.isFieldUpdated( Check.NEW_AVATAR)){ //todo is there 3 times upload ?
 
             if( pageService.makeCheck( Check.AVATAR_SIZE)){
 
@@ -155,12 +155,11 @@ public class UpdateProfile {
 
             userService.updateUserInDatabase( userName, userPassword, userEmail, blobKey);
 
-            htmlMail.sendEmail( userName, userPassword, userEmail, Email.UPDATE);
-
-            //todo to check - after any update should be updated login session as well
             session.setUserPassword(userPassword);
             session.setUserEmail(userEmail);
             session.setBlobKey(blobKey);
+
+            htmlMail.sendEmail( userName, userPassword, userEmail, Email.UPDATE);
 
             if( updatePassword)
                 pageService.add( Tag.MYPROFILE_ERR_USER_PASSWORD, Message.UPDATED);

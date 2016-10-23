@@ -19,7 +19,7 @@
 
                 <label for="inputUserName" class="col-md-3 control-label">User Name</label>
                 <div class="col-md-9" >
-                    <input type="text" name="formuserName" class="form-control" id="inputUserName" placeholder="User Name" value="${SavedName}">
+                    <input type="text" name="formUserName" class="form-control" id="inputUserName" placeholder="User Name" value="${SavedName}">
                     <span class="help-block">${ErrorMessage_UserId}</span>
                 </div>
 

@@ -1,8 +1,8 @@
 package jfiles.controllers;
 
 import jfiles.Constants.Page;
+import jfiles.Constants.PageService.Message;
 import jfiles.Constants.PageService.Tag;
-import jfiles.service.Game.GamePool;
 import jfiles.service.PageService;
 import jfiles.service.SessionLogin.LoginSession;
 import jfiles.service.SessionLogin.Session;
@@ -17,11 +17,6 @@ import org.springframework.web.bind.annotation.RequestMethod;
 public class WelcomePage {
 
     //region Services declaration
-    private PageService pageService = new PageService();
-
-    @Autowired
-    private GamePool gamePool;
-
     @Autowired
     private LoginSession loginSession;
     //endregion
@@ -30,23 +25,21 @@ public class WelcomePage {
     @RequestMapping(value = "/welcome/{authKey}", method = RequestMethod.GET)
     public String welcome(Model model, @PathVariable int authKey){
 
+        PageService pageService = new PageService();
+
         Session session = loginSession.getSession(authKey);
 
-        if(session == null)
-            return Page.ERROR;
+        pageService.setModel(model);
 
-        try {
-            gamePool.removeUser( session.getUserName()); //todo add try
-        } catch (Exception e) {
-            e.printStackTrace();
+        if(session == null){
+            pageService.add( Tag.ERROR_NO_LOGIN_SESSION, Message.ERROR_NO_LOGIN_SESSION);
+            return Page.ERROR;
         }
 
-        pageService.setModel(model)
-
-                .add( Tag.MAIN_MENU_USER_NAME    , session.getUserName())
-                .add( Tag.MAIN_MENU_USER_ROLE    , session.getUserRole())
-                .add( Tag.MAIN_MENU_WELCOME_PAGE , true)
-                .add( Tag.MAIN_MENU_AUTH_KEY     , authKey);
+        pageService.add( Tag.MAIN_MENU_USER_NAME    , session.getUserName())
+                   .add( Tag.MAIN_MENU_USER_ROLE    , session.getUserRole())
+                   .add( Tag.MAIN_MENU_WELCOME_PAGE , true)
+                   .add( Tag.MAIN_MENU_AUTH_KEY     , authKey);
 
         return Page.MAIN_MENU;
     }

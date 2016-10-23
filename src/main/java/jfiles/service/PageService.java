@@ -3,10 +3,10 @@ package jfiles.service;
 import jfiles.Constants.PageService.Check;
 import jfiles.Constants.Roles;
 import jfiles.model.UserEntity;
+import jfiles.service.SessionLogin.Session;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.ui.Model;
-import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import javax.servlet.http.HttpServletRequest;
@@ -30,11 +30,17 @@ public class PageService<T> {
     private String formUserRole;
     private String formVsUserName;
 
-    private MultipartFile avatarFile;
+    private Boolean isUserOrEmailCheckDone = false;
+    private Boolean emailAlreadyRegistered;
+    private Boolean userAlreadyRegistered;
 
-    private UserEntity loginEntity;
+    private UserEntity userInDBandPassword;
+    private UserEntity editEntity;
 
-    private List<UserEntity> registrationCheck;
+    private List<UserEntity> nameOrEmail;
+    private List<UserEntity> bothInDatabase;
+
+    private Session session;
 
     /**Method adds required attribute to JSP page*/
     public PageService add(String attribute, T value){
@@ -71,34 +77,75 @@ public class PageService<T> {
                 return formUserName.contains(" ");
 
             case Check.USER_MISSING_IN_DATABASE:
-                return loginEntity == null;
-//                return userService.getUserByName(formUserName) == null;
-
-            case Check.USER_MISSING_IN_DATABASE_2:
-//                return loginEntity == null;
                 return userService.getUserByName(formUserName) == null;
+
+            case Check.USER_IN_DATABASE_AND_PASSWORD_USER:
+
+                if(userInDBandPassword == null)
+                    userInDBandPassword = userService.getUserByName(formUserName);
+
+                return userInDBandPassword == null;
+
+            case Check.USER_IN_DATABASE_AND_PASSWORD_PASS:
+
+                if(userInDBandPassword == null)
+                    userInDBandPassword = userService.getUserByName(formUserName);
+
+                return !userInDBandPassword.getPassword().contentEquals(formUserPassword);
+
+            case Check.USER_OR_EMAIL_EXIST_USER:{
+
+                if( !isUserOrEmailCheckDone){
+                    nameOrEmail = userService.getRecordsWithUserNameOrEmail(formUserName, formUserEmail);
+                    isUserOrEmailCheckDone = true;
+                }
+
+                if(nameOrEmail.size() == 0) return false;
+
+                if(nameOrEmail.size() == 2) return true;
+
+                return nameOrEmail.get(0).getName().contentEquals(formUserName);
+            }
+
+            case Check.USER_OR_EMAIL_EXIST_EMAIL:
+                if( !isUserOrEmailCheckDone){
+                    nameOrEmail = userService.getRecordsWithUserNameOrEmail(formUserName, formUserEmail);
+                    isUserOrEmailCheckDone = true;
+                }
+                if(nameOrEmail.size() == 0)
+                    return false;
+                if(nameOrEmail.size() == 1)
+                    return nameOrEmail.get(0).getEmail().contentEquals(formUserEmail);
+                if(nameOrEmail.size() == 2)
+                    return true;
+
+
+            case Check.BOTH_IN_DB_USER:{
+
+                if(bothInDatabase == null)
+                    bothInDatabase = userService.getBoth(formUserName, formVsUserName);
+
+                if(bothInDatabase.size() == 0) return true;
+
+                if(bothInDatabase.size() == 2) return false;
+
+                return !bothInDatabase.get(0).getName().contentEquals(formUserName);
+            }
+
+            case Check.BOTH_IN_DB_VS_USER:{
+
+                if(bothInDatabase == null)
+                    bothInDatabase = userService.getBoth(formUserName, formVsUserName);
+
+                if(bothInDatabase.size() == 0) return true;
+
+                if(bothInDatabase.size() == 2) return false;
+
+                return !bothInDatabase.get(0).getName().contentEquals(formVsUserName);
+            }
 
             case Check.VS_USER_MISSING_IN_DB:
                 return userService.getUserByName(formVsUserName) == null;
-
-            case Check.USER_ALREADY_REGISTERED:
-
-                Boolean ch1 = false;
-                Boolean ch2 = false;
-
-                try {
-                    ch1 = registrationCheck.get(0).getName().contentEquals( formUserName);
-                } catch (Exception e) {
-//                    e.printStackTrace();
-                }
-
-                try {
-                    ch2 = registrationCheck.get(1).getName().contentEquals( formUserName);
-                } catch (Exception e) {
-//                    e.printStackTrace();
-                }
-
-                return ch1 || ch2;
 
 //                return userService.getUserByName(formUserName) != null;
 
@@ -118,32 +165,15 @@ public class PageService<T> {
                          formUserPassword.matches(".*[abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ].*"));
 
             case Check.EMAIL_IN_DATABASE:
-
-                Boolean ch_1 = false;
-                Boolean ch_2 = false;
-
-                try {
-                    ch_1 = registrationCheck.get(0).getEmail().contentEquals( formUserEmail);
-                } catch (Exception e) {
-//                    e.printStackTrace();
-                }
-
-                try {
-                    ch_2 = registrationCheck.get(1).getEmail().contentEquals( formUserEmail);
-                } catch (Exception e) {
-//                    e.printStackTrace();
-                }
-
-                return ch_1 || ch_2;
-//                return userService.isEmailInDatabase(formUserEmail);
+                return userService.isEmailInDatabase(formUserEmail);
 
             case Check.PASSWORD_MATCH:
-                return !loginEntity.getPassword().contentEquals( formUserPassword);
-//                UserEntity userEntity = userService.getUserByName(formUserName);
+//                return !loginEntity.getPassword().contentEquals( formUserPassword);
+                UserEntity userEntity = userService.getUserByName(formUserName);
 
-//                String password       = userEntity.getPassword();
+                String password       = userEntity.getPassword();
 
-//                return !password.contentEquals(formUserPassword);
+                return !password.contentEquals(formUserPassword);
 
             case Check.AVATAR_SIZE:
 
@@ -159,32 +189,57 @@ public class PageService<T> {
 
         switch (checkType){
 
-            case Check.NEW_PASSWORD:{
+            /*case Check.NEW_PASSWORD:{
 
-                String currentPassword  = userService.getUserByName( userName).getPassword();
+                if(userInDBandPassword == null)
+                    userInDBandPassword = userService.getUserByName( userName);
+
+//                String currentPassword  = userService.getUserByName( userName).getPassword();
+                String currentPassword  = userInDBandPassword.getPassword();
 
                 return !currentPassword.contentEquals( formUserPassword);
-            }
+            }*/
 
-            case Check.NEW_EMAIL:{
+            /*case Check.NEW_EMAIL:{
 
-                String currentEmail = userService.getUserByName( userName).getEmail();
+                if(userInDBandPassword == null)
+                    userInDBandPassword = userService.getUserByName( userName);
+//                String currentEmail = userService.getUserByName( userName).getEmail();
+                String currentEmail = userInDBandPassword.getEmail();
 
-                if( currentEmail == null) currentEmail = "";
+                if( currentEmail == null) currentEmail = ""; //todo ??
 
                 return !currentEmail.contentEquals( formUserEmail);
-            }
+            }*/
 
             case Check.NEW_AVATAR:{
 
                 return BlobStoreGAE.isNewFile(req);
-//                return !avatarFile.getOriginalFilename().isEmpty();
+            }
+
+//            case Check.NEW_PASSWORD_MY:{
+//                return !session.getUserPassword().contentEquals( formUserPassword);
+//            }
+
+            case Check.NEW_PASSWORD:{
+                return !editEntity.getPassword().contentEquals( formUserPassword);
+            }
+
+//            case Check.NEW_EMAIL_MY:{
+//                return !session.getUserEmail().contentEquals( formUserEmail);
+//            }
+
+            case Check.NEW_EMAIL:{
+                return !editEntity.getEmail().contentEquals( formUserEmail);
             }
 
             default: return false;
         }
     }
 
+    public UserEntity getUserInDBandPassword() {
+        return userInDBandPassword;
+    }
 
     public PageService setModel(Model model) {
         this.model = model;
@@ -211,11 +266,6 @@ public class PageService<T> {
         return this;
     }
 
-    public PageService setAvatarFile(MultipartFile avatarFile) {
-        this.avatarFile = avatarFile;
-        return this;
-    }
-
     public PageService setFormUserRole(String formUserRole) {
         this.formUserRole = formUserRole;
         return this;
@@ -236,13 +286,41 @@ public class PageService<T> {
         return this;
     }
 
-    public PageService setLoginEntity(UserEntity loginEntity){
-        this.loginEntity = loginEntity;
+    public PageService setSession(Session session) {
+        this.session = session;
         return this;
     }
 
-    public PageService setRegistrationCheck(List<UserEntity> registrationCheck){
-        this.registrationCheck = registrationCheck;
+    public PageService setEditEntity(UserEntity editEntity) {
+        this.editEntity = editEntity;
+        return this;
+    }
+
+    //    public PageService setRegistrationCheck(List<UserEntity> registrationCheck){
+//        this.registrationCheck = registrationCheck;
+//        return this;
+//    }
+
+    public PageService getDataForRegistrationCheckFromDatabase(List<UserEntity> registrationCheck){
+
+        if(registrationCheck.size() == 0){
+
+            emailAlreadyRegistered = false;
+            userAlreadyRegistered  = false;
+        }
+
+        if(registrationCheck.size() == 1){
+
+            emailAlreadyRegistered = registrationCheck.get(0).getEmail().contentEquals( formUserEmail);
+            userAlreadyRegistered  = registrationCheck.get(0).getName().contentEquals( formUserName);
+        }
+
+        if(registrationCheck.size() == 2){
+
+            emailAlreadyRegistered = true;
+            userAlreadyRegistered = true;
+        }
+
         return this;
     }
 

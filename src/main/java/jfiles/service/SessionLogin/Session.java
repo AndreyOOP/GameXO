@@ -2,6 +2,7 @@ package jfiles.service.SessionLogin;
 
 import jfiles.model.StatisticEntity;
 import jfiles.model.UserEntity;
+import jfiles.service.Game.GameSession;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -18,6 +19,7 @@ public class Session {
     private int    userRole;
 
     private int    authKey;
+    private GameSession gameSession;
 
     private List<UserEntity> userEntities;
     private List<StatisticEntity> statisticEntities;
@@ -95,5 +97,13 @@ public class Session {
 
     public void setStatisticEntities(List<StatisticEntity> statisticEntities) {
         this.statisticEntities = statisticEntities;
+    }
+
+    public GameSession getGameSession() {
+        return gameSession;
+    }
+
+    public void setGameSession(GameSession gameSession) {
+        this.gameSession = gameSession;
     }
 }

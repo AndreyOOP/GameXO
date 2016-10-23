@@ -144,4 +144,10 @@ public class UserService{
         return userDAO.getRecordsWithUserNameOrEmail( userName, userEmail);
     }
 
+    @Transactional
+    public List<UserEntity> getBoth(String user, String vsUser){
+
+        return userDAO.getBoth(user, vsUser);
+    }
+
 }

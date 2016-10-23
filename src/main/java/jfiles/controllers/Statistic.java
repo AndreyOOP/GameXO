@@ -13,13 +13,13 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 
+import java.util.List;
+
 /**Controller is responsible for personal statistic display*/
 @org.springframework.stereotype.Controller
 public class Statistic {
 
     //region Services declaration
-    private PageService page = new PageService();
-
     @Autowired
     private LoginSession loginSession;
 
@@ -28,35 +28,44 @@ public class Statistic {
     //endregion
 
     /**Load personal statisctic page<br>
-     * Calculates personal rank and load records of played games*/
+     * Calculates personal rank and load gameHistory of played games*/
     @RequestMapping(value = "/statistic", method = RequestMethod.GET)
     public String welcome(Model model,
                           @RequestParam int authKey){
 
+        PageService page = new PageService();
+        page.setModel(model);
+
         Session session = loginSession.getSession(authKey);
 
-        page.setModel(model)
+        if(session==null){
 
-            .add( Tag.MAIN_MENU_USER_NAME    , session.getUserName())
+            page.add(Tag.ERROR_NO_LOGIN_SESSION, Tag.ERROR_NO_LOGIN_SESSION);
+            return Page.ERROR;
+        }
+
+        List<StatisticEntity> gameHistory = statisticService.getAllRecordsWithUser( session.getUserName());
+
+        page.add( Tag.MAIN_MENU_USER_NAME    , session.getUserName())
             .add( Tag.MAIN_MENU_USER_ROLE    , session.getUserRole())
             .add( Tag.MAIN_MENU_IS_STATISTIC , true)
             .add( Tag.MAIN_MENU_AUTH_KEY     , authKey)
 
-            .add( Tag.STATISTIC_RANK          , rankCalculation( session.getUserName()))
-            .add( Tag.STATISTIC_LIST          , statisticService.getAllRecordsWithUser( session.getUserName()));
+            .add( Tag.STATISTIC_RANK          , rankCalculation( gameHistory))
+            .add( Tag.STATISTIC_LIST          , gameHistory);
 
         return Page.MAIN_MENU;
     }
 
     /**Calculate personal rank<br>
      * It depend on win/loose/even ratio. Even weight is 0.5*/
-    private int rankCalculation(String user){
+    private int rankCalculation(List<StatisticEntity> gameHistory){
 
         int win   = 0;
         int loose = 0;
         int even  = 0;
 
-        for(StatisticEntity record: statisticService.getAllRecordsWithUser(user)){
+        for(StatisticEntity record: gameHistory){
 
             win   += record.getWin();
             loose += record.getLoose();

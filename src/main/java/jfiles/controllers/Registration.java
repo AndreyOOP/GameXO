@@ -23,8 +23,6 @@ import javax.servlet.http.HttpServletRequest;
 public class Registration {
 
     //region Services declaration
-    private PageService pageService = new PageService();
-
     @Autowired
     private UserService userService;
 
@@ -48,12 +46,14 @@ public class Registration {
                                @RequestParam String userEmail,
                                HttpServletRequest req){
 
+        PageService pageService = new PageService();
 
         pageService.setModel(model)
                    .setFormUserName(userName)
                    .setFormUserPassword(userPassword)
                    .setFormUserEmail(userEmail)
                    .setHttpServletRequest(req)
+                   .setUserService(userService)
 
                    .add( Tag.REGISTRATION_SAVED_USER_NAME     , userName)
                    .add( Tag.REGISTRATION_SAVED_USER_PASSWORD , userPassword)
@@ -97,15 +97,13 @@ public class Registration {
             return Page.REGISTRATION;
         }
 
-        pageService.setRegistrationCheck( userService.getRecordsWithUserNameOrEmail(userName, userEmail));
-
-        if( pageService.makeCheck( Check.USER_ALREADY_REGISTERED)){
+        if( pageService.makeCheck( Check.USER_OR_EMAIL_EXIST_USER)){
 
             pageService.add( Tag.REGISTRATION_ERR_USER_NAME, Message.USER_ALREADY_REGISTERED);
             return Page.REGISTRATION;
         }
 
-        if( pageService.makeCheck( Check.EMAIL_IN_DATABASE)){
+        if( pageService.makeCheck( Check.USER_OR_EMAIL_EXIST_EMAIL)){
 
             pageService.add( Tag.REGISTRATION_ERR_EMAIL, Message.EMAIL_ALREADY_REGISTERED);
             return Page.REGISTRATION;
@@ -119,18 +117,15 @@ public class Registration {
         //endregion
 
         UserEntity registeredUser = new UserEntity(userName, userPassword, Roles.USER.id(), userEmail, BlobStoreGAE.getBlobKey(req));
-//        registeredUser.setName(userName);
-//        registeredUser.setPassword(userPassword);
-//        registeredUser.setRole(Roles.USER.id());
-//        registeredUser.setEmail(userEmail);
-//        registeredUser.setBlobKey(BlobStoreGAE.getBlobKey(req));
 
         userService.addUser( registeredUser);
 
         htmlMail.sendEmail( userName, userPassword, userEmail, Email.WELCOME);
 
-        if( loginSession.isUserAlreadyLoggedIn(userName))
+        if( loginSession.isUserAlreadyLoggedIn(userName)){
+            pageService.add( Tag.ERROR_USER_WITH_YOUR_NAME_ONLINE, Message.ERROR_USER_WITH_YOUR_NAME_ONLINE);
             return Page.ERROR;
+        }
 
         int authKey = loginSession.generateAuthorizationKey();
 

@@ -28,8 +28,6 @@ public class AdminStatisticTable {
     @Autowired
     private TableUtil tableUtil;
 
-    private PageService page = new PageService();
-
     @Autowired
     private LoginSession loginSession;
 
@@ -48,11 +46,16 @@ public class AdminStatisticTable {
                              @RequestParam int authKey,
                              @RequestParam(value = Tag.ADMIN_STATISTIC_CURRENT_PAGE, required = false) int currentPage){
 
+        PageService page = new PageService().setModel(model);
 
         Session session = loginSession.getSession(authKey);
+        int     role    = session.getUserRole();
 
-        if( !(session.getUserRole() == Roles.ADMIN.id() || session.getUserRole() == Roles.SUPER_ADMIN.id()))
+        if( !(role == Roles.ADMIN.id() || role == Roles.SUPER_ADMIN.id())){
+
+            page.add( Tag.ERROR_MESSAGE, Message.ERROR_ROLE);
             return Page.ERROR;
+        }
 
         if ( session.getStatisticEntities() == null) {
             session.setStatisticEntities( statisticService.getAllRecords());
@@ -62,9 +65,7 @@ public class AdminStatisticTable {
 
         tableUtil.setParam( currentPage, cachedTable.size());
 
-        page.setModel(model)
-
-            .add( Tag.MAIN_MENU_USER_NAME            , session.getUserName())
+        page.add( Tag.MAIN_MENU_USER_NAME            , session.getUserName())
             .add( Tag.MAIN_MENU_USER_ROLE            , session.getUserRole())
             .add( Tag.MAIN_MENU_ADMIN_STATISTIC_PAGE , true)
             .add( Tag.MAIN_MENU_AUTH_KEY             , authKey)
@@ -92,13 +93,17 @@ public class AdminStatisticTable {
                              @RequestParam int tableCurrentPage,
                              @RequestParam int authKey){
 
+        PageService page = new PageService().setModel(model);
 
         Session session = loginSession.getSession(authKey);
 
-        List<StatisticEntity> cachedTable = session.getStatisticEntities();
+        if(session.getUserRole() != Roles.SUPER_ADMIN.id()){
 
-        if(session.getUserRole() != Roles.SUPER_ADMIN.id())
+            page.add( Tag.ERROR_MESSAGE, Message.ERROR_ROLE);
             return Page.ERROR;
+        }
+
+        List<StatisticEntity> cachedTable = session.getStatisticEntities();
 
         tableUtil.setParam(tableCurrentPage, cachedTable.size());
 
@@ -106,6 +111,7 @@ public class AdminStatisticTable {
             .setFormUserName(formUserName)
             .setFormVsUserName(vsUserName)
             .setRedirectAttributes(redirectAttributes)
+            .setUserService(userService)
 
             .add( Tag.MAIN_MENU_AUTH_KEY            , authKey)
             .add( Tag.MAIN_MENU_USER_NAME           , session.getUserName())
@@ -126,18 +132,10 @@ public class AdminStatisticTable {
             .add( Tag.ADMIN_STATISTIC_SAVED_LOOSE      , loose)
             .add( Tag.ADMIN_STATISTIC_SAVED_EVEN       , even);
 
-        page.setUserService(userService);
 
         if ( page.makeCheck( Check.USER_NAME_BLANK)){
 
             page.add( Tag.ADMIN_STATISTIC_ERR_USER_NAME, Message.ADD_RECORD_FIELD_BLANK);
-
-            return Page.MAIN_MENU;
-        }
-
-        if( page.makeCheck(Check.USER_MISSING_IN_DATABASE_2)){
-
-            page.add( Tag.ADMIN_STATISTIC_ERR_USER_NAME, Message.USER_NAME_MISSING);
 
             return Page.MAIN_MENU;
         }
@@ -149,7 +147,18 @@ public class AdminStatisticTable {
             return Page.MAIN_MENU;
         }
 
-        if( page.makeCheck( Check.VS_USER_MISSING_IN_DB)){
+        //todo check negative values
+
+//        if( page.makeCheck(Check.USER_MISSING_IN_DATABASE_2)){
+        if( page.makeCheck(Check.BOTH_IN_DB_USER)){
+
+            page.add( Tag.ADMIN_STATISTIC_ERR_USER_NAME, Message.USER_NAME_MISSING);
+
+            return Page.MAIN_MENU;
+        }
+
+//        if( page.makeCheck( Check.VS_USER_MISSING_IN_DB)){
+        if( page.makeCheck( Check.BOTH_IN_DB_VS_USER)){
 
             page.add( Tag.ADMIN_STATISTIC_ERR_VSUSER_NAME, Message.USER_NAME_MISSING);
 
@@ -157,9 +166,8 @@ public class AdminStatisticTable {
         }
 
         statisticService.addRecord(formUserName, vsUserName, win, loose, even);
-        session.setStatisticEntities(null); //todo think how to define id
-        //how to define id ?
-//        cachedTable.add( new StatisticEntity(id, formUserName, vsUserName, win, loose, even));
+
+        session.setStatisticEntities(null); //todo think how to define id, the table will be reloaded
 
         page.addRedirect( Tag.MAIN_MENU_AUTH_KEY           , authKey)
             .addRedirect( Tag.ADMIN_STATISTIC_CURRENT_PAGE , tableCurrentPage);
@@ -175,41 +183,43 @@ public class AdminStatisticTable {
                                 @RequestParam int recordId,
                                 @RequestParam int tableCurrentPage){
 
+        PageService page = new PageService().setModel(model);
+
         Session session = loginSession.getSession(authKey);
 
-        List<StatisticEntity> cachedTable = session.getStatisticEntities();
+        if(session.getUserRole() != Roles.SUPER_ADMIN.id()){
 
-        if(session.getUserRole() != Roles.SUPER_ADMIN.id())
+            page.add( Tag.ERROR_MESSAGE, Message.ERROR_ROLE);
             return Page.ERROR;
+        }
+
+        List<StatisticEntity> cachedTable = session.getStatisticEntities();
 
         tableUtil.setParam( tableCurrentPage, cachedTable.size());
 
         StatisticEntity record = tableUtil.getById(recordId, cachedTable);  // getRecordById(recordId, cachedTable);
 
-        page.setModel(model)
+        page.add( Tag.MAIN_MENU_USER_NAME            , session.getUserName())
+            .add( Tag.MAIN_MENU_USER_ROLE            , session.getUserRole())
+            .add( Tag.MAIN_MENU_ADMIN_STATISTIC_PAGE , true)
+            .add( Tag.MAIN_MENU_AUTH_KEY             , authKey)
 
-                .add( Tag.MAIN_MENU_USER_NAME            , session.getUserName())
-                .add( Tag.MAIN_MENU_USER_ROLE            , session.getUserRole())
-                .add( Tag.MAIN_MENU_ADMIN_STATISTIC_PAGE , true)
-                .add( Tag.MAIN_MENU_AUTH_KEY             , authKey)
+            .add( Tag.ADMIN_STATISTIC_RECORDS_LIST , tableUtil.getServiceRecords(cachedTable))
+            .add( Tag.ADMIN_STATISTIC_CURRENT_PAGE , tableCurrentPage)
+            .add( Tag.TABLE_FROM_PAGE              , tableUtil.getFromPage())
+            .add( Tag.TABLE_TO_PAGE                , tableUtil.getToPage())
+            .add( Tag.TABLE_PREVIOUS               , tableUtil.getPrev())
+            .add( Tag.TABLE_NEXT                   , tableUtil.getNext())
 
-                .add( Tag.ADMIN_STATISTIC_RECORDS_LIST , tableUtil.getServiceRecords(cachedTable))
-                .add( Tag.ADMIN_STATISTIC_CURRENT_PAGE , tableCurrentPage)
-                .add( Tag.TABLE_FROM_PAGE              , tableUtil.getFromPage())
-                .add( Tag.TABLE_TO_PAGE                , tableUtil.getToPage())
-                .add( Tag.TABLE_PREVIOUS               , tableUtil.getPrev())
-                .add( Tag.TABLE_NEXT                   , tableUtil.getNext())
-
-                .add( Tag.ADMIN_STATISTIC_SAVED_USER_NAME   , record.getUser())
-                .add( Tag.ADMIN_STATISTIC_SAVED_VS_NAME     , record.getVsUser())
-                .add( Tag.ADMIN_STATISTIC_SAVED_WIN         , record.getWin())
-                .add( Tag.ADMIN_STATISTIC_SAVED_LOOSE       , record.getLoose())
-                .add( Tag.ADMIN_STATISTIC_SAVED_EVEN        , record.getEven())
-                .add( Tag.ADMIN_STATISTIC_SHOW_EDIT_MENU    , true)
-                .add( Tag.ADMIN_STATISTIC_SAVED_ID          , recordId);
+            .add( Tag.ADMIN_STATISTIC_SAVED_USER_NAME   , record.getUser())
+            .add( Tag.ADMIN_STATISTIC_SAVED_VS_NAME     , record.getVsUser())
+            .add( Tag.ADMIN_STATISTIC_SAVED_WIN         , record.getWin())
+            .add( Tag.ADMIN_STATISTIC_SAVED_LOOSE       , record.getLoose())
+            .add( Tag.ADMIN_STATISTIC_SAVED_EVEN        , record.getEven())
+            .add( Tag.ADMIN_STATISTIC_SHOW_EDIT_MENU    , true)
+            .add( Tag.ADMIN_STATISTIC_SAVED_ID          , recordId);
 
         return Page.MAIN_MENU;
-
     }
 
     /**Proceed POST request of edit form of Statistics table<br>
@@ -226,19 +236,23 @@ public class AdminStatisticTable {
                              @RequestParam int tableCurrentPage,
                              @RequestParam int authKey){
 
+        PageService page = new PageService().setModel(model);
+
         Session session = loginSession.getSession(authKey);
 
         List<StatisticEntity> cachedTable = session.getStatisticEntities();
 
-        if(session.getUserRole() != Roles.SUPER_ADMIN.id())
+        if(session.getUserRole() != Roles.SUPER_ADMIN.id()){
+
+            page.add( Tag.ERROR_MESSAGE, Message.ERROR_ROLE);
             return Page.ERROR;
+        }
 
         tableUtil.setParam(tableCurrentPage, cachedTable.size());
 
-
-        page.setModel(model)
-            .setRedirectAttributes(redirectAttributes)
+        page.setRedirectAttributes(redirectAttributes)
             .setFormVsUserName(vsUserName)
+            .setUserService(userService)
 
             .add( Tag.MAIN_MENU_AUTH_KEY             , authKey)
             .add( Tag.MAIN_MENU_USER_NAME            , session.getUserName())
@@ -268,6 +282,8 @@ public class AdminStatisticTable {
             return Page.MAIN_MENU;
         }
 
+        //todo add negative checks
+
         if( page.makeCheck( Check.VS_USER_MISSING_IN_DB)){
 
             page.add( Tag.ADMIN_STATISTIC_ERR_VSUSER_NAME, Message.USER_NAME_MISSING);
@@ -286,19 +302,25 @@ public class AdminStatisticTable {
 
     /**Delete record based on Id parameter<br>*/
     @RequestMapping(value = "/deleterecord", method = RequestMethod.GET)
-    public String deleteRecord(RedirectAttributes redirectAttributes,
+    public String deleteRecord(RedirectAttributes redirectAttributes, Model model,
                                @RequestParam int authKey,
                                @RequestParam("deleteRecordId") int deleteRecordId,
                                @RequestParam("tablePage") String tablePage){
 
+        PageService page = new PageService().setModel(model);
+
         Session session = loginSession.getSession(authKey);
+
+        if( session.getUserRole() != Roles.SUPER_ADMIN.id()){
+
+            page.add( Tag.ERROR_MESSAGE, Message.ERROR_ROLE);
+            return Page.ERROR;
+        }
 
         List<StatisticEntity> cachedTable = session.getStatisticEntities();
 
-        if( session.getUserRole() != Roles.SUPER_ADMIN.id())
-            return Page.ERROR;
-
         StatisticEntity remove = tableUtil.getById(deleteRecordId, cachedTable);
+
         statisticService.deleteRecord( deleteRecordId);
         cachedTable.remove( remove);
 
@@ -331,25 +353,4 @@ public class AdminStatisticTable {
         return Page.ADMIN_STATISTIC_ADD;
     }
 
-    /*private StatisticEntity getRecordById(int id, List<StatisticEntity> list){
-
-        StatisticEntity editRec = new StatisticEntity();
-
-        for(StatisticEntity u: list){
-
-            if( u.getId() == id){
-
-                editRec.setId( u.getId());
-                editRec.setUser( u.getUser());
-                editRec.setVsUser( u.getVsUser());
-                editRec.setLoose( u.getLoose());
-                editRec.setEven( u.getEven());
-                editRec.setWin( u.getWin());
-
-                return editRec;
-            }
-        }
-
-        return null;
-    }*/
 }

@@ -40,11 +40,12 @@ public class TableLoader {
 
                 response.setContentType("text/xml");
 
-                if( fileId == Table.STATISCTIC)
+                if( fileId == Table.STATISCTIC) {
                     fileName = Table.STATISTIC_FILE_NAME;
-
-                if( fileId == Table.USER)
+                }
+                else if ( fileId == Table.USER){
                     fileName = Table.USER_FILE_NAME;
+                }
 
                 response.setHeader( "Content-Disposition", "attachment; filename=" + fileName);
 

@@ -1,16 +1,16 @@
 package jfiles.controllers;
 
 import jfiles.Constants.Page;
+import jfiles.Constants.PageService.Message;
 import jfiles.Constants.PageService.Tag;
 
 import jfiles.Constants.Roles;
-import jfiles.model.StatisticEntity;
+import jfiles.Constants.XO;
 import jfiles.service.Game.GamePool;
-import jfiles.service.Game.GameSession;
 import jfiles.service.PageService;
 import jfiles.service.SessionLogin.LoginSession;
 import jfiles.service.SessionLogin.Session;
-import jfiles.service.StatusTable;
+import jfiles.model.StatusTable.StatusTable;
 import jfiles.service.TableUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.ui.Model;
@@ -26,8 +26,6 @@ public class AdminStatusTable {
     @Autowired
     private TableUtil tableUtil;
 
-    private PageService page = new PageService();
-
     @Autowired
     private LoginSession loginSession;
 
@@ -38,69 +36,61 @@ public class AdminStatusTable {
     @RequestMapping(value = "/admin/status", method = RequestMethod.GET)
     public String adminStatus(Model model,
                               @RequestParam int authKey,
-                              @RequestParam(value = Tag.ADMIN_STATISTIC_CURRENT_PAGE, required = false) int currentPage){
+                              @RequestParam("tableCurrentPage") int currentPage){
+
+        PageService page = new PageService().setModel(model);
 
         Session session = loginSession.getSession(authKey);
         int role = session.getUserRole();
 
-        if( !(role == Roles.ADMIN.id() || role == Roles.SUPER_ADMIN.id()))
-            return Page.ERROR; //todo change to auth error
+        if( !(role == Roles.ADMIN.id() || role == Roles.SUPER_ADMIN.id())){
 
-        //prepare list user name <-> status (online/looking for game)
-        StatusTable statusTable = new StatusTable();
-
-        for(Session s: loginSession.getLoggedUsers().values()){
-            statusTable.addRecord( s.getUserName(), "online");
+            page.add( Tag.ERROR_MESSAGE, Message.ERROR_ROLE);
+            return Page.ERROR;
         }
 
-        for(GameSession gs: gamePool.getGameSessions()){
+        StatusTable statusTable = tableUtil.createStatusTable(loginSession, gamePool);
 
-            try {
-                String name = gs.getPlayer1();
-                statusTable.setStatusForRecord( name, "in game");
-            } catch (Exception e) {}
+        tableUtil.setParam( currentPage, statusTable.size());
 
-            try {
-                String name = gs.getPlayer2();
-                statusTable.setStatusForRecord( name, "in game");
-            } catch (Exception e) {}
-        }
+        page.add( Tag.MAIN_MENU_USER_NAME           , session.getUserName())
+            .add( Tag.MAIN_MENU_USER_ROLE           , session.getUserRole())
+            .add( Tag.MAIN_MENU_ADMIN_STATUS_PAGE   , true)
+            .add( Tag.MAIN_MENU_AUTH_KEY            , authKey)
 
-
-        tableUtil.setParam( currentPage, statusTable.size()); //todo update
-
-
-        page.setModel(model)
-
-                .add( Tag.MAIN_MENU_USER_NAME           , session.getUserName())
-                .add( Tag.MAIN_MENU_USER_ROLE           , session.getUserRole())
-                .add( Tag.MAIN_MENU_ADMIN_STATUS_PAGE   , true)
-                .add( Tag.MAIN_MENU_AUTH_KEY            , authKey)
-
-                .add( Tag.ADMIN_STATUS_RECORDS_LIST    , statusTable.list())
-                .add( Tag.ADMIN_STATUS_CURRENT_PAGE    , currentPage)
-                .add( Tag.TABLE_FROM_PAGE              , tableUtil.getFromPage())
-                .add( Tag.TABLE_TO_PAGE                , tableUtil.getToPage())
-                .add( Tag.TABLE_PREVIOUS               , tableUtil.getPrev())
-                .add( Tag.TABLE_NEXT                   , tableUtil.getNext());
+            .add( Tag.ADMIN_STATUS_RECORDS_LIST    , statusTable.list())
+            .add( Tag.ADMIN_STATUS_CURRENT_PAGE    , currentPage)
+            .add( Tag.TABLE_FROM_PAGE              , tableUtil.getFromPage())
+            .add( Tag.TABLE_TO_PAGE                , tableUtil.getToPage())
+            .add( Tag.TABLE_PREVIOUS               , tableUtil.getPrev())
+            .add( Tag.TABLE_NEXT                   , tableUtil.getNext());
 
         return Page.MAIN_MENU;
     }
 
 
     @RequestMapping(value = "/killloginsession", method = RequestMethod.GET)
-    public String killLoginSession(RedirectAttributes redirectAttributes,
+    public String killLoginSession(RedirectAttributes redirectAttributes, Model model,
                                @RequestParam int authKey,
-                               @RequestParam("recordId") String deleteRecordId,
+                               @RequestParam("removeUser") String removeUser,
                                @RequestParam("tableCurrentPage") String tableCurrentPage){
+
+        PageService page = new PageService().setModel(model);
 
         Session session = loginSession.getSession(authKey);
         int role = session.getUserRole();
 
-        if( !(role == Roles.ADMIN.id() || role == Roles.SUPER_ADMIN.id()))
-            return Page.ERROR; //todo change to auth error
+        if( !(role == Roles.ADMIN.id() || role == Roles.SUPER_ADMIN.id())){
 
-        loginSession.removeUserByName( deleteRecordId);
+            page.add( Tag.ERROR_MESSAGE, Message.ERROR_ROLE);
+            return Page.ERROR;
+        }
+
+        gamePool.getGame(removeUser).setIsGameOver(true);
+        gamePool.getGame(removeUser).setPlayer1Status(XO.EVEN);
+        gamePool.getGame(removeUser).setPlayer2Status(XO.EVEN);
+
+        loginSession.removeUserByName(removeUser);
 
         page.setRedirectAttributes( redirectAttributes);
 
@@ -112,22 +102,25 @@ public class AdminStatusTable {
 
 
     @RequestMapping(value = "/killgamesession", method = RequestMethod.GET)
-    public String killGameSession(RedirectAttributes redirectAttributes,
+    public String killGameSession(RedirectAttributes redirectAttributes, Model model,
                                @RequestParam int authKey,
-                               @RequestParam("recordId") String deleteRecordId,
+                               @RequestParam("removeUser") String removeUser,
                                @RequestParam("tableCurrentPage") String tableCurrentPage){
+
+        PageService page = new PageService().setModel(model);
 
         Session session = loginSession.getSession(authKey);
         int role = session.getUserRole();
 
-        if( !(role == Roles.ADMIN.id() || role == Roles.SUPER_ADMIN.id()))
-            return Page.ERROR; //todo change to auth error
+        if( !(role == Roles.ADMIN.id() || role == Roles.SUPER_ADMIN.id())){
 
-        try {
-            gamePool.removeUser( deleteRecordId);
-        } catch (Exception e) {
-            e.printStackTrace();
+            page.add( Tag.ERROR_MESSAGE, Message.ERROR_ROLE);
+            return Page.ERROR;
         }
+
+        gamePool.getGame(removeUser).setIsGameOver(true);
+        gamePool.getGame(removeUser).setPlayer1Status(XO.EVEN);
+        gamePool.getGame(removeUser).setPlayer2Status(XO.EVEN);
 
         page.setRedirectAttributes( redirectAttributes);
 

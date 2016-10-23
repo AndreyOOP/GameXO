@@ -67,4 +67,13 @@ public class UserDAO{
                                 .getResultList();
         return list;
     }
+
+    public List<UserEntity> getBoth(String user, String vsUser){
+
+        List<UserEntity> list = entityManager
+                .createQuery("SELECT U FROM UserEntity U WHERE U.name = '" + user + "' OR U.name = '" + vsUser + "'")
+                .getResultList();
+
+        return list;
+    }
 }

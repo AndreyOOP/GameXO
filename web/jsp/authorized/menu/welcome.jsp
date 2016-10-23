@@ -6,4 +6,6 @@
     <img src="/blob/${authKey}" />
     <br>
     <h1> Dear ${userName}, welcome to your account! </h1>
+    <br>
+    ${previousSession}
 </div>

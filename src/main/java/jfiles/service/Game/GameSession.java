@@ -213,6 +213,10 @@ public class GameSession {
         return isGameOver;
     }
 
+    public void setIsGameOver(Boolean gameOver){
+        isGameOver = gameOver;
+    }
+
     public Boolean isPlayer1Turn(String player){
 
         return player1.contentEquals(player) && turn1;
@@ -262,8 +266,16 @@ public class GameSession {
         return player1Status;
     }
 
+    public void setPlayer1Status(int player1Status) {
+        this.player1Status = player1Status;
+    }
+
     public int getPlayer2Status() {
         return player2Status;
+    }
+
+    public void setPlayer2Status(int player2Status) {
+        this.player2Status = player2Status;
     }
 
     public String getBlobPlayer1() {

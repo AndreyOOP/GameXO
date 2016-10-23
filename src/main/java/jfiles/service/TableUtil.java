@@ -2,7 +2,10 @@ package jfiles.service;
 
 import jfiles.Constants.Table;
 import jfiles.model.StatisticEntity;
+import jfiles.model.StatusTable.StatusTable;
 import jfiles.model.UserEntity;
+import jfiles.service.Game.GamePool;
+import jfiles.service.Game.GameSession;
 import jfiles.service.SessionLogin.LoginSession;
 import jfiles.service.SessionLogin.Session;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -223,6 +226,40 @@ public class TableUtil {
                 return;
             }
         }
+    }
+
+    public StatusTable createStatusTable(LoginSession loginSession, GamePool gamePool){
+
+        StatusTable statusTable = new StatusTable();
+
+        for(Session s: loginSession.getLoggedUsers().values()){
+            statusTable.addRecord( s.getUserName(), Table.ONLINE);
+        }
+
+        for(GameSession gs: gamePool.getGameSessions()){
+
+            String name = gs.getPlayer1();
+
+            if(name != null)
+                statusTable.setStatusForRecord(name, Table.IN_GAME);
+
+            name = gs.getPlayer2();
+
+            if(name != null)
+                statusTable.setStatusForRecord(name, Table.IN_GAME);
+
+            /*try {
+                String name = gs.getPlayer1();
+                statusTable.setStatusForRecord( name, "in game");
+            } catch (Exception e) {}
+
+            try {
+                String name = gs.getPlayer2();
+                statusTable.setStatusForRecord( name, "in game");
+            } catch (Exception e) {}*/
+        }
+
+        return statusTable;
     }
 
 }

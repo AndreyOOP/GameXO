@@ -12,7 +12,7 @@ import java.util.Map;
 @Service("BlobStore")
 public class BlobStoreGAE {
 
-    private static int maxUploadSize;
+    private static int    maxUploadSize;
     private static String defaultPicture;
 
     private static BlobstoreService blobstoreService = BlobstoreServiceFactory.getBlobstoreService();
@@ -29,14 +29,14 @@ public class BlobStoreGAE {
             Map<String, List<BlobKey>> blobs     = blobstoreService.getUploads(req);
             Map<String, List<FileInfo>> blobInfo = blobstoreService.getFileInfos(req);
 
-            //bug fix
+            //*** Note ***
             //during upload form without file on google blobstore sometimes appears file containing 0, sometime nothing
-            //this part checks size if it is too small - just use default picture
+            //this part checks size if it is less 10 bytes - just use default picture
             if( blobInfo.get("avatarFile").get(0).getSize() < 10){
 
                 blobstoreService.delete( blobs.get("avatarFile").get(0)); //remove 0 blob
 
-                return defaultPicture; //todo, it is possible to id default value from database, so it is possible to change picture without server restart
+                return defaultPicture;
             }
 
             return blobs.get("avatarFile").get(0).getKeyString();
@@ -68,7 +68,6 @@ public class BlobStoreGAE {
         } catch (Exception e) {
 
             e.printStackTrace();
-
             return false;
         }
     }
@@ -104,7 +103,4 @@ public class BlobStoreGAE {
         BlobStoreGAE.defaultPicture = defaultPicture;
     }
 
-    public static String getDefaultPicture() {
-        return defaultPicture;
-    }
 }

@@ -1,6 +1,7 @@
 package jfiles.controllers;
 
 import jfiles.Constants.Page;
+import jfiles.Constants.PageService.Message;
 import jfiles.Constants.PageService.Tag;
 import jfiles.Constants.XO;
 import jfiles.service.Game.GamePool;
@@ -9,7 +10,6 @@ import jfiles.service.PageService;
 import jfiles.service.SessionLogin.LoginSession;
 import jfiles.service.SessionLogin.Session;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Scope;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -24,8 +24,6 @@ public class PlayGame {
     @Autowired
     private LoginSession loginSession;
 
-    private PageService page = new PageService();
-
     @Autowired
     private GamePool gamePool;
     //endregion
@@ -33,16 +31,20 @@ public class PlayGame {
     /**Looking for game or show current game session (GamePool.getGame)<br>
      * Check is game over - display appropriate message*/
     @RequestMapping(value = "/findgame", method = RequestMethod.GET)
-    public synchronized String findGame(Model model,
+    public String findGame(Model model,
                            @RequestParam int authKey){
+
+        PageService page = new PageService().setModel(model);
 
         Session session = loginSession.getSession(authKey);
 
-        if( session == null)
-            return Page.ERROR;
+        if( session == null){
 
-        page.setModel(model)
-            .add( Tag.MAIN_MENU_USER_NAME    , session.getUserName())
+            page.add( Tag.ERROR_MESSAGE, Message.ERROR_NO_LOGIN_SESSION);
+            return Page.ERROR;
+        }
+
+        page.add( Tag.MAIN_MENU_USER_NAME    , session.getUserName())
             .add( Tag.MAIN_MENU_USER_ROLE    , session.getUserRole())
             .add( Tag.MAIN_MENU_AUTH_KEY     , authKey)
             .add( Tag.MAIN_MENU_IS_FIND_GAME , true)
@@ -53,32 +55,33 @@ public class PlayGame {
         if(gameSession != null){
 
             page.add( Tag.GAME_GAME_FOUND , true)
+                .add( Tag.GAME_USER       , session.getUserName())
                 .add( Tag.GAME_FIELD_SIZE , XO.FIELD_SIZE)
                 .add( Tag.GAME_MATRIX     , gameSession.getMatrix())
                 .add( Tag.GAME_PLAYER_1   , gameSession.getPlayer1())
                 .add( Tag.GAME_PLAYER_2   , gameSession.getPlayer2())
-            .add("key1", gameSession.getBlobPlayer1())
-            .add("key2", gameSession.getBlobPlayer2());
+                .add( Tag.GAME_PICTURE_1  , gameSession.getBlobPlayer1())
+                .add( Tag.GAME_PICTURE_2  , gameSession.getBlobPlayer2());
 
             String user = session.getUserName();
 
             if( gameSession.isGameOver()){
 
                 if( gameSession.getPlayer1().contentEquals(user))
-                    setGameEndStatus( gameSession.getPlayer1Status());
+                    setGameEndStatus( page, gameSession.getPlayer1Status());
 
                 if( gameSession.getPlayer2().contentEquals(user))
-                    setGameEndStatus( gameSession.getPlayer2Status());
+                    setGameEndStatus( page, gameSession.getPlayer2Status());
 
             } else {
 
-                page.add( Tag.GAME_MESSAGE, "Opponent Turn");
+                page.add( Tag.GAME_MESSAGE, Message.GAME_OPPONENT_TURN);
 
                 if( gameSession.isPlayer1Turn(user))
-                    page.add( Tag.GAME_MESSAGE, "Your Turn");
+                    page.add( Tag.GAME_MESSAGE, Message.GAME_YOUR_TURN);
 
                 if( gameSession.isPlayer2Turn(user))
-                    page.add( Tag.GAME_MESSAGE, "Your Turn");
+                    page.add( Tag.GAME_MESSAGE, Message.GAME_YOUR_TURN);
             }
         }
 
@@ -87,15 +90,20 @@ public class PlayGame {
 
     /**If game is in process - define active player, send turn information (position) to server, make 'win' check*/
     @RequestMapping(value = "/turn", method = RequestMethod.POST)
-    public String makeTurn(RedirectAttributes redirectAttributes,
+    public String makeTurn(RedirectAttributes redirectAttributes, Model model,
                            @RequestParam int iPos,
                            @RequestParam int jPos,
                            @RequestParam int authKey){
 
+        PageService page = new PageService().setModel(model);
+
         Session session = loginSession.getSession(authKey);
 
-        if( session == null)
+        if( session == null){
+
+            page.add( Tag.ERROR_MESSAGE, Message.ERROR_NO_LOGIN_SESSION);
             return Page.ERROR;
+        }
 
         String player = session.getUserName();
 
@@ -137,6 +145,8 @@ public class PlayGame {
     public String createNewGame(RedirectAttributes redirectAttributes,
                                 @RequestParam int authKey){
 
+        PageService page = new PageService();
+
         Session session = loginSession.getSession(authKey);
 
         gamePool.removeUser( session.getUserName());
@@ -153,9 +163,60 @@ public class PlayGame {
     public String goToMainMenu(Model model,
                                @RequestParam int authKey){
 
+        PageService page = new PageService();
+
         Session session = loginSession.getSession(authKey);
 
-        gamePool.removeUser( session.getUserName());
+        try {
+            gamePool.removeUser( session.getUserName());
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        page.setModel(model)
+                .add( Tag.MAIN_MENU_USER_NAME    , session.getUserName())
+                .add( Tag.MAIN_MENU_USER_ROLE    , session.getUserRole())
+                .add( Tag.MAIN_MENU_WELCOME_PAGE , true)
+                .add( Tag.MAIN_MENU_AUTH_KEY     , authKey);
+
+        return Page.MAIN_MENU;
+    }
+
+    @RequestMapping(value = "/endgame")
+    public String endGame(Model model,
+                               @RequestParam int authKey){
+
+        PageService page = new PageService();
+
+        Session session = loginSession.getSession(authKey);
+
+        String user = session.getUserName();
+        GameSession gameSession = gamePool.getGame(user);
+
+        if( gameSession.getPlayer1().contentEquals(user)){
+
+            gameSession.setIsGameOver(true);
+            gameSession.setPlayer1Status(XO.LOOSE);
+            gameSession.setPlayer2Status(XO.WIN);
+        }
+
+        if( gameSession.getPlayer2().contentEquals(user)){
+
+            gameSession.setIsGameOver(true);
+            gameSession.setPlayer2Status(XO.LOOSE);
+            gameSession.setPlayer1Status(XO.WIN);
+        }
+
+        try {
+            gamePool.removeUser( session.getUserName());
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        /*try {
+            gamePool.removeUser( session.getUserName());
+        } catch (Exception e) {
+            e.printStackTrace();
+        }*/
 
         page.setModel(model)
                 .add( Tag.MAIN_MENU_USER_NAME    , session.getUserName())
@@ -173,7 +234,7 @@ public class PlayGame {
         return Page.GAME;
     }
 
-    private void setGameEndStatus(int status){
+    private void setGameEndStatus(PageService page, int status){
 
         if( status == XO.WIN)
             page.add( Tag.GAME_WIN, true);

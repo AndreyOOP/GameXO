@@ -26,8 +26,8 @@
                 <tr>
                     <td>${record.userName}</td>
                     <td>${record.status}</td>
-                    <td><a href="<c:url value='/killloginsession?authKey=${authKey}&recordId=${record.userName}&tableCurrentPage=${tableCurrentPage}' />" >Remove</a></td>
-                    <td><a href="<c:url value='/killgamesession?authKey=${authKey}&recordId=${record.userName}&tableCurrentPage=${tableCurrentPage}' />" >Remove</a></td>
+                    <td><a href="<c:url value='/killloginsession?authKey=${authKey}&removeUser=${record.userName}&tableCurrentPage=${tableCurrentPage}' />" >Remove</a></td>
+                    <td><a href="<c:url value='/killgamesession?authKey=${authKey}&removeUser=${record.userName}&tableCurrentPage=${tableCurrentPage}' />" >Remove</a></td>
                 </tr>
             </c:forEach>
             </tbody>

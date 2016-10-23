@@ -9,6 +9,8 @@ public interface Tag {
     String LOGIN_ERR_USER_NAME              = "Login_ErrorMessage_UserId";
     String LOGIN_ERR_USER_PASSWORD          = "Login_ErrorMessage_UserPassword";
 
+    String WELCOME_SESSION_REMOVED          = "previousSession";
+
     String REGISTRATION_SAVED_USER_NAME     = "Registration_SavedName";
     String REGISTRATION_SAVED_USER_PASSWORD = "Registration_SavedPassword";
     String REGISTRATION_SAVED_EMAIL         = "Registration_SavedEmail";
@@ -66,6 +68,7 @@ public interface Tag {
     String ADMIN_STATUS_CURRENT_PAGE        = "tableCurrentPage";
 
     String GAME_GAME_FOUND                  = "gameFound";
+    String GAME_USER                        = "gameUser";
     String GAME_FIELD_SIZE                  = "matrixSize";
     String GAME_MATRIX                      = "cells";
     String GAME_PLAYER_1                    = "player1";
@@ -74,6 +77,8 @@ public interface Tag {
     String GAME_LOOSE                       = "youLoose";
     String GAME_EVEN                        = "youEven";
     String GAME_MESSAGE                     = "message";
+    String GAME_PICTURE_1                   = "key1";
+    String GAME_PICTURE_2                   = "key2";
 
     String STATISTIC_RANK                   = "rank";
     String STATISTIC_LIST                   = "statistic_listRecords";
@@ -82,4 +87,8 @@ public interface Tag {
     String TABLE_NEXT                       = "next";
     String TABLE_FROM_PAGE                  = "fromPage";
     String TABLE_TO_PAGE                    = "toPage";
+
+    String ERROR_NO_LOGIN_SESSION           = "missingLoginSession";
+    String ERROR_USER_WITH_YOUR_NAME_ONLINE = "userWithYourNameOnline";
+    String ERROR_MESSAGE                    = "errorMessage";
 }

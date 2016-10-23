@@ -3,9 +3,13 @@
 
 <c:if test="${gameFound eq false}">
     <h1 align="center">Looking for game</h1>
+    <div align="center">
+        <a href="/backtomainmenu?authKey=${authKey}" class="btn btn-primary" >Back to Main Menu</a>
+    </div>
 </c:if>
 
 <c:if test="${gameFound eq true}">
+    <p align="center">Playing ${gameUser}</p>
     <br>
     <table align="center">
         <tr>
@@ -41,7 +45,6 @@
     </table>
     <br>
     <h1 align="center">${message}</h1>
-
 </c:if>
 
 <c:if test="${youWin eq true}">
@@ -62,7 +65,15 @@
         <a href="/backtomainmenu?authKey=${authKey}" class="btn btn-primary" >Main Menu</a>
         <a href="/newgame?authKey=${authKey}" class="btn btn-primary" >New Game</a>
     </div>
+
 </c:if>
+<c:if test="${youWin ne true && youLoose ne true && youEven ne true && gameFound eq true}">
+
+    <div align="center">
+        <a href="/endgame?authKey=${authKey}" class="btn btn-primary" >End Game</a>
+    </div>
+</c:if>
+
 
 <div style="display: none">
 
