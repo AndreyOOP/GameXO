@@ -86,11 +86,16 @@ public class AdminStatusTable {
             return Page.ERROR;
         }
 
-        gamePool.getGameSession(removeUser).setIsGameOver(true);
-        gamePool.getGameSession(removeUser).setPlayer1Status(XO.EVEN);
-        gamePool.getGameSession(removeUser).setPlayer2Status(XO.EVEN);
+        if(!session.getUserName().contentEquals(removeUser)) //to avoid yourself removal
+            loginSession.removeUserByName(removeUser);
 
-        loginSession.removeUserByName(removeUser);
+        try {
+            gamePool.getGameSession(removeUser).setIsGameOver(true);
+            gamePool.getGameSession(removeUser).setPlayer1Status(XO.EVEN);
+            gamePool.getGameSession(removeUser).setPlayer2Status(XO.EVEN);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
 
         page.setRedirectAttributes( redirectAttributes);
 
@@ -118,9 +123,13 @@ public class AdminStatusTable {
             return Page.ERROR;
         }
 
-        gamePool.getGameSession(removeUser).setIsGameOver(true);
-        gamePool.getGameSession(removeUser).setPlayer1Status(XO.EVEN);
-        gamePool.getGameSession(removeUser).setPlayer2Status(XO.EVEN);
+        try {
+            gamePool.getGameSession(removeUser).setIsGameOver(true);
+            gamePool.getGameSession(removeUser).setPlayer1Status(XO.EVEN);
+            gamePool.getGameSession(removeUser).setPlayer2Status(XO.EVEN);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
 
         page.setRedirectAttributes( redirectAttributes);
 

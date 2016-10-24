@@ -64,8 +64,8 @@
 
     <bean id="BlobStore" class="jfiles.service.BlobStoreGAE">
         <property name="maxUploadSize" value="102400" />
-        <!--<property name="defaultPicture" value="edMI2L0Z4Ah-OZq9wlX-EA" /> &lt;!&ndash;local DB&ndash;&gt;-->
-        <property name="defaultPicture" value="NlT1Rq8RBy57_lJ4g3ZYfQ" /> <!--local DB Tr-->
+        <property name="defaultPicture" value="edMI2L0Z4Ah-OZq9wlX-EA" /> <!--local DB-->
+        <!--<property name="defaultPicture" value="NlT1Rq8RBy57_lJ4g3ZYfQ" /> &lt;!&ndash;local DB Tr&ndash;&gt;-->
         <!--<property name="defaultPicture" value="AMIfv96s63HkcOxuJ4tE5SYtzJqEtlYE9il1_O-IpHarIpChB1MoGO5Bejx-QuRT_zqdIY8Z8ncwuOH0vFOxDLmBgsntJRdGK5rlHRYQBKQyQ7FuKfjOZB0h7wwa2VV8IQYWiJeNJVKQoYGNMZr-9FO6SieObPcPtg" /> &lt;!&ndash;local DB&ndash;&gt;-->
     </bean>
 
