@@ -90,9 +90,9 @@ public class AdminStatusTable {
             loginSession.removeUserByName(removeUser);
 
         try {
-            gamePool.getGameSession(removeUser).setIsGameOver(true);
+            /*gamePool.getGameSession(removeUser).setIsGameOver(true);
             gamePool.getGameSession(removeUser).setPlayer1Status(XO.EVEN);
-            gamePool.getGameSession(removeUser).setPlayer2Status(XO.EVEN);
+            gamePool.getGameSession(removeUser).setPlayer2Status(XO.EVEN);*/
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -124,9 +124,9 @@ public class AdminStatusTable {
         }
 
         try {
-            gamePool.getGameSession(removeUser).setIsGameOver(true);
+            /*gamePool.getGameSession(removeUser).setIsGameOver(true);
             gamePool.getGameSession(removeUser).setPlayer1Status(XO.EVEN);
-            gamePool.getGameSession(removeUser).setPlayer2Status(XO.EVEN);
+            gamePool.getGameSession(removeUser).setPlayer2Status(XO.EVEN);*/
         } catch (Exception e) {
             e.printStackTrace();
         }

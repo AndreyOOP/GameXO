@@ -237,7 +237,7 @@ public class TableUtil {
             statusTable.addRecord( s.getUserName(), Table.ONLINE);
         }
 
-        for(GameSession gs: gamePool.getGameSessions()){
+        /*for(GameSession gs: gamePool.getGameSessions()){
 
             String name = gs.getPlayer1();
 
@@ -248,7 +248,7 @@ public class TableUtil {
 
             if(name != null)
                 statusTable.setStatusForRecord(name, Table.IN_GAME);
-        }
+        }*/
 
         return statusTable;
     }

@@ -10,11 +10,12 @@ public interface XO {
     int O       = 0;
     int BLANK   = -1;
 
-    int FIELD_SIZE    = 10;
-    int WIN_LINE_SIZE = 5;
+    int FIELD_SIZE    = 3; //todo to update
+    int WIN_LINE_SIZE = 3;
 
     int WIN   =  11;
     int LOOSE = -11;
     int EVEN  =  10;
+    int IN_GAME  =  20;
 
 }

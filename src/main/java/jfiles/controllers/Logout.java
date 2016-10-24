@@ -2,7 +2,10 @@ package jfiles.controllers;
 
 import jfiles.Constants.Page;
 import jfiles.Constants.PageService.Tag;
+import jfiles.Constants.XO;
 import jfiles.service.Game.GamePool;
+import jfiles.service.Game.GameSession2;
+import jfiles.service.Game.Player;
 import jfiles.service.PageService;
 import jfiles.service.SessionLogin.LoginSession;
 import jfiles.service.SessionLogin.Session;
@@ -37,11 +40,20 @@ public class Logout {
             return Page.ERROR;
         }
 
-        try {
-            gamePool.removeUser(session.getUserName());
-        } catch (Exception e) {
-            e.printStackTrace();
+        //region Set logout user as looser & stop game
+        GameSession2 gameSession = session.getGameSession();
+
+        if(gameSession != null){
+
+            Player player   = gameSession.getPlayer(authKey);
+            Player vsPlayer = gameSession.getVsPlayer(authKey);
+
+            player.setGameStatus(XO.LOOSE);
+            vsPlayer.setGameStatus(XO.WIN);
+            gameSession.setGameOver(true);
         }
+
+        //endregion
 
         loginSession.removeSession(authKey);
 

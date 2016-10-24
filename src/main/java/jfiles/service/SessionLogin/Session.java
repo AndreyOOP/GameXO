@@ -3,6 +3,7 @@ package jfiles.service.SessionLogin;
 import jfiles.model.StatisticEntity;
 import jfiles.model.UserEntity;
 import jfiles.service.Game.GameSession;
+import jfiles.service.Game.GameSession2;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -22,7 +23,7 @@ public class Session {
 
     private List<UserEntity> userEntities;
     private List<StatisticEntity> statisticEntities;
-    private GameSession gameSession;
+    private GameSession2 gameSession;
 
 
     public Session(){}
@@ -100,11 +101,11 @@ public class Session {
         this.statisticEntities = statisticEntities;
     }
 
-    public GameSession getGameSession() {
+    public GameSession2 getGameSession() {
         return gameSession;
     }
 
-    public void setGameSession(GameSession gameSession) {
+    public void setGameSession(GameSession2 gameSession) {
         this.gameSession = gameSession;
     }
 }

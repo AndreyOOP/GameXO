@@ -9,7 +9,7 @@
 </c:if>
 
 <c:if test="${gameFound eq true}">
-    <p align="center">Playing ${gameUser}</p>
+    <%--<p align="center">Playing ${gameUser}</p>--%>
     <br>
     <table align="center">
         <tr>
@@ -91,7 +91,7 @@
     function autoRefresh() {
         window.location.reload();
     }
-    setInterval('autoRefresh()', 2500)
+    setInterval('autoRefresh()', 2000)
 
     function setValue(i, j){
 

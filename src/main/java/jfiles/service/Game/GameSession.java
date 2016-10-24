@@ -14,19 +14,22 @@ public class GameSession {
     @Autowired
     private StatisticService statisticService;
 
-    private String player1;
-    private String player2;
-    private Boolean turn1  = true;
+//    private String player1;
+//    private String player2;
+//    private Boolean turn1  = true;
     private int[][] matrix = new int[XO.FIELD_SIZE][XO.FIELD_SIZE];
-    private int player1Status;
-    private int player2Status;
-    private Boolean isGameOver = false;
 
-    private String blobPlayer1;
-    private String blobPlayer2;
-
-    private Boolean player1Turn;
-    private Boolean player2Turn;
+    private Player player1;
+    private Player player2;
+//    private int player1Status;
+//    private int player2Status;
+//    private Boolean isGameOver = false;
+//
+//    private String blobPlayer1;
+//    private String blobPlayer2;
+//
+//    private Boolean player1Turn;
+//    private Boolean player2Turn;
 
     public GameSession(){}
 
@@ -39,7 +42,7 @@ public class GameSession {
 
     /**Check is game over (player create line of appropriate length or there is no cell available)<br>
      * Set win/loose/even status for players and update <i>Statistic</i> database record*/
-    public void checkIfWinnerAndUpdateDB(int type){
+/*    public void checkIfWinnerAndUpdateDB(int type){
 
         if(isWinner(type)){
 
@@ -75,7 +78,7 @@ public class GameSession {
                 statisticService.addEven(player1, player2);
             }
         }
-    }
+    }*/
 
     /**Check if line of appropriate length exist*/
     private Boolean isWinner(int type){
@@ -212,7 +215,7 @@ public class GameSession {
         }
     }
 
-    public Boolean isUserTurn(String user){
+/*    public Boolean isUserTurn(String user){
 //        if(player1.contentEquals(user) && player1Turn) return true;
 //        if(player2.contentEquals(user) && player2Turn) return true;
 
@@ -244,7 +247,7 @@ public class GameSession {
         matrix[i][j] = value;
     }
 
-    /**Method checks is cell(i, j) populated by X or O*/
+    *//**Method checks is cell(i, j) populated by X or O*//*
     public Boolean isCell(int i, int j, int type){
 
         return matrix[i][j] == type;
@@ -331,5 +334,5 @@ public class GameSession {
 
     public void setPlayer2Turn(Boolean player2Turn) {
         this.player2Turn = player2Turn;
-    }
+    }*/
 }
