@@ -7,8 +7,8 @@ import jfiles.Constants.PageService.Tag;
 import jfiles.Constants.Role;
 import jfiles.model.StatisticEntity;
 import jfiles.service.*;
-import jfiles.service.SessionLogin.LoginSession;
-import jfiles.service.SessionLogin.Session;
+import jfiles.service.SessionService;
+import jfiles.model.Session;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -28,7 +28,7 @@ public class AdminStatisticTable {
     private TableUtil tableUtil;
 
     @Autowired
-    private LoginSession loginSession;
+    private SessionService sessionService;
 
     @Autowired
     private StatisticService statisticService;
@@ -47,7 +47,7 @@ public class AdminStatisticTable {
 
         PageService page = new PageService().setModel(model);
 
-        Session session = loginSession.getSession(authKey);
+        Session session = sessionService.getBy(authKey);
         int     role    = session.getUserRole();
 
         if( !(role == Role.ADMIN.id() || role == Role.SUPER_ADMIN.id())){
@@ -94,7 +94,7 @@ public class AdminStatisticTable {
 
         PageService page = new PageService().setModel(model);
 
-        Session session = loginSession.getSession(authKey);
+        Session session = sessionService.getBy(authKey);
 
         if(session.getUserRole() != Role.SUPER_ADMIN.id()){
 
@@ -184,7 +184,7 @@ public class AdminStatisticTable {
 
         PageService page = new PageService().setModel(model);
 
-        Session session = loginSession.getSession(authKey);
+        Session session = sessionService.getBy(authKey);
 
         if(session.getUserRole() != Role.SUPER_ADMIN.id()){
 
@@ -237,7 +237,7 @@ public class AdminStatisticTable {
 
         PageService page = new PageService().setModel(model);
 
-        Session session = loginSession.getSession(authKey);
+        Session session = sessionService.getBy(authKey);
 
         List<StatisticEntity> cachedTable = session.getStatisticEntities();
 
@@ -308,7 +308,7 @@ public class AdminStatisticTable {
 
         PageService page = new PageService().setModel(model);
 
-        Session session = loginSession.getSession(authKey);
+        Session session = sessionService.getBy(authKey);
 
         if( session.getUserRole() != Role.SUPER_ADMIN.id()){
 

@@ -7,8 +7,8 @@ import jfiles.Constants.PageService.Tag;
 import jfiles.model.UserEntity;
 import jfiles.service.HTMLMail;
 import jfiles.service.PageService;
-import jfiles.service.SessionLogin.LoginSession;
-import jfiles.service.SessionLogin.Session;
+import jfiles.service.SessionService;
+import jfiles.model.Session;
 import jfiles.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.ui.Model;
@@ -25,7 +25,7 @@ public class UpdateProfile {
 
     //region Services declaration
     @Autowired
-    private LoginSession loginSession;
+    private SessionService sessionService;
 
     @Autowired
     private UserService userService;
@@ -40,7 +40,7 @@ public class UpdateProfile {
 
         PageService pageService = new PageService().setModel(model);
 
-        Session session = loginSession.getSession(authKey);
+        Session session = sessionService.getBy(authKey);
 
         if(session==null){
 
@@ -72,7 +72,7 @@ public class UpdateProfile {
                                   HttpServletRequest req) {
 
         PageService pageService = new PageService();
-        Session     session     = loginSession.getSession(authKey);
+        Session     session     = sessionService.getBy(authKey);
         String      blobKey     = session.getBlobKey();
         UserEntity  editEntity  = new UserEntity(session.getUserName(), session.getUserPassword(), session.getUserRole(), session.getUserEmail(), session.getBlobKey());
 
@@ -125,6 +125,18 @@ public class UpdateProfile {
 
 
         if( pageService.isFieldUpdated( Check.NEW_EMAIL)){
+
+            if( pageService.makeCheck( Check.EMAIL_MISSING)){
+
+                pageService.add( Tag.REGISTRATION_ERR_EMAIL, Message.EMAIL_MISSING);
+                return Page.MAIN_MENU;
+            }
+
+            if( pageService.makeCheck( Check.EMAIL_LENGTH)){
+
+                pageService.add( Tag.REGISTRATION_ERR_EMAIL, Message.EMAIL_LENGTH);
+                return Page.MAIN_MENU;
+            }
 
             if( pageService.makeCheck( Check.EMAIL_IN_DATABASE)){
 

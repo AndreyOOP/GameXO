@@ -2,14 +2,9 @@ package jfiles.service;
 
 import jfiles.Constants.Table;
 import jfiles.model.StatisticEntity;
-import jfiles.model.StatusTable.StatusRecord;
 import jfiles.model.StatusTable.StatusTable;
 import jfiles.model.UserEntity;
-import jfiles.service.Game.GamePool;
-import jfiles.service.Game.GameSession2;
-import jfiles.service.Game.Player;
-import jfiles.service.SessionLogin.LoginSession;
-import jfiles.service.SessionLogin.Session;
+import jfiles.model.Session;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -36,47 +31,18 @@ public class TableUtil {
     @Autowired
     private UserService       userService;
 
-//    @Autowired
-//    private LoginSession loginSession;
-
 
     public TableUtil(){}
-
-    /**Extracts <i>Statistic</i> records which should be displayed on page with number 'page'*/
-    public List<StatisticEntity> getServiceRecords(int page){
-
-        List<StatisticEntity> allRecords = statisticService.getAllRecords();
-
-        return allRecords.subList( getFromLine(), getToLine());
-    }
 
     public List<StatisticEntity> getServiceRecords(List<StatisticEntity> list){
 
         return list.subList( getFromLine(), getToLine());
     }
 
-    /**Extracts <i>User</i> records which should be displayed on page with number 'page'*/
-//    public List<UserEntity> getUserRecords(int page){
-//
-//        List<UserEntity> allRecords = userService.getAllUsers();
-//
-//        return allRecords.subList( getFromLine(), getToLine());
-//    }
-
     public List<UserEntity> getUserRecords(List<UserEntity> list){
 
         return list.subList( getFromLine(), getToLine());
     }
-
-    /*public List<Session> getOnlineUsers(int page){
-
-        //todo to update
-        Collection<Session> allRecords = loginSession.getLoggedUsers().values();
-        List<Session> list = new ArrayList<>(allRecords);
-
-        return list.subList( getFromLine(), getToLine());
-    }*/
-
 
     /**Calculates page number <b>From</b> which should begin page list*/
     public int getFromPage() {
@@ -224,15 +190,15 @@ public class TableUtil {
         }
     }
 
-    public StatusTable createStatusTable(LoginSession loginSession){
+    public StatusTable createStatusTable(SessionService sessionService){
 
         StatusTable statusTable = new StatusTable();
 
-        for(Session s: loginSession.getLoggedUsers().values()){
+        for(Session s: sessionService.getLoggedUsers().values()){
 
             if(s.getGameSession() != null){
 
-                if(s.getGameSession().isNotGameOver())
+                if(s.getGameSession().isGameContinue())
                     statusTable.addRecord( s.getUserName(), Table.IN_GAME);
 
                  else

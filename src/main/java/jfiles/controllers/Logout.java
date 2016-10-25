@@ -3,12 +3,12 @@ package jfiles.controllers;
 import jfiles.Constants.Page;
 import jfiles.Constants.PageService.Tag;
 import jfiles.Constants.XO;
-import jfiles.service.Game.GamePool;
-import jfiles.service.Game.GameSession2;
-import jfiles.service.Game.Player;
+import jfiles.service.GameQueue;
+import jfiles.model.Game.GameSession;
+import jfiles.model.Game.Player;
 import jfiles.service.PageService;
-import jfiles.service.SessionLogin.LoginSession;
-import jfiles.service.SessionLogin.Session;
+import jfiles.service.SessionService;
+import jfiles.model.Session;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -20,10 +20,10 @@ import org.springframework.web.bind.annotation.RequestMethod;
 public class Logout {
 
     @Autowired
-    private LoginSession loginSession;
+    private SessionService sessionService;
 
     @Autowired
-    private GamePool gamePool;
+    private GameQueue gameQueue;
 
     /**Remove user from logged in user list, redirect to login page*/
     @RequestMapping(value = "/logout/{authKey}", method = RequestMethod.GET)
@@ -32,7 +32,7 @@ public class Logout {
         PageService pageService = new PageService();
         pageService.setModel(model);
 
-        Session session = loginSession.getSession(authKey);
+        Session session = sessionService.getBy(authKey);
 
         if(session==null){
 
@@ -41,7 +41,7 @@ public class Logout {
         }
 
         //region Set logout user as looser & stop game
-        GameSession2 gameSession = session.getGameSession();
+        GameSession gameSession = session.getGameSession();
 
         if(gameSession != null){
 
@@ -55,7 +55,7 @@ public class Logout {
 
         //endregion
 
-        loginSession.removeSession(authKey);
+        sessionService.removeBy(authKey);
 
         return "redirect:/";
     }

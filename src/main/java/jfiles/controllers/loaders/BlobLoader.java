@@ -1,8 +1,8 @@
 package jfiles.controllers.loaders;
 
 import jfiles.service.BlobStoreGAE;
-import jfiles.service.SessionLogin.LoginSession;
-import jfiles.service.SessionLogin.Session;
+import jfiles.service.SessionService;
+import jfiles.model.Session;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -15,12 +15,12 @@ import java.io.IOException;
 public class BlobLoader {
 
     @Autowired
-    private LoginSession loginSession;
+    private SessionService sessionService;
 
     @RequestMapping("/blob/{authKey}")
     public void blob(@PathVariable("authKey") int authKey, HttpServletResponse res) throws IOException {
 
-        Session session = loginSession.getSession(authKey);
+        Session session = sessionService.getBy(authKey);
 
         String blobKey = session.getBlobKey();
 

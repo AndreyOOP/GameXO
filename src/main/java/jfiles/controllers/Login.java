@@ -6,7 +6,7 @@ import jfiles.Constants.PageService.Message;
 import jfiles.Constants.PageService.Tag;
 import jfiles.model.UserEntity;
 import jfiles.service.PageService;
-import jfiles.service.SessionLogin.LoginSession;
+import jfiles.service.SessionService;
 import jfiles.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
@@ -24,7 +24,7 @@ public class Login {
     private UserService userService;
 
     @Autowired
-    private LoginSession loginSession;
+    private SessionService sessionService;
 
     /**Method is mapped '/' to login page*/
     @RequestMapping(value = "/")
@@ -76,18 +76,18 @@ public class Login {
         }
         //endregion
 
-        if( loginSession.isUserAlreadyLoggedIn(userName)){
+        if( sessionService.isUserAlreadyLoggedIn(userName)){
 
-            loginSession.removeUserByName(userName);
+            sessionService.removeBy(userName);
 
             pageService.add( Tag.WELCOME_SESSION_REMOVED, Message.WELCOME_SESSION_REMOVED);
         }
 
 
-        int authKey     = loginSession.generateAuthorizationKey();
+        int authKey     = sessionService.generateAuthorizationKey();
         UserEntity user = pageService.getUserInDBandPassword();
 
-        loginSession.addUser(authKey, user);
+        sessionService.addUser(authKey, user);
 
         pageService.add( Tag.MAIN_MENU_USER_NAME    , userName)
                    .add( Tag.MAIN_MENU_USER_ROLE    , user.getRole())

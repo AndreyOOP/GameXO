@@ -1,23 +1,16 @@
-package jfiles.service.SessionLogin;
+package jfiles.service;
 
+import jfiles.model.Session;
 import jfiles.model.UserEntity;
-import jfiles.service.UserService;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
-
-import java.util.HashMap;
-import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**Pool of authorized users*/
 @Service
-public class LoginSession {
-
-    @Autowired
-    private UserService userService;
+public class SessionService {
 
     private ConcurrentHashMap<Integer, Session> loggedUsers = new ConcurrentHashMap<>();
+
 
     /**Create login session for user<br>
      * Add user to <i>logged user</i> list*/
@@ -39,41 +32,6 @@ public class LoginSession {
         return false;
     }
 
-    public void removeUserByName(String userName){
-
-        for(Integer authKey: loggedUsers.keySet()){
-            if( loggedUsers.get(authKey).getUserName().contentEquals( userName)){
-                removeSession( authKey);
-                return;
-            }
-        }
-    }
-
-
-
-    public Session getSession(int authKey){
-
-        return loggedUsers.get(authKey);
-    }
-
-    public Session getSessionByUserName(String name){
-
-        for(Integer authKey: loggedUsers.keySet()){
-
-            Session session = loggedUsers.get(authKey);
-
-            if( session.getUserName().contentEquals( name))
-                return session;
-        }
-
-        return null;
-    }
-
-    public void removeSession(int authKey){
-
-        loggedUsers.remove(authKey);
-    }
-
     /**Authorization key is random integer value<br>
      * It is generated during login or registration process, it is needed for access to any program menu<br>*/
     public int generateAuthorizationKey(){
@@ -86,6 +44,42 @@ public class LoginSession {
         }while ( loggedUsers.containsKey(authKey));
 
         return authKey;
+    }
+
+
+    public Session getBy(int authKey){
+
+        return loggedUsers.get(authKey);
+    }
+
+    public Session getBy(String name){
+
+        for(Integer authKey: loggedUsers.keySet()){
+
+            Session session = loggedUsers.get(authKey);
+
+            if( session.getUserName().contentEquals( name))
+                return session;
+        }
+
+        return null;
+    }
+
+    public void removeBy(int authKey){
+
+        loggedUsers.remove(authKey);
+    }
+
+    public void removeBy(String userName){
+
+        for(Integer authKey: loggedUsers.keySet()){
+
+            if( loggedUsers.get(authKey).getUserName().contentEquals( userName)){
+
+                loggedUsers.remove( authKey);
+                return;
+            }
+        }
     }
 
     public ConcurrentHashMap<Integer, Session> getLoggedUsers(){

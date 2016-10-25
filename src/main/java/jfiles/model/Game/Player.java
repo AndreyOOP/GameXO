@@ -1,32 +1,35 @@
-package jfiles.service.Game;
+package jfiles.model.Game;
 
 /**
  * Created by an.yudaichev on 24.10.2016.
  */
 public class Player {
 
-    private Boolean turn; //true - his turn, false not his turn
-    private int     gameStatus; //in game, win, loose, even
+    private Boolean turn;       //true - player's turn
+    private int     gameStatus; //in game, win, lose, draw
     private String  blobKey;
     private String  name;
-    private int     mark; //X or O
+    private int     mark;       //X or O
     private int     authKey;
-    private Boolean updatedDB = false;
+    private Boolean statisticUpdated;
 
     public Player(Boolean turn, int gameStatus, String blobKey, String name, int mark, int authKey) {
-        this.turn = turn;
+
+        this.turn       = turn;
         this.gameStatus = gameStatus;
-        this.blobKey = blobKey;
-        this.name = name;
-        this.mark = mark;
-        this.authKey = authKey;
+        this.blobKey    = blobKey;
+        this.name       = name;
+        this.mark       = mark;
+        this.authKey    = authKey;
+
+        this.statisticUpdated = false;
     }
 
-    public Boolean getTurn() {
+    /*public Boolean getTurn() {
         return turn;
-    }
+    }*/
 
-    public Boolean isHisTurn() {
+    public Boolean isPlayerTurn() {
         return turn;
     }
 
@@ -46,9 +49,9 @@ public class Player {
         return blobKey;
     }
 
-    public void setBlobKey(String blobKey) {
+    /*public void setBlobKey(String blobKey) {
         this.blobKey = blobKey;
-    }
+    }*/
 
     public String getName() {
         return name;
@@ -62,9 +65,9 @@ public class Player {
         return mark;
     }
 
-    public void setMark(int mark) {
+    /*public void setMark(int mark) {
         this.mark = mark;
-    }
+    }*/
 
     public int getAuthKey() {
         return authKey;
@@ -74,11 +77,15 @@ public class Player {
         this.authKey = authKey;
     }
 
-    public Boolean getUpdatedDB() {
-        return updatedDB;
+    /*public Boolean getStatisticUpdated() {
+        return statisticUpdated;
+    }*/
+
+    public Boolean isNotUpdatedInDB(){
+        return !statisticUpdated;
     }
 
-    public void setUpdatedDB(Boolean updatedDB) {
-        this.updatedDB = updatedDB;
+    public void setStatisticUpdated(Boolean statisticUpdated) {
+        this.statisticUpdated = statisticUpdated;
     }
 }

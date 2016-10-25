@@ -5,7 +5,7 @@ package jfiles.Constants.PageService;
 public interface Message {
 
     String USER_NAME_BLANK          = "Please enter your user id";
-    String USER_NAME_TOO_SHORT      = "User name should be at least 3 symbols";
+    String USER_NAME_LENGTH         = "User name should be at least 3 and less than 20 symbols";
     String USER_ALREADY_REGISTERED  = "User id registered already";
     String USER_NAME_CONTAIN_SPACES = "User id should not contain space";
     String USER_NAME_NOT_FOUND      = "Entered id could not be found. Please register";
@@ -16,10 +16,12 @@ public interface Message {
 
     String PASSWORD_INCORRECT       = "Incorrect password";
     String PASSWORD_BLANK           = "Please enter your password";
-    String PASSWORD_LENGTH          = "Password should contain more than 3 characters";
+    String PASSWORD_LENGTH          = "Password should contain more than 3 characters and less than 20";
     String PASSWORD_SYNTAX          = "Password should contain alphabet characters and at least one number";
 
     String EMAIL_ALREADY_REGISTERED = "This email already in use";
+    String EMAIL_LENGTH             = "Email is too long. (Should be less then 20 symbols)";
+    String EMAIL_MISSING            = "Email is missing";
 
     String AVATAR_SIZE              = "Image size too big. (Should be less than 100KB)";
 

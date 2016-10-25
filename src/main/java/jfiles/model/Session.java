@@ -1,29 +1,29 @@
-package jfiles.service.SessionLogin;
+package jfiles.model;
 
-import jfiles.model.StatisticEntity;
-import jfiles.model.UserEntity;
-import jfiles.service.Game.GameSession2;
+import jfiles.model.Game.GameSession;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 
 /**Session contains information about authorized(logged in) user<br>
  * User information extracted once during authorization after this it could be accessed via <i>authorization key</i> (it is stored into HashMap into LoginSession class)*/
-@Service
+@Service //todo is it service ??
 public class Session {
+
+    //region Variables declaration
+    private int userRole;
+//    private int authKey;
 
     private String userName;
     private String userPassword;
     private String userEmail;
     private String blobKey;
-    private int    userRole;
 
-    private int    authKey;
+    private GameSession gameSession;
 
-    private List<UserEntity> userEntities;
-    private List<StatisticEntity> statisticEntities;
-    private GameSession2 gameSession;
-
+    private List<UserEntity>      userEntities;      //cached Users table
+    private List<StatisticEntity> statisticEntities; //cached Statistics table
+    //endregion
 
     public Session(){}
 
@@ -52,9 +52,9 @@ public class Session {
         this.userRole = userRole;
     }
 
-    public int getAuthKey() {
-        return authKey;
-    }
+//    public int getAuthKey() {
+//        return authKey;
+//    }
 
     public String getUserPassword() {
         return userPassword;
@@ -72,9 +72,9 @@ public class Session {
         this.userEmail = userEmail;
     }
 
-    public void setAuthKey(int authKey) {
-        this.authKey = authKey;
-    }
+//    public void setAuthKey(int authKey) {
+//        this.authKey = authKey;
+//    }
 
     public String getBlobKey() {
         return blobKey;
@@ -100,11 +100,11 @@ public class Session {
         this.statisticEntities = statisticEntities;
     }
 
-    public GameSession2 getGameSession() {
+    public GameSession getGameSession() {
         return gameSession;
     }
 
-    public void setGameSession(GameSession2 gameSession) {
+    public void setGameSession(GameSession gameSession) {
         this.gameSession = gameSession;
     }
 }

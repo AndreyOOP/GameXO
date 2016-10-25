@@ -1,74 +1,89 @@
-package jfiles.service.Game;
+package jfiles.model.Game;
 
 import jfiles.Constants.XO;
-import jfiles.service.StatisticService;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 /**
  * Created by an.yudaichev on 24.10.2016.
  */
 @Service
-public class GameSession2 {
+public class GameSession {
 
-    @Autowired
-    private StatisticService statisticService;
-
-    private Player player1;
-    private Player player2;
+    private Player  player1;
+    private Player  player2;
     private Boolean gameOver;
-    private int[][] matrix = new int[XO.FIELD_SIZE][XO.FIELD_SIZE];
+    private int[][] matrix;
 
-    public GameSession2(){}
+    public GameSession(){} //for bean creation
 
-    public GameSession2(Player player1, Player player2) {
+    public GameSession(Player player1, Player player2) {
+
         this.player1 = player1;
         this.player2 = player2;
+
+        gameOver = false;
+        matrix   = new int[XO.FIELD_SIZE][XO.FIELD_SIZE];
     }
 
-    public Boolean isNotGameOver(){
-        return !gameOver;
-    }
+    /*public Player getPlayer(String name){
 
-    public Player getPlayer(String name){
-
-        if(player1.getName().contentEquals(name))
+     *//*   if(player1.getName().contentEquals(name))
             return player1;
 
         if(player2.getName().contentEquals(name))
+            return player2;*//*
+
+        if(player1.getName().contentEquals(name))
+            return player1;
+        else
             return player2;
 
-        return null;
-    }
+//        return null;
+    }*/
 
     public Player getPlayer(int authKey){
 
-        if(player1.getAuthKey() == authKey)
+        /*if(player1.getAuthKey() == authKey)
             return player1;
 
         if (player2.getAuthKey() == authKey)
             return player2;
 
-        return null;
+        return null;*/
+
+        if(player1.getAuthKey() == authKey)
+            return player1;
+        else
+            return player2;
     }
 
-    public Player getVsPlayer(String name){
-        if(!player1.getName().contentEquals(name))
+    /*public Player getVsPlayer(String name){
+        *//*if(!player1.getName().contentEquals(name))
             return player1;
         if(!player2.getName().contentEquals(name))
             return player2;
-        return null;
-    }
+        return null;*//*
+
+        if( !player1.getName().contentEquals(name))
+            return player1;
+        else
+            return player2;
+    }*/
 
     public Player getVsPlayer(int authKey){
 
-        if(player1.getAuthKey() != authKey)
+        /*if(player1.getAuthKey() != authKey)
             return player1;
 
         if (player2.getAuthKey() != authKey)
             return player2;
 
-        return null;
+        return null;*/
+
+        if(player1.getAuthKey() != authKey)
+            return player1;
+        else
+            return player2;
     }
 
     public Boolean isCell(int i, int j, int type){
@@ -81,6 +96,35 @@ public class GameSession2 {
         matrix[i][j] = value;
     }
 
+    public void setMatrixToBlank(){
+
+        for( int i=0; i < XO.FIELD_SIZE; i++){
+
+            for( int j=0; j < XO.FIELD_SIZE; j++){
+
+                matrix[i][j] = XO.BLANK;
+            }
+        }
+    }
+
+    /**Check if there is any free cell*/
+    public Boolean isNoFreeCell(){
+
+        for( int i=0; i < XO.FIELD_SIZE; i++){
+
+            for( int j=0; j < XO.FIELD_SIZE; j++){
+
+                if( matrix[i][j] == XO.BLANK)
+                    return false;
+            }
+        }
+
+        return true;
+    }
+
+    public Boolean isGameContinue(){
+        return !gameOver;
+    }
 
     /**Check if line of appropriate length exist*/
     public Boolean isWinner(int type){
@@ -190,31 +234,6 @@ public class GameSession2 {
         return false;
     }
 
-    /**Check if there is any free cell*/
-    public Boolean isNoFreeCell(){
-
-        for( int i=0; i < XO.FIELD_SIZE; i++){
-
-            for( int j=0; j < XO.FIELD_SIZE; j++){
-
-                if( matrix[i][j] == XO.BLANK)
-                    return false;
-            }
-        }
-
-        return true;
-    }
-
-    public void setMatrixToBlank(){
-
-        for( int i=0; i < XO.FIELD_SIZE; i++){
-
-            for( int j=0; j < XO.FIELD_SIZE; j++){
-
-                matrix[i][j] = XO.BLANK;
-            }
-        }
-    }
 
     public Player getPlayer1() {
         return player1;
@@ -228,11 +247,11 @@ public class GameSession2 {
         return matrix;
     }
 
-    public Boolean getGameOver() {
-        return gameOver;
-    }
-
     public void setGameOver(Boolean gameOver) {
         this.gameOver = gameOver;
+    }
+
+    public Boolean getGameOver() {
+        return gameOver;
     }
 }

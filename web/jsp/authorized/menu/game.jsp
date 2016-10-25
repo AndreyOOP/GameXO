@@ -4,7 +4,7 @@
 <c:if test="${gameFound eq false}">
     <h1 align="center">Looking for game</h1>
     <div align="center">
-        <a href="/backtomainmenu?authKey=${authKey}" class="btn btn-primary" >Back to Main Menu</a>
+        <a href="/cancel?authKey=${authKey}" class="btn btn-primary" >Back to Main Menu</a>
     </div>
 </c:if>
 

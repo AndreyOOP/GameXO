@@ -2,7 +2,7 @@ package jfiles.controllers.loaders;
 
 import jfiles.Constants.Role;
 import jfiles.Constants.Table;
-import jfiles.service.SessionLogin.LoginSession;
+import jfiles.service.SessionService;
 import jfiles.service.TableUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -20,7 +20,7 @@ import java.io.OutputStream;
 public class TableLoader {
 
     @Autowired
-    private LoginSession loginSession;
+    private SessionService sessionService;
 
     @Autowired
     private TableUtil tableUtil;
@@ -30,7 +30,7 @@ public class TableLoader {
                                @RequestParam int fileId,
                                HttpServletResponse response){
 
-        int userRole = loginSession.getSession(authKey).getUserRole();
+        int userRole = sessionService.getBy(authKey).getUserRole();
 
         if ( userRole == Role.SUPER_ADMIN.id() || userRole == Role.ADMIN.id() ){
 

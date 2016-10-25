@@ -63,7 +63,7 @@ public class PageService<T> {
                 return formVsUserName.length() == 0;
 
             case Check.USER_LENGTH:
-                return formUserName.length() < 3;
+                return formUserName.length() < 3 || formUserName.length() > 20;
 
             case Check.USER_CONTAIN_SPACE:
                 return formUserName.contains(" ");
@@ -71,19 +71,21 @@ public class PageService<T> {
             case Check.USER_MISSING_IN_DATABASE:
                 return userService.getUserByName(formUserName) == null;
 
-            case Check.USER_IN_DATABASE_AND_PASSWORD_USER:
+            case Check.USER_IN_DATABASE_AND_PASSWORD_USER:{
 
                 if(userInDBandPassword == null)
                     userInDBandPassword = userService.getUserByName(formUserName);
 
                 return userInDBandPassword == null;
+            }
 
-            case Check.USER_IN_DATABASE_AND_PASSWORD_PASS:
+            case Check.USER_IN_DATABASE_AND_PASSWORD_PASS:{
 
                 if(userInDBandPassword == null)
                     userInDBandPassword = userService.getUserByName(formUserName);
 
                 return !userInDBandPassword.getPassword().contentEquals(formUserPassword);
+            }
 
             case Check.USER_OR_EMAIL_EXIST_USER:{
 
@@ -99,17 +101,20 @@ public class PageService<T> {
                 return nameOrEmail.get(0).getName().contentEquals(formUserName);
             }
 
-            case Check.USER_OR_EMAIL_EXIST_EMAIL:
+            case Check.USER_OR_EMAIL_EXIST_EMAIL:{
+
                 if( !isUserOrEmailCheckDone){
                     nameOrEmail = userService.getRecordsWithUserNameOrEmail(formUserName, formUserEmail);
                     isUserOrEmailCheckDone = true;
                 }
-                if(nameOrEmail.size() == 0)
-                    return false;
-                if(nameOrEmail.size() == 1)
-                    return nameOrEmail.get(0).getEmail().contentEquals(formUserEmail);
-                if(nameOrEmail.size() == 2)
-                    return true;
+
+                if(nameOrEmail.size() == 0) return false;
+
+                if(nameOrEmail.size() == 2) return true;
+
+//                if(nameOrEmail.size() == 1)
+                return nameOrEmail.get(0).getEmail().contentEquals(formUserEmail);
+            }
 
 
             case Check.BOTH_IN_DB_USER:{
@@ -148,7 +153,7 @@ public class PageService<T> {
                 return formUserPassword.length() == 0;
 
             case Check.PASSWORD_LENGTH:
-                return formUserPassword.length() <= 3;
+                return formUserPassword.length() <= 3 || formUserPassword.length() > 20;
 
             case Check.PASSWORD_SYNTAX:
                 return !(formUserPassword.matches(".*[0123456789].*") &&
@@ -157,15 +162,22 @@ public class PageService<T> {
             case Check.EMAIL_IN_DATABASE:
                 return userService.isEmailInDatabase(formUserEmail);
 
-            case Check.PASSWORD_MATCH:
+            case Check.EMAIL_MISSING:
+               return formUserEmail.isEmpty();
+
+            case Check.EMAIL_LENGTH:
+                return formUserEmail.length() > 20;
+
+            case Check.PASSWORD_MATCH:{
+
                 UserEntity userEntity = userService.getUserByName(formUserName);
 
-                String password       = userEntity.getPassword();
+                String password = userEntity.getPassword();
 
                 return !password.contentEquals(formUserPassword);
+            }
 
             case Check.AVATAR_SIZE:
-
                 return BlobStoreGAE.isSizeTooBig(req);
 
             default: return false;

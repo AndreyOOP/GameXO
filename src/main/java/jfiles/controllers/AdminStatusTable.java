@@ -6,11 +6,10 @@ import jfiles.Constants.PageService.Tag;
 
 import jfiles.Constants.Role;
 import jfiles.Constants.XO;
-import jfiles.service.Game.GamePool;
-import jfiles.service.Game.GameSession2;
+import jfiles.model.Game.GameSession;
 import jfiles.service.PageService;
-import jfiles.service.SessionLogin.LoginSession;
-import jfiles.service.SessionLogin.Session;
+import jfiles.service.SessionService;
+import jfiles.model.Session;
 import jfiles.model.StatusTable.StatusTable;
 import jfiles.service.TableUtil;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,7 +27,7 @@ public class AdminStatusTable {
     private TableUtil tableUtil;
 
     @Autowired
-    private LoginSession loginSession;
+    private SessionService sessionService;
     //endregion
 
     @RequestMapping(value = "/admin/status", method = RequestMethod.GET)
@@ -38,7 +37,7 @@ public class AdminStatusTable {
 
         PageService page = new PageService().setModel(model);
 
-        Session session = loginSession.getSession(authKey);
+        Session session = sessionService.getBy(authKey);
         int role = session.getUserRole();
 
         if( !(role == Role.ADMIN.id() || role == Role.SUPER_ADMIN.id())){
@@ -47,7 +46,7 @@ public class AdminStatusTable {
             return Page.ERROR;
         }
 
-        StatusTable statusTable = tableUtil.createStatusTable(loginSession);
+        StatusTable statusTable = tableUtil.createStatusTable(sessionService);
 
         tableUtil.setParam( currentPage, statusTable.size());
 
@@ -75,7 +74,7 @@ public class AdminStatusTable {
 
         PageService page = new PageService().setModel(model);
 
-        Session session = loginSession.getSession(authKey);
+        Session session = sessionService.getBy(authKey);
         int role = session.getUserRole();
 
         if( !(role == Role.ADMIN.id() || role == Role.SUPER_ADMIN.id())){
@@ -86,20 +85,12 @@ public class AdminStatusTable {
 
         if( !session.getUserName().contentEquals(removeUser)){ //to avoid yourself removal
 
-            //get game session of removed user, set that is game over & that database is updated
-            Session session2 = loginSession.getSessionByUserName( removeUser); //todo rewrite!
+            Session session2 = sessionService.getBy( removeUser);
 
-            GameSession2 gameSession = session2.getGameSession();
+            GameSession gameSession = session2.getGameSession();
+            gameEnd(gameSession);
 
-            gameSession.setGameOver(true);
-
-            gameSession.getPlayer1().setUpdatedDB(true); //no need of DB update
-            gameSession.getPlayer2().setUpdatedDB(true);
-
-            gameSession.getPlayer1().setGameStatus(XO.EVEN);
-            gameSession.getPlayer2().setGameStatus(XO.EVEN);
-
-            loginSession.removeUserByName(removeUser);
+            sessionService.removeBy(removeUser);
         }
 
         page.setRedirectAttributes( redirectAttributes);
@@ -119,7 +110,7 @@ public class AdminStatusTable {
 
         PageService page = new PageService().setModel(model);
 
-        Session session = loginSession.getSession(authKey);
+        Session session = sessionService.getBy(authKey);
         int role = session.getUserRole();
 
         if( !(role == Role.ADMIN.id() || role == Role.SUPER_ADMIN.id())){
@@ -128,17 +119,8 @@ public class AdminStatusTable {
             return Page.ERROR;
         }
 
-        Session session2 = loginSession.getSessionByUserName( removeUser);
-
-        GameSession2 gameSession = session2.getGameSession();
-
-        gameSession.setGameOver(true);
-
-        gameSession.getPlayer1().setUpdatedDB(true); //no need of DB update
-        gameSession.getPlayer2().setUpdatedDB(true);
-
-        gameSession.getPlayer1().setGameStatus(XO.EVEN);
-        gameSession.getPlayer2().setGameStatus(XO.EVEN);
+        GameSession killGameSession = sessionService.getBy( removeUser).getGameSession();
+        gameEnd(killGameSession);
 
         page.setRedirectAttributes( redirectAttributes);
 
@@ -154,4 +136,17 @@ public class AdminStatusTable {
         return Page.ADMIN_STATUS;
     }
 
+    private void gameEnd(GameSession gameSession){
+
+        if( gameSession != null){
+
+            gameSession.setGameOver(true);
+
+            gameSession.getPlayer1().setStatisticUpdated(true); //no need of DB update
+            gameSession.getPlayer2().setStatisticUpdated(true);
+
+            gameSession.getPlayer1().setGameStatus(XO.EVEN);
+            gameSession.getPlayer2().setGameStatus(XO.EVEN);
+        }
+    }
 }

@@ -8,7 +8,7 @@ import jfiles.model.UserEntity;
 import jfiles.service.BlobStoreGAE;
 import jfiles.service.HTMLMail;
 import jfiles.service.PageService;
-import jfiles.service.SessionLogin.LoginSession;
+import jfiles.service.SessionService;
 import jfiles.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.ui.Model;
@@ -30,7 +30,7 @@ public class Registration {
     private HTMLMail    htmlMail;
 
     @Autowired
-    private LoginSession loginSession;
+    private SessionService sessionService;
     //endregion
 
 
@@ -69,7 +69,7 @@ public class Registration {
 
         if( pageService.makeCheck( Check.USER_LENGTH))    {
 
-            pageService.add( Tag.REGISTRATION_ERR_USER_NAME, Message.USER_NAME_TOO_SHORT);
+            pageService.add( Tag.REGISTRATION_ERR_USER_NAME, Message.USER_NAME_LENGTH);
             return Page.REGISTRATION;
         }
 
@@ -94,6 +94,18 @@ public class Registration {
         if( pageService.makeCheck( Check.PASSWORD_SYNTAX)){
 
             pageService.add( Tag.REGISTRATION_ERR_USER_PASSWORD, Message.PASSWORD_SYNTAX);
+            return Page.REGISTRATION;
+        }
+
+        if( pageService.makeCheck( Check.EMAIL_MISSING)){
+
+            pageService.add( Tag.REGISTRATION_ERR_EMAIL, Message.EMAIL_MISSING);
+            return Page.REGISTRATION;
+        }
+
+        if( pageService.makeCheck( Check.EMAIL_LENGTH)){
+
+            pageService.add( Tag.REGISTRATION_ERR_EMAIL, Message.EMAIL_LENGTH);
             return Page.REGISTRATION;
         }
 
@@ -122,14 +134,14 @@ public class Registration {
 
         htmlMail.sendEmail( userName, userPassword, userEmail, Email.WELCOME);
 
-        if( loginSession.isUserAlreadyLoggedIn(userName)){
+        if( sessionService.isUserAlreadyLoggedIn(userName)){
             pageService.add( Tag.ERROR_USER_WITH_YOUR_NAME_ONLINE, Message.ERROR_USER_WITH_YOUR_NAME_ONLINE);
             return Page.ERROR;
         }
 
-        int authKey = loginSession.generateAuthorizationKey();
+        int authKey = sessionService.generateAuthorizationKey();
 
-        loginSession.addUser(authKey, registeredUser);
+        sessionService.addUser(authKey, registeredUser);
 
         return "redirect:/welcome/" + authKey;
     }

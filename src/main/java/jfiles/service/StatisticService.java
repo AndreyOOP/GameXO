@@ -1,5 +1,6 @@
 package jfiles.service;
 
+import jfiles.Constants.XO;
 import jfiles.dao.StatisticDAO;
 import jfiles.model.StatisticEntity;
 import org.springframework.beans.factory.annotation.Autowire;
@@ -122,5 +123,22 @@ public class StatisticService {
         }
     }
 
+    @Transactional //todo why without this not work
+    public void updateWinLooseDrawTable(int status, String player, String vsPLayer){
+
+        switch (status){
+
+            case XO.WIN:
+                addWin( player, vsPLayer);
+                break;
+
+            case XO.LOOSE:
+                addLoose( player, vsPLayer);
+                break;
+
+            case XO.EVEN:
+                addEven( player, vsPLayer);
+        }
+    }
 
 }

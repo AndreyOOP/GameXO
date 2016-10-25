@@ -4,8 +4,8 @@ import jfiles.Constants.Page;
 import jfiles.Constants.PageService.Tag;
 import jfiles.model.StatisticEntity;
 import jfiles.service.PageService;
-import jfiles.service.SessionLogin.LoginSession;
-import jfiles.service.SessionLogin.Session;
+import jfiles.service.SessionService;
+import jfiles.model.Session;
 import jfiles.service.StatisticService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.ui.Model;
@@ -21,7 +21,7 @@ public class Statistic {
 
     //region Services declaration
     @Autowired
-    private LoginSession loginSession;
+    private SessionService sessionService;
 
     @Autowired
     private StatisticService statisticService;
@@ -36,7 +36,7 @@ public class Statistic {
         PageService page = new PageService();
         page.setModel(model);
 
-        Session session = loginSession.getSession(authKey);
+        Session session = sessionService.getBy(authKey);
 
         if(session==null){
 

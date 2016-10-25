@@ -4,14 +4,13 @@ import jfiles.Constants.Page;
 import jfiles.Constants.PageService.Message;
 import jfiles.Constants.PageService.Tag;
 import jfiles.Constants.XO;
-import jfiles.service.Game.GamePool;
-import jfiles.service.Game.GameSession2;
-import jfiles.service.Game.Player;
+import jfiles.service.GameQueue;
+import jfiles.model.Game.GameSession;
+import jfiles.model.Game.Player;
 import jfiles.service.PageService;
-import jfiles.service.SessionLogin.LoginSession;
-import jfiles.service.SessionLogin.Session;
+import jfiles.service.SessionService;
+import jfiles.model.Session;
 import jfiles.service.StatisticService;
-import jfiles.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -25,25 +24,20 @@ public class PlayGame {
 
     //region Services declaration
     @Autowired
-    private LoginSession loginSession;
-
-//    @Autowired
-//    private GamePool gamePool;
+    private SessionService sessionService;
 
     @Autowired
     private StatisticService statisticService;
 
-    @Autowired
-    UserService userService;
     //endregion
 
-    /**Looking for game or show current game session (GamePool.getGame)<br>
+    /**Looking for game or show current game session (GameQueue.getGame)<br>
      * Check is game over - display appropriate message*/
     @RequestMapping(value = "/findgame", method = RequestMethod.GET)
     public String findGame(Model model,
                            @RequestParam int authKey){
 
-        Session session = loginSession.getSession(authKey);
+        Session session = sessionService.getBy(authKey);
 
         PageService page = new PageService().setModel(model);
 
@@ -58,59 +52,30 @@ public class PlayGame {
             .add( Tag.MAIN_MENU_IS_FIND_GAME , true)
             .add( Tag.GAME_GAME_FOUND        , false);
 
-        GameSession2 gameSession = session.getGameSession();
+        GameSession gameSession = session.getGameSession();
 
         if( gameSession != null){
 
-            if( gameSession.isNotGameOver()){
+            Player currPlayer = gameSession.getPlayer  (authKey);
+            Player vsPlayer   = gameSession.getVsPlayer(authKey);
 
-                String playerOnPage = session.getUserName();
+            if( gameSession.isGameContinue()){
 
-                Player currPlayer = gameSession.getPlayer(playerOnPage);
-                Player vsPlayer   = gameSession.getVsPlayer(playerOnPage);
-
-                page.add( Tag.GAME_GAME_FOUND , true)
-                    .add( Tag.GAME_USER       , currPlayer.getName())
-                    .add( Tag.GAME_FIELD_SIZE , XO.FIELD_SIZE)
-                    .add( Tag.GAME_MATRIX     , gameSession.getMatrix())
-                    .add( Tag.GAME_PLAYER_1   , currPlayer.getName())
-                    .add( Tag.GAME_PLAYER_2   , vsPlayer.getName())
-                    .add( Tag.GAME_PICTURE_1  , currPlayer.getBlobKey())
-                    .add( Tag.GAME_PICTURE_2  , vsPlayer.getBlobKey());
-
-                if( currPlayer.isHisTurn()){
-                    page.add( Tag.GAME_MESSAGE, Message.GAME_YOUR_TURN);
-
-                } else {
-                    page.add( Tag.GAME_MESSAGE, Message.GAME_OPPONENT_TURN);
-                }
+                updateGameView(page, gameSession, currPlayer, vsPlayer);
 
             }else {
 
-                Player currPlayer = gameSession.getPlayer( session.getUserName());
-                Player vsPlayer   = gameSession.getVsPlayer(session.getUserName());
+                updateGameOverView(page, gameSession, currPlayer, vsPlayer);
 
-                displayGameEndMessage(page, currPlayer.getGameStatus());
+                if( currPlayer.isNotUpdatedInDB()){
 
-                if( !currPlayer.getUpdatedDB()){
-
-                    updateDatabaseRecord(currPlayer.getGameStatus(), currPlayer.getName(), vsPlayer.getName());
-
-                    currPlayer.setUpdatedDB(true);
+                    statisticService.updateWinLooseDrawTable(currPlayer.getGameStatus(), currPlayer.getName(), vsPlayer.getName());
+                    currPlayer.setStatisticUpdated(true);
                 }
-
-                page.add( Tag.GAME_USER       , session.getUserName())
-                    .add( Tag.GAME_FIELD_SIZE , XO.FIELD_SIZE)
-                    .add( Tag.GAME_MATRIX     , gameSession.getMatrix())
-                    .add( Tag.GAME_PLAYER_1   , currPlayer.getName())
-                    .add( Tag.GAME_PLAYER_2   , vsPlayer.getName())
-                    .add( Tag.GAME_PICTURE_1  , currPlayer.getBlobKey())
-                    .add( Tag.GAME_PICTURE_2  , vsPlayer.getBlobKey())
-                    .add( Tag.GAME_GAME_FOUND , true);
             }
-
         } else {
-            createGameSesssionAndSetToPlayers(session, authKey);
+
+            createNewGameSession(authKey, session);
         }
 
         return Page.MAIN_MENU;
@@ -125,19 +90,19 @@ public class PlayGame {
 
         PageService page = new PageService().setModel(model);
 
-        Session session = loginSession.getSession(authKey);
+        Session session = sessionService.getBy(authKey);
 
         if( session == null){
             page.add( Tag.ERROR_MESSAGE, Message.ERROR_NO_LOGIN_SESSION);
             return Page.ERROR;
         }
 
-        GameSession2 gameSession = session.getGameSession();
+        GameSession gameSession = session.getGameSession();
 
         Player player   = gameSession.getPlayer(authKey);
         Player vsPlayer = gameSession.getVsPlayer(authKey);
 
-        if( player.isHisTurn()){
+        if( player.isPlayerTurn()){
 
             if( gameSession.isCell(iPos, jPos, XO.BLANK)){
 
@@ -175,7 +140,7 @@ public class PlayGame {
 
         PageService page = new PageService();
 
-        Session session = loginSession.getSession(authKey);
+        Session session = sessionService.getBy(authKey);
         session.setGameSession(null);
 
         page.setRedirectAttributes(redirectAttributes)
@@ -186,15 +151,31 @@ public class PlayGame {
 
     /**Method of <i>Back</i> button which appears after finishing of the previous game<br>
      * Remove from previous game session, redirect to main menu <i>Welcome</i> page*/
-    @RequestMapping(value = "/backtomainmenu")
+    @RequestMapping(value = "/backtomainmenu") //todo create 2 separate methods - back when looking for game && back when game over
     public String goToMainMenu(@RequestParam int authKey){
 
-        GamePool.removeFromLookingForGameList(authKey);
-
-        Session session = loginSession.getSession(authKey);
+        Session session = sessionService.getBy(authKey);
         session.setGameSession(null);
 
         return "redirect:welcome/" + authKey;
+    }
+
+    @RequestMapping(value = "/cancel")
+    public String cancel(RedirectAttributes redirectAttributes, @RequestParam int authKey){
+
+        PageService page = new PageService();
+
+        Session session = sessionService.getBy(authKey);
+
+        if(session.getGameSession() == null){
+            GameQueue.removeFromLookingForGameList(authKey);
+            return "redirect:welcome/" + authKey;
+        }
+
+        page.setRedirectAttributes(redirectAttributes)
+                .addRedirect( Tag.MAIN_MENU_AUTH_KEY, authKey);
+
+        return "redirect:" + Page.GAME_FIND;
     }
 
     @RequestMapping(value = "/endgame")
@@ -203,9 +184,9 @@ public class PlayGame {
 
         PageService page = new PageService();
 
-        Session session = loginSession.getSession(authKey);
+        Session session = sessionService.getBy(authKey);
 
-        GameSession2 gameSession = session.getGameSession();
+        GameSession gameSession = session.getGameSession();
 
         Player player   = gameSession.getPlayer(authKey);
         Player vsPlayer = gameSession.getVsPlayer(authKey);
@@ -227,40 +208,37 @@ public class PlayGame {
         return Page.GAME;
     }
 
-    private void createGameSesssionAndSetToPlayers(Session session, int authKey){
 
-        if ( !GamePool.isUserInLookingForGameList( authKey)){
-            GamePool.addToLookingForGameList(authKey);
-        }
+    private void updateGameView(PageService page, GameSession gameSession, Player currPlayer, Player vsPlayer){
 
-        int player2Key = GamePool.findPair(authKey);
+        page.add( Tag.GAME_GAME_FOUND , true)
+                .add( Tag.GAME_USER       , currPlayer.getName())
+                .add( Tag.GAME_FIELD_SIZE , XO.FIELD_SIZE)
+                .add( Tag.GAME_MATRIX     , gameSession.getMatrix())
+                .add( Tag.GAME_PLAYER_1   , currPlayer.getName())
+                .add( Tag.GAME_PLAYER_2   , vsPlayer.getName())
+                .add( Tag.GAME_PICTURE_1  , currPlayer.getBlobKey())
+                .add( Tag.GAME_PICTURE_2  , vsPlayer.getBlobKey());
 
-        if( player2Key != -1) {
+        if( currPlayer.isPlayerTurn())
+            page.add( Tag.GAME_MESSAGE, Message.GAME_YOUR_TURN);
 
-            Player player1 = new Player(true,
-                    XO.IN_GAME,
-                    session.getBlobKey(),
-                    session.getUserName(),
-                    XO.X,
-                    authKey);
+        else
+            page.add( Tag.GAME_MESSAGE, Message.GAME_OPPONENT_TURN);
+    }
 
-            Player player2 = new Player(false,
-                    XO.IN_GAME,
-                    loginSession.getSession(player2Key).getBlobKey(),
-                    loginSession.getSession(player2Key).getUserName(),
-                    XO.O,
-                    player2Key);
+    private void updateGameOverView(PageService page, GameSession gameSession, Player currPlayer, Player vsPlayer){
 
-            GameSession2 gs = new GameSession2(player1, player2);
-            gs.setMatrixToBlank();
-            gs.setGameOver(false);
+        displayGameEndMessage(page, currPlayer.getGameStatus());
 
-            GamePool.removeFromLookingForGameList(authKey);
-            GamePool.removeFromLookingForGameList(player2Key);
-
-            session.setGameSession(gs);
-            loginSession.getSession(player2Key).setGameSession(gs);
-        }
+        page.add( Tag.GAME_USER       , currPlayer.getName())
+                .add( Tag.GAME_FIELD_SIZE , XO.FIELD_SIZE)
+                .add( Tag.GAME_MATRIX     , gameSession.getMatrix())
+                .add( Tag.GAME_PLAYER_1   , currPlayer.getName())
+                .add( Tag.GAME_PLAYER_2   , vsPlayer.getName())
+                .add( Tag.GAME_PICTURE_1  , currPlayer.getBlobKey())
+                .add( Tag.GAME_PICTURE_2  , vsPlayer.getBlobKey())
+                .add( Tag.GAME_GAME_FOUND , true);
     }
 
     private void displayGameEndMessage(PageService page, int status){
@@ -280,20 +258,29 @@ public class PlayGame {
         }
     }
 
-    private void updateDatabaseRecord(int status, String player, String vsPLayer){
+    private void createNewGameSession(int authKey, Session session){
 
-        switch (status){
+        if ( !GameQueue.isUserInQueue( authKey))
+            GameQueue.addToQueue(authKey);
 
-            case XO.WIN:
-                statisticService.addWin( player, vsPLayer);
-                break;
+        int player2Key = GameQueue.findPair(authKey);
 
-            case XO.LOOSE:
-                statisticService.addLoose( player, vsPLayer);
-                break;
+        if( player2Key != -1){
 
-            case XO.EVEN:
-                statisticService.addEven( player, vsPLayer);
+            Session player2Session = sessionService.getBy(player2Key);
+
+            Player player1 = new Player(true , XO.IN_GAME, session.getBlobKey()       , session.getUserName()       , XO.X, authKey);
+            Player player2 = new Player(false, XO.IN_GAME, player2Session.getBlobKey(), player2Session.getUserName(), XO.O, player2Key);
+
+            GameSession gs = new GameSession(player1, player2);
+            gs.setMatrixToBlank();
+            gs.setGameOver(false);
+
+            GameQueue.removeFromLookingForGameList(authKey);
+            GameQueue.removeFromLookingForGameList(player2Key);
+
+            session.setGameSession(gs);
+            player2Session.setGameSession(gs);
         }
     }
 

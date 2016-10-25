@@ -6,8 +6,8 @@ import jfiles.Constants.PageService.Message;
 import jfiles.Constants.PageService.Tag;
 import jfiles.model.UserEntity;
 import jfiles.service.*;
-import jfiles.service.SessionLogin.LoginSession;
-import jfiles.service.SessionLogin.Session;
+import jfiles.service.SessionService;
+import jfiles.model.Session;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -37,7 +37,7 @@ public class AdminUserTable {
     private PasswordGenerator passwordGenerator;
 
     @Autowired
-    private LoginSession loginSession;
+    private SessionService sessionService;
     //endregion
 
     /**Load User table based on tableCurrentPage parameter<br>
@@ -50,7 +50,7 @@ public class AdminUserTable {
 
         PageService page = new PageService().setModel(model);
 
-        Session session = loginSession.getSession(authKey);
+        Session session = sessionService.getBy(authKey);
         int     role    = session.getUserRole();
 
         if( !(role == Role.ADMIN.id() || role == Role.SUPER_ADMIN.id())){
@@ -93,7 +93,7 @@ public class AdminUserTable {
 
         PageService page = new PageService().setModel(model);
 
-        Session session = loginSession.getSession(authKey);
+        Session session = sessionService.getBy(authKey);
 
         if( session.getUserRole() != Role.SUPER_ADMIN.id()){
 
@@ -131,7 +131,7 @@ public class AdminUserTable {
 
         PageService page = new PageService().setModel(model);
 
-        Session session = loginSession.getSession(authKey);
+        Session session = sessionService.getBy(authKey);
         int     role    = session.getUserRole();
 
         if( !(role == Role.ADMIN.id() || role == Role.SUPER_ADMIN.id())){
@@ -175,7 +175,7 @@ public class AdminUserTable {
 
         PageService page = new PageService().setModel(model);
 
-        Session session = loginSession.getSession(authKey);
+        Session session = sessionService.getBy(authKey);
 
         if( session.getUserRole() != Role.SUPER_ADMIN.id()){
 
@@ -277,7 +277,7 @@ public class AdminUserTable {
 
         PageService page = new PageService().setModel(model);
 
-        Session session = loginSession.getSession(authKey);
+        Session session = sessionService.getBy(authKey);
 
         if(session.getUserRole() != Role.SUPER_ADMIN.id()){
 
@@ -327,7 +327,7 @@ public class AdminUserTable {
 
         PageService page = new PageService().setModel(model);
 
-        Session session = loginSession.getSession(authKey);
+        Session session = sessionService.getBy(authKey);
 
         if( session.getUserRole() != Role.SUPER_ADMIN.id()){
 

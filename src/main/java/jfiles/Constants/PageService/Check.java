@@ -21,15 +21,17 @@ public interface Check {
     int PASSWORD_SYNTAX                    = 15;
 
     int EMAIL_IN_DATABASE                  = 16;
-    int NEW_EMAIL                          = 17;
-    int NEW_PASSWORD                       = 18;
+    int EMAIL_LENGTH                       = 17;
+    int EMAIL_MISSING                      = 18;
+    int NEW_EMAIL                          = 19;
+    int NEW_PASSWORD                       = 20;
 
-    int NEW_AVATAR                         = 19;
-    int AVATAR_SIZE                        = 20;
+    int NEW_AVATAR                         = 21;
+    int AVATAR_SIZE                        = 22;
 
-    int VS_USER_NAME_BLANK                 = 21;
-    int VS_USER_MISSING_IN_DB              = 22;
+    int VS_USER_NAME_BLANK                 = 23;
+    int VS_USER_MISSING_IN_DB              = 24;
 
-    int USER_OR_EMAIL_EXIST_USER           = 23;
-    int USER_OR_EMAIL_EXIST_EMAIL          = 24;
+    int USER_OR_EMAIL_EXIST_USER           = 25;
+    int USER_OR_EMAIL_EXIST_EMAIL          = 26;
 }

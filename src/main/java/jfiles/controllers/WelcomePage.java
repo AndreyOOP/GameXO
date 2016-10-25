@@ -4,8 +4,8 @@ import jfiles.Constants.Page;
 import jfiles.Constants.PageService.Message;
 import jfiles.Constants.PageService.Tag;
 import jfiles.service.PageService;
-import jfiles.service.SessionLogin.LoginSession;
-import jfiles.service.SessionLogin.Session;
+import jfiles.service.SessionService;
+import jfiles.model.Session;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -18,7 +18,7 @@ public class WelcomePage {
 
     //region Services declaration
     @Autowired
-    private LoginSession loginSession;
+    private SessionService sessionService;
     //endregion
 
     /**Load welcome page*/
@@ -27,7 +27,7 @@ public class WelcomePage {
 
         PageService pageService = new PageService();
 
-        Session session = loginSession.getSession(authKey);
+        Session session = sessionService.getBy(authKey);
 
         pageService.setModel(model);
 

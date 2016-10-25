@@ -64,9 +64,9 @@ public class StatisticDAO {
         entityManager.remove(record);
     }
 
-    public void deleteRecord(StatisticEntity record) {
+    /*public void deleteRecord(StatisticEntity record) {
 
         entityManager.remove(record);
-    }
+    }*/
 
 }
