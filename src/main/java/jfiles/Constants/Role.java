@@ -1,6 +1,6 @@
 package jfiles.Constants;
 
-public enum Roles {
+public enum Role {
 
     USER(101, "User"),
     ADMIN(202, "Admin"),
@@ -9,7 +9,7 @@ public enum Roles {
     private int    id;
     private String text;
 
-    Roles(int id, String text){
+    Role(int id, String text){
         this.id = id;
         this.text = text;
     }
@@ -22,9 +22,9 @@ public enum Roles {
         return text;
     }
 
-    public static Roles id(String text){
+    public static Role id(String text){
 
-        for(Roles r: values()){
+        for(Role r: values()){
             if( r.text.contentEquals( text)){
                 return r;
             }

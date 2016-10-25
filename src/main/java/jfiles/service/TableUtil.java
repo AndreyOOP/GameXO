@@ -1,19 +1,19 @@
 package jfiles.service;
 
 import jfiles.Constants.Table;
-import jfiles.Constants.XO;
 import jfiles.model.StatisticEntity;
+import jfiles.model.StatusTable.StatusRecord;
 import jfiles.model.StatusTable.StatusTable;
 import jfiles.model.UserEntity;
 import jfiles.service.Game.GamePool;
-import jfiles.service.Game.GameSession;
+import jfiles.service.Game.GameSession2;
+import jfiles.service.Game.Player;
 import jfiles.service.SessionLogin.LoginSession;
 import jfiles.service.SessionLogin.Session;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 
 /**Service for preparation <i>Statistic</i> and <i>User</i> tables.<br>
@@ -172,11 +172,6 @@ public class TableUtil {
         }
     }
 
-//    public void remove(UserEntity entity, List<UserEntity> table){
-//
-//        table.remove(entity);
-//    }
-
     public UserEntity getByName(String name, List<UserEntity> table){
 
         for(UserEntity ue: table){
@@ -229,26 +224,23 @@ public class TableUtil {
         }
     }
 
-    public StatusTable createStatusTable(LoginSession loginSession, GamePool gamePool){
+    public StatusTable createStatusTable(LoginSession loginSession){
 
         StatusTable statusTable = new StatusTable();
 
         for(Session s: loginSession.getLoggedUsers().values()){
-            statusTable.addRecord( s.getUserName(), Table.ONLINE);
+
+            if(s.getGameSession() != null){
+
+                if(s.getGameSession().isNotGameOver())
+                    statusTable.addRecord( s.getUserName(), Table.IN_GAME);
+
+                 else
+                    statusTable.addRecord( s.getUserName(), Table.GAME_END);
+            }
+            else
+                statusTable.addRecord( s.getUserName(), Table.ONLINE);
         }
-
-        /*for(GameSession gs: gamePool.getGameSessions()){
-
-            String name = gs.getPlayer1();
-
-            if(name != null)
-                statusTable.setStatusForRecord(name, Table.IN_GAME);
-
-            name = gs.getPlayer2();
-
-            if(name != null)
-                statusTable.setStatusForRecord(name, Table.IN_GAME);
-        }*/
 
         return statusTable;
     }

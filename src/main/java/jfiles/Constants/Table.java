@@ -24,6 +24,7 @@ public interface Table {
     String USER_FILE_NAME      = "user_table.csv";
 
     /**For status table*/
-    String ONLINE  = "online";
-    String IN_GAME = "playing";
+    String ONLINE   = "online";
+    String IN_GAME  = "playing";
+    String GAME_END = "game end";
 }

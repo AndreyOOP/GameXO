@@ -2,7 +2,6 @@ package jfiles.service.SessionLogin;
 
 import jfiles.model.StatisticEntity;
 import jfiles.model.UserEntity;
-import jfiles.service.Game.GameSession;
 import jfiles.service.Game.GameSession2;
 import org.springframework.stereotype.Service;
 

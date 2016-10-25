@@ -116,7 +116,7 @@ public class Registration {
         }
         //endregion
 
-        UserEntity registeredUser = new UserEntity(userName, userPassword, Roles.USER.id(), userEmail, BlobStoreGAE.getBlobKey(req));
+        UserEntity registeredUser = new UserEntity(userName, userPassword, Role.USER.id(), userEmail, BlobStoreGAE.getBlobKey(req));
 
         userService.addUser( registeredUser);
 

@@ -53,7 +53,7 @@ public class AdminUserTable {
         Session session = loginSession.getSession(authKey);
         int     role    = session.getUserRole();
 
-        if( !(role == Roles.ADMIN.id() || role == Roles.SUPER_ADMIN.id())){
+        if( !(role == Role.ADMIN.id() || role == Role.SUPER_ADMIN.id())){
             page.add( Tag.ERROR_MESSAGE, Message.ERROR_ROLE);
             return Page.ERROR;
         }
@@ -95,7 +95,7 @@ public class AdminUserTable {
 
         Session session = loginSession.getSession(authKey);
 
-        if( session.getUserRole() != Roles.SUPER_ADMIN.id()){
+        if( session.getUserRole() != Role.SUPER_ADMIN.id()){
 
             page.add( Tag.ERROR_MESSAGE, Message.ERROR_ROLE);
             return Page.ERROR;
@@ -134,7 +134,7 @@ public class AdminUserTable {
         Session session = loginSession.getSession(authKey);
         int     role    = session.getUserRole();
 
-        if( !(role == Roles.ADMIN.id() || role == Roles.SUPER_ADMIN.id())){
+        if( !(role == Role.ADMIN.id() || role == Role.SUPER_ADMIN.id())){
 
             page.add( Tag.ERROR_MESSAGE, Message.ERROR_ROLE);
             return Page.ERROR;
@@ -177,7 +177,7 @@ public class AdminUserTable {
 
         Session session = loginSession.getSession(authKey);
 
-        if( session.getUserRole() != Roles.SUPER_ADMIN.id()){
+        if( session.getUserRole() != Role.SUPER_ADMIN.id()){
 
             page.add( Tag.ERROR_MESSAGE, Message.ERROR_ROLE);
             return Page.ERROR;
@@ -209,7 +209,7 @@ public class AdminUserTable {
             .add( Tag.ADMIN_USER_CURRENT_PAGE    , tableCurrentPage)
             .add( Tag.ADMIN_USER_SAVED_NAME      , formUserName)
             .add( Tag.ADMIN_USER_SAVED_PASSWORD  , userPassword)
-            .add( Tag.ADMIN_USER_SAVED_USER_ROLE , Roles.id(userRole).id())
+            .add( Tag.ADMIN_USER_SAVED_USER_ROLE , Role.id(userRole).id())
             .add( Tag.ADMIN_USER_SAVED_EMAIL     , userEmail);
 
 
@@ -255,7 +255,7 @@ public class AdminUserTable {
         //endregion
 
 
-        int    role    = Roles.id(userRole).id(); //id role id by name
+        int    role    = Role.id(userRole).id(); //id role id by name
         String blobKey = BlobStoreGAE.getBlobKey(req);
 
         userService.addUser(formUserName, userPassword, role, userEmail, blobKey);
@@ -279,7 +279,7 @@ public class AdminUserTable {
 
         Session session = loginSession.getSession(authKey);
 
-        if(session.getUserRole() != Roles.SUPER_ADMIN.id()){
+        if(session.getUserRole() != Role.SUPER_ADMIN.id()){
 
             page.add( Tag.ERROR_MESSAGE, Message.ERROR_ROLE);
             return Page.ERROR;
@@ -329,7 +329,7 @@ public class AdminUserTable {
 
         Session session = loginSession.getSession(authKey);
 
-        if( session.getUserRole() != Roles.SUPER_ADMIN.id()){
+        if( session.getUserRole() != Role.SUPER_ADMIN.id()){
 
             page.add( Tag.ERROR_MESSAGE, Message.ERROR_ROLE);
             return Page.ERROR;
@@ -363,7 +363,7 @@ public class AdminUserTable {
 
             .add( Tag.ADMIN_USER_SAVED_NAME      , editName)
             .add( Tag.ADMIN_USER_SAVED_PASSWORD  , userPassword)
-            .add( Tag.ADMIN_USER_SAVED_USER_ROLE , Roles.id(userRole).id())
+            .add( Tag.ADMIN_USER_SAVED_USER_ROLE , Role.id(userRole).id())
             .add( Tag.ADMIN_USER_SAVED_EMAIL     , userEmail);
 
 
@@ -396,7 +396,7 @@ public class AdminUserTable {
             blobKey = BlobStoreGAE.getBlobKey(req);
         }
 
-        int role = Roles.id(userRole).id();
+        int role = Role.id(userRole).id();
 
         userService.updateUserInDatabase(editName, userPassword, userEmail, blobKey, role);
         tableUtil.update(editName, userPassword, userEmail, blobKey, role, cachedTable);

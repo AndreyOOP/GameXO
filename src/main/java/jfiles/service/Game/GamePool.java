@@ -1,10 +1,5 @@
 package jfiles.service.Game;
 
-import jfiles.service.SessionLogin.Session;
-import jfiles.service.StatisticService;
-import jfiles.service.UserService;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -52,9 +47,11 @@ public class GamePool {
 
     public static void addToLookingForGameList(int authKey){
 
-        if( !isGameSessionExist(authKey)){
-            lookingForGame.add(authKey);
-        }
+//        if( !isGameSessionExist(authKey)){
+//            lookingForGame.add(authKey);
+//        }
+
+        lookingForGame.add(authKey);
     }
 
     /**Method just gets first name from <i>lookingForGame</i> queue*/
@@ -87,6 +84,7 @@ public class GamePool {
         }
     }
 
-    /**Method creates new GameSession, add it to pool of GameSessions and <br>
-     * remove players from <i>lookingForGame</i> queue*/
+    public static List<Integer> getLookingForGame() {
+        return lookingForGame;
+    }
 }

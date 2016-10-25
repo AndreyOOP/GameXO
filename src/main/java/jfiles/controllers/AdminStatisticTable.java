@@ -4,9 +4,8 @@ import jfiles.Constants.Page;
 import jfiles.Constants.PageService.Check;
 import jfiles.Constants.PageService.Message;
 import jfiles.Constants.PageService.Tag;
-import jfiles.Constants.Roles;
+import jfiles.Constants.Role;
 import jfiles.model.StatisticEntity;
-import jfiles.model.UserEntity;
 import jfiles.service.*;
 import jfiles.service.SessionLogin.LoginSession;
 import jfiles.service.SessionLogin.Session;
@@ -51,7 +50,7 @@ public class AdminStatisticTable {
         Session session = loginSession.getSession(authKey);
         int     role    = session.getUserRole();
 
-        if( !(role == Roles.ADMIN.id() || role == Roles.SUPER_ADMIN.id())){
+        if( !(role == Role.ADMIN.id() || role == Role.SUPER_ADMIN.id())){
 
             page.add( Tag.ERROR_MESSAGE, Message.ERROR_ROLE);
             return Page.ERROR;
@@ -97,7 +96,7 @@ public class AdminStatisticTable {
 
         Session session = loginSession.getSession(authKey);
 
-        if(session.getUserRole() != Roles.SUPER_ADMIN.id()){
+        if(session.getUserRole() != Role.SUPER_ADMIN.id()){
 
             page.add( Tag.ERROR_MESSAGE, Message.ERROR_ROLE);
             return Page.ERROR;
@@ -187,7 +186,7 @@ public class AdminStatisticTable {
 
         Session session = loginSession.getSession(authKey);
 
-        if(session.getUserRole() != Roles.SUPER_ADMIN.id()){
+        if(session.getUserRole() != Role.SUPER_ADMIN.id()){
 
             page.add( Tag.ERROR_MESSAGE, Message.ERROR_ROLE);
             return Page.ERROR;
@@ -242,7 +241,7 @@ public class AdminStatisticTable {
 
         List<StatisticEntity> cachedTable = session.getStatisticEntities();
 
-        if(session.getUserRole() != Roles.SUPER_ADMIN.id()){
+        if(session.getUserRole() != Role.SUPER_ADMIN.id()){
 
             page.add( Tag.ERROR_MESSAGE, Message.ERROR_ROLE);
             return Page.ERROR;
@@ -311,7 +310,7 @@ public class AdminStatisticTable {
 
         Session session = loginSession.getSession(authKey);
 
-        if( session.getUserRole() != Roles.SUPER_ADMIN.id()){
+        if( session.getUserRole() != Role.SUPER_ADMIN.id()){
 
             page.add( Tag.ERROR_MESSAGE, Message.ERROR_ROLE);
             return Page.ERROR;

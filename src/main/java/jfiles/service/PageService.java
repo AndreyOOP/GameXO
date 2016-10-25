@@ -1,9 +1,8 @@
 package jfiles.service;
 
 import jfiles.Constants.PageService.Check;
-import jfiles.Constants.Roles;
+import jfiles.Constants.Role;
 import jfiles.model.UserEntity;
-import jfiles.service.SessionLogin.Session;
 import org.springframework.stereotype.Service;
 import org.springframework.ui.Model;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
@@ -141,9 +140,9 @@ public class PageService<T> {
                 return userService.getUserByName(formVsUserName) == null;
 
             case Check.USER_ROLE:
-                return !(formUserRole.contentEquals(Roles.USER.text()) ||
-                         formUserRole.contentEquals(Roles.ADMIN.text()) ||
-                         formUserRole.contentEquals(Roles.SUPER_ADMIN.text()));
+                return !(formUserRole.contentEquals(Role.USER.text()) ||
+                         formUserRole.contentEquals(Role.ADMIN.text()) ||
+                         formUserRole.contentEquals(Role.SUPER_ADMIN.text()));
 
             case Check.PASSWORD_BLANK:
                 return formUserPassword.length() == 0;

@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**Pool of authorized users*/
@@ -48,9 +49,24 @@ public class LoginSession {
         }
     }
 
+
+
     public Session getSession(int authKey){
 
         return loggedUsers.get(authKey);
+    }
+
+    public Session getSessionByUserName(String name){
+
+        for(Integer authKey: loggedUsers.keySet()){
+
+            Session session = loggedUsers.get(authKey);
+
+            if( session.getUserName().contentEquals( name))
+                return session;
+        }
+
+        return null;
     }
 
     public void removeSession(int authKey){
