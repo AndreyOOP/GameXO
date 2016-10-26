@@ -3,9 +3,7 @@
 <%@ page import="com.google.appengine.api.blobstore.BlobstoreServiceFactory" %>
 <%@ page import="com.google.appengine.api.blobstore.BlobstoreService" %>
 
-<%
-    BlobstoreService blobstoreService = BlobstoreServiceFactory.getBlobstoreService();
-%>
+<%BlobstoreService blobstoreService = BlobstoreServiceFactory.getBlobstoreService();%>
 
 <div class="row">
     <div class="col-md-4" >
@@ -41,8 +39,6 @@
                     </div>
                 </div>
 
-                <%--todo to hide--%>
-                <%--<input type="hidden" class="form-control" name="authKey" value="${authKey}">--%>
                 <div class="form-group" style="display:none">
                     <div class="col-md-9" >
                         <input type="number" name="authKey" class="form-control" value="${authKey}">
@@ -59,7 +55,6 @@
         </form>
     </div>
     <div class="col-md-8" >
-        <%--<img src="/avatar/${userName}" />--%>
         <img src="/blob/${authKey}" />
     </div>
 </div>

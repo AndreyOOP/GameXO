@@ -2,7 +2,6 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <div align="center">
 
-    <%--<img src="/avatar/${userName}" />--%>
     <img src="/blob/${authKey}" />
     <br>
     <h1> Dear ${userName}, welcome to your account! </h1>

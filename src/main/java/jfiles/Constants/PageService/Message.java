@@ -20,7 +20,7 @@ public interface Message {
     String PASSWORD_SYNTAX          = "Password should contain alphabet characters and at least one number";
 
     String EMAIL_ALREADY_REGISTERED = "This email already in use";
-    String EMAIL_LENGTH             = "Email is too long. (Should be less then 20 symbols)";
+    String EMAIL_LENGTH             = "Email is too long. (Should be less then 50 symbols)";
     String EMAIL_MISSING            = "Email is missing";
 
     String AVATAR_SIZE              = "Image size too big. (Should be less than 100KB)";

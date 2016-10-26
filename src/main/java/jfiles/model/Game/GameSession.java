@@ -3,9 +3,6 @@ package jfiles.model.Game;
 import jfiles.Constants.XO;
 import org.springframework.stereotype.Service;
 
-/**
- * Created by an.yudaichev on 24.10.2016.
- */
 @Service
 public class GameSession {
 
@@ -14,7 +11,7 @@ public class GameSession {
     private Boolean gameOver;
     private int[][] matrix;
 
-    public GameSession(){} //for bean creation
+    public GameSession(){}
 
     public GameSession(Player player1, Player player2) {
 
@@ -25,31 +22,7 @@ public class GameSession {
         matrix   = new int[XO.FIELD_SIZE][XO.FIELD_SIZE];
     }
 
-    /*public Player getPlayer(String name){
-
-     *//*   if(player1.getName().contentEquals(name))
-            return player1;
-
-        if(player2.getName().contentEquals(name))
-            return player2;*//*
-
-        if(player1.getName().contentEquals(name))
-            return player1;
-        else
-            return player2;
-
-//        return null;
-    }*/
-
     public Player getPlayer(int authKey){
-
-        /*if(player1.getAuthKey() == authKey)
-            return player1;
-
-        if (player2.getAuthKey() == authKey)
-            return player2;
-
-        return null;*/
 
         if(player1.getAuthKey() == authKey)
             return player1;
@@ -57,28 +30,7 @@ public class GameSession {
             return player2;
     }
 
-    /*public Player getVsPlayer(String name){
-        *//*if(!player1.getName().contentEquals(name))
-            return player1;
-        if(!player2.getName().contentEquals(name))
-            return player2;
-        return null;*//*
-
-        if( !player1.getName().contentEquals(name))
-            return player1;
-        else
-            return player2;
-    }*/
-
     public Player getVsPlayer(int authKey){
-
-        /*if(player1.getAuthKey() != authKey)
-            return player1;
-
-        if (player2.getAuthKey() != authKey)
-            return player2;
-
-        return null;*/
 
         if(player1.getAuthKey() != authKey)
             return player1;

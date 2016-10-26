@@ -9,7 +9,6 @@
 </c:if>
 
 <c:if test="${gameFound eq true}">
-    <%--<p align="center">Playing ${gameUser}</p>--%>
     <br>
     <table align="center">
         <tr>

@@ -38,8 +38,6 @@
 
                 <li><a href="<c:url value='/statistic?authKey=${authKey}' />">Statistic</a></li>
 
-                <%--<li><a href="#">Download</a></li>--%>
-
                 <c:if test="${(userRole eq 202) || (userRole eq 303)}"> <%--Admin or Super Admin menu--%>
                     <li class="dropdown">
                         <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">Admin<span class="caret"></span></a>

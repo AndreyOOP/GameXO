@@ -1,10 +1,5 @@
 package jfiles.service;
 
-import jfiles.Constants.XO;
-import jfiles.model.Game.GameSession;
-import jfiles.model.Game.Player;
-import jfiles.model.Session;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -15,22 +10,7 @@ import java.util.List;
 @Service("GamePool")
 public class GameQueue {
 
-//    private static List<GameSession> gameSessions   = new ArrayList<>(); //better change to hash map id -> game
     private static List<Integer>      lookingForGame = new ArrayList<>();
-
-    /*private static Boolean isGameSessionExist(int authKey){
-
-        for(GameSession gs: gameSessions){
-
-            if( gs.getPlayer1().getAuthKey() == authKey || gs.getPlayer2().getAuthKey() == authKey){
-                return true;
-            }
-        }
-
-        return false;
-    }*/
-
-    /**Return link to GameSession where player1 or player2 name is equal to userName*/
 
     public static Boolean isUserInQueue(int authKey){
 
@@ -44,11 +24,12 @@ public class GameQueue {
 
     public static void addToQueue(int authKey){
 
-//        if( !isGameSessionExist(authKey)){
-//            lookingForGame.add(authKey);
-//        }
-
         lookingForGame.add(authKey);
+    }
+
+    public static void removeFromQueue(Integer authKey){
+
+        lookingForGame.remove(authKey);
     }
 
     /**Method just gets first name from <i>lookingForGame</i> queue*/
@@ -68,28 +49,4 @@ public class GameQueue {
         return -1;
     }
 
-    public static void removeFromLookingForGameList(Integer authKey){
-
-        /*for(int i=0; i<lookingForGame.size(); i++){
-
-            if( lookingForGame.get(i) == authKey){
-
-
-                lookingForGame.remove(i);
-
-                return;
-            }
-        }*/
-
-        lookingForGame.remove(authKey);
-    }
-
-    /*public static void createGameSesssionAndSetToPlayers(int player2Key, SessionService sessionService ,Session session, int authKey){
-
-
-    }*/
-
-    /*public static List<Integer> getLookingForGame() {
-        return lookingForGame;
-    }*/
 }

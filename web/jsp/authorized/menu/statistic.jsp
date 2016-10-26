@@ -12,7 +12,7 @@
         <th width="25%">vsPlayer</th>
         <th width="17%">Win</th>
         <th width="16%">Loose</th>
-        <th width="17%">Even</th>
+        <th width="17%">Draw</th>
     </tr>
     </thead>
     <tbody>

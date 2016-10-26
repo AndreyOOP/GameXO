@@ -14,6 +14,7 @@ import java.util.List;
 @Service("pageService")
 public class PageService<T> {
 
+    //region Variables declaration
     private UserService userService;
 
     private Model model;
@@ -33,6 +34,7 @@ public class PageService<T> {
 
     private List<UserEntity> nameOrEmail;
     private List<UserEntity> bothInDatabase;
+    //endregion
 
     /**Method adds required attribute to JSP page*/
     public PageService add(String attribute, T value){
@@ -112,7 +114,6 @@ public class PageService<T> {
 
                 if(nameOrEmail.size() == 2) return true;
 
-//                if(nameOrEmail.size() == 1)
                 return nameOrEmail.get(0).getEmail().contentEquals(formUserEmail);
             }
 
@@ -166,7 +167,7 @@ public class PageService<T> {
                return formUserEmail.isEmpty();
 
             case Check.EMAIL_LENGTH:
-                return formUserEmail.length() > 20;
+                return formUserEmail.length() > 50;
 
             case Check.PASSWORD_MATCH:{
 

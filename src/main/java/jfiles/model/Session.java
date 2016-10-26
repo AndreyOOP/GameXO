@@ -12,7 +12,6 @@ public class Session {
 
     //region Variables declaration
     private int userRole;
-//    private int authKey;
 
     private String userName;
     private String userPassword;
@@ -52,10 +51,6 @@ public class Session {
         this.userRole = userRole;
     }
 
-//    public int getAuthKey() {
-//        return authKey;
-//    }
-
     public String getUserPassword() {
         return userPassword;
     }
@@ -71,10 +66,6 @@ public class Session {
     public void setUserEmail(String userEmail) {
         this.userEmail = userEmail;
     }
-
-//    public void setAuthKey(int authKey) {
-//        this.authKey = authKey;
-//    }
 
     public String getBlobKey() {
         return blobKey;

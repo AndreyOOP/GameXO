@@ -1,8 +1,5 @@
 package jfiles.model.Game;
 
-/**
- * Created by an.yudaichev on 24.10.2016.
- */
 public class Player {
 
     private Boolean turn;       //true - player's turn
@@ -25,10 +22,6 @@ public class Player {
         this.statisticUpdated = false;
     }
 
-    /*public Boolean getTurn() {
-        return turn;
-    }*/
-
     public Boolean isPlayerTurn() {
         return turn;
     }
@@ -49,10 +42,6 @@ public class Player {
         return blobKey;
     }
 
-    /*public void setBlobKey(String blobKey) {
-        this.blobKey = blobKey;
-    }*/
-
     public String getName() {
         return name;
     }
@@ -65,10 +54,6 @@ public class Player {
         return mark;
     }
 
-    /*public void setMark(int mark) {
-        this.mark = mark;
-    }*/
-
     public int getAuthKey() {
         return authKey;
     }
@@ -76,10 +61,6 @@ public class Player {
     public void setAuthKey(int authKey) {
         this.authKey = authKey;
     }
-
-    /*public Boolean getStatisticUpdated() {
-        return statisticUpdated;
-    }*/
 
     public Boolean isNotUpdatedInDB(){
         return !statisticUpdated;

@@ -12,16 +12,6 @@ public class StatusTable {
         statusTable.add( new StatusRecord(userName, status));
     }
 
-    /*public void setStatusForRecord(String userName, String status){
-
-        for(StatusRecord r: statusTable){
-            if( r.getUserName().contentEquals( userName)){
-                r.setStatus( status);
-                return;
-            }
-        }
-    }*/
-
     public int size(){
         return statusTable.size();
     }

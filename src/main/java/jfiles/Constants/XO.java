@@ -13,9 +13,9 @@ public interface XO {
     int FIELD_SIZE    = 10;
     int WIN_LINE_SIZE = 5;
 
-    int WIN   =  11;
-    int LOOSE = -11;
-    int EVEN  =  10;
-    int IN_GAME  =  20;
+    int WIN     =  11;
+    int LOOSE   = -11;
+    int EVEN    =  10;
+    int IN_GAME =  20;
 
 }

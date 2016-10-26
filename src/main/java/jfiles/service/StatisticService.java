@@ -3,7 +3,6 @@ package jfiles.service;
 import jfiles.Constants.XO;
 import jfiles.dao.StatisticDAO;
 import jfiles.model.StatisticEntity;
-import org.springframework.beans.factory.annotation.Autowire;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -123,7 +122,7 @@ public class StatisticService {
         }
     }
 
-    @Transactional //todo why without this not work
+    @Transactional
     public void updateWinLooseDrawTable(int status, String player, String vsPLayer){
 
         switch (status){

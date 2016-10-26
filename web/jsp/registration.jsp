@@ -1,5 +1,11 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
+
+<%@ page import="com.google.appengine.api.blobstore.BlobstoreServiceFactory" %>
+<%@ page import="com.google.appengine.api.blobstore.BlobstoreService" %>
+
+<%BlobstoreService blobstoreService = BlobstoreServiceFactory.getBlobstoreService();%>
+
 <html lang="en">
 <head>
     <meta charset="utf-8">
@@ -12,14 +18,6 @@
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
 </head>
 <body>
-
-<%@ page import="com.google.appengine.api.blobstore.BlobstoreServiceFactory" %>
-<%@ page import="com.google.appengine.api.blobstore.BlobstoreService" %>
-
-<%
-    BlobstoreService blobstoreService = BlobstoreServiceFactory.getBlobstoreService();
-%>
-
 
 <div class="row">
     <div class="col-md-4" >

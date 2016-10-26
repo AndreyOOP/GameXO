@@ -47,7 +47,6 @@ public class BlobStoreGAE {
         }
     }
 
-    //todo how to solve? now it will anyway upload picture, if it is too big - send error message and delete it...
     public static Boolean isSizeTooBig(HttpServletRequest req){
 
         try {
@@ -78,7 +77,7 @@ public class BlobStoreGAE {
             Map<String, List<BlobKey>>  blobs    = blobstoreService.getUploads(req);
             Map<String, List<FileInfo>> blobInfo = blobstoreService.getFileInfos(req);
 
-            if( blobInfo.get("avatarFile").get(0).getSize() < 10){
+            if( blobInfo.get("avatarFile").get(0).getSize() < 10){ //it means no file has been uploaded
 
                 blobstoreService.delete( blobs.get("avatarFile").get(0));
 

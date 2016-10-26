@@ -168,7 +168,7 @@ public class PlayGame {
         Session session = sessionService.getBy(authKey);
 
         if(session.getGameSession() == null){
-            GameQueue.removeFromLookingForGameList(authKey);
+            GameQueue.removeFromQueue(authKey);
             return "redirect:welcome/" + authKey;
         }
 
@@ -276,8 +276,8 @@ public class PlayGame {
             gs.setMatrixToBlank();
             gs.setGameOver(false);
 
-            GameQueue.removeFromLookingForGameList(authKey);
-            GameQueue.removeFromLookingForGameList(player2Key);
+            GameQueue.removeFromQueue(authKey);
+            GameQueue.removeFromQueue(player2Key);
 
             session.setGameSession(gs);
             player2Session.setGameSession(gs);
